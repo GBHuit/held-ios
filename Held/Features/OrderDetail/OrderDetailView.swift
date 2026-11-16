@@ -104,7 +104,7 @@ struct OrderDetailView: View {
         .onChange(of: selectedPhoto) { _, newValue in
             if let newValue { importSelectedPhoto(newValue) }
         }
-        .task(perform: prepareAttachmentStore)
+        .task { await prepareAttachmentStore() }
         .heldLoadingOverlay(isPresented: isWorking, title: "Working…")
         .alert("Order action needs attention", isPresented: errorPresented) {
             Button("OK") { errorMessage = nil }

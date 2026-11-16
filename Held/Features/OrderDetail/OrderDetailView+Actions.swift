@@ -286,10 +286,16 @@ extension OrderDetailView {
                 selectedPhoto = nil
             }
             do {
-                guard let url = try await item.loadFileRepresentation(type: .image) else {
+                guard let data = try await item.loadTransferable(type: Data.self), !data.isEmpty else {
                     throw OrderDetailActionError.missingPhoto
                 }
-                let metadata = try attachmentStore.importFile(from: url)
+                let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "jpg"
+                let tempURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent(UUID().uuidString)
+                    .appendingPathExtension(ext)
+                try data.write(to: tempURL)
+                defer { try? FileManager.default.removeItem(at: tempURL) }
+                let metadata = try attachmentStore.importFile(from: tempURL)
                 var draft = EvidenceDraft()
                 draft.title = URL(fileURLWithPath: metadata.filename).deletingPathExtension().lastPathComponent
                 draft.source = "Imported photo"
