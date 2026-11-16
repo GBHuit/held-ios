@@ -95,8 +95,8 @@ struct DocumentScanner: UIViewControllerRepresentable {
 
         func dataScanner(
             _ dataScanner: DataScannerViewController,
-            didAdd addedItems: [RecognizedData],
-            allItems: [RecognizedData]
+            didAdd addedItems: [DataScannerViewController.RecognizedData],
+            allItems: [DataScannerViewController.RecognizedData]
         ) {
             for item in addedItems {
                 switch item {
