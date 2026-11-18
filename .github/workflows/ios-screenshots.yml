@@ -44,7 +44,7 @@ jobs:
           test -s "${ICON_BASE}.png"
           echo "225f4f83470d92bb64de57fe6e8411794a9d0674524407cbb1ce67b3e1f66d56  ${ICON_BASE}.png" | shasum -a 256 -c -
 
-      - name: Select an available simulator
+      - name: Select and boot an available simulator
         run: |
           if [ "$DEVICE_KIND" = "iPad" ]; then
             DEVICE_NAME=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]; names=[d["name"] for runtime in sorted(devices, reverse=True) for d in devices[runtime] if d.get("isAvailable") and "iPad" in d["name"] and "13-inch" in d["name"]]; print(names[0] if names else "")')
@@ -56,8 +56,17 @@ jobs:
             xcrun simctl list devices available
             exit 1
           fi
+          DEVICE_UDID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; name=sys.argv[1]; devices=json.load(sys.stdin)["devices"]; matches=[d["udid"] for runtime in sorted(devices, reverse=True) for d in devices[runtime] if d.get("isAvailable") and d["name"] == name]; print(matches[0] if matches else "")' "$DEVICE_NAME")
+          if [ -z "$DEVICE_UDID" ]; then
+            echo "No available simulator UDID matched $DEVICE_NAME" >&2
+            xcrun simctl list devices available
+            exit 1
+          fi
           echo "DEVICE_NAME=$DEVICE_NAME" >> "$GITHUB_ENV"
-          echo "Using $DEVICE_NAME"
+          echo "DEVICE_UDID=$DEVICE_UDID" >> "$GITHUB_ENV"
+          echo "Using $DEVICE_NAME ($DEVICE_UDID)"
+          xcrun simctl boot "$DEVICE_UDID" || true
+          xcrun simctl bootstatus "$DEVICE_UDID" -b
 
       - name: Run native UI tests and capture screenshots
         id: ui_test
@@ -67,7 +76,7 @@ jobs:
             -project Held.xcodeproj \
             -scheme KeyvowScreenshots \
             -configuration Debug \
-            -destination "platform=iOS Simulator,name=$DEVICE_NAME,OS=latest" \
+            -destination "platform=iOS Simulator,id=$DEVICE_UDID" \
             -resultBundlePath "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" \
             test 2>&1 | tee "Keyvow-$ARTIFACT_NAME-UI.log"
 

@@ -119,10 +119,19 @@ final class KeyvowUITests: XCTestCase {
     }
 
     private func selectTab(_ label: String) {
-        // Both the iPhone tab bar and the iPadOS sidebar expose tab items as buttons.
-        let tab = app.buttons[label]
-        requireHittable(tab, "The \(label) tab was not available")
-        tab.tap()
+        // iPadOS can expose nested buttons with the same label. Select the real
+        // hittable candidate while retaining the hittability assertion below.
+        let tabs = app.buttons.matching(NSPredicate(format: "label == %@", label))
+        requireExists(tabs.firstMatch, "The \(label) tab was not available")
+
+        let candidates = tabs.allElementsBoundByIndex
+        let tab = candidates.first(where: { $0.isHittable }) ?? candidates.last
+        XCTAssertNotNil(tab, "The \(label) tab had no accessibility candidates")
+
+        if let tab {
+            requireHittable(tab, "The \(label) tab was not available")
+            tab.tap()
+        }
     }
 
     private func firstOrderCard() -> XCUIElement {
