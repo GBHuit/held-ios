@@ -19,6 +19,11 @@ on:
         description: "Development provisioning profile name (signed IPA only)"
         required: false
         type: string
+      capture_native_screenshots:
+        description: "Also run native iPhone/iPad UI tests and export screenshots"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -250,3 +255,7 @@ jobs:
                 '```'
               ].join('\n')
             });
+
+  screenshots:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.capture_native_screenshots }}
+    uses: ./.github/workflows/ios-screenshots.yml
