@@ -58,6 +58,7 @@
 		100000000000000000000001 /* KeyvowShareExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				100000000000000000000010 /* Exclude generated Info.plist from resources */,
 			);
 			explicitFileTypes = (
 			);
@@ -67,6 +68,16 @@
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		100000000000000000000010 /* Exclude generated Info.plist from resources */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 100000000000000000000006 /* KeyvowShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000005 /* Held.app */ = {

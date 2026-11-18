@@ -58,7 +58,12 @@ jobs:
           test -f "$PROJECT/project.pbxproj"
           test -f Held/PrivacyInfo.xcprivacy
           test -f Held/Assets.xcassets/AppIcon.appiconset/Held-1024.png
+          test -f KeyvowShareExtension/Info.plist
+          test -f KeyvowShareExtension/KeyvowShareExtension.entitlements
           plutil -lint Held/PrivacyInfo.xcprivacy
+          plutil -lint Held/Held.entitlements
+          plutil -lint KeyvowShareExtension/Info.plist
+          plutil -lint KeyvowShareExtension/KeyvowShareExtension.entitlements
 
       - name: Compile without signing
         if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && !inputs.signed_device_ipa) }}
