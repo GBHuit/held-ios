@@ -82,6 +82,7 @@ extension OrderDetailView {
         let paymentMethod = try OrderDetailValidation.paymentMethod(draft.paymentMethod)
         let sourceURL = try OrderDetailValidation.optionalURL(draft.sourceURL)
         let previousEstimate = order.estimateEnd
+        let previousNextCheck = order.nextCheckAt
 
         order.title = title
         order.vendor = OrderDetailValidation.trimmed(draft.vendor)
@@ -123,8 +124,38 @@ extension OrderDetailView {
             order.milestones.append(milestone)
         }
 
+        if previousNextCheck != draft.nextCheckAt {
+            synchronizeCheckInReminder(from: previousNextCheck, to: draft.nextCheckAt)
+        }
+
         try saveContext(action: "Order changes")
-        synchronizeReminders()
+        synchronizeReminders(requestAuthorization: previousNextCheck != draft.nextCheckAt)
+    }
+
+    private func synchronizeCheckInReminder(from previousDate: Date?, to newDate: Date?) {
+        let checkIns = order.reminders.filter { $0.kind == .checkIn }
+        if let newDate {
+            let linked = checkIns.first { $0.triggerAt == previousDate }
+                ?? (checkIns.count == 1 ? checkIns[0] : nil)
+            if let linked {
+                linked.triggerAt = newDate
+            } else {
+                let reminder = HeldReminder(
+                    kind: .checkIn,
+                    triggerAt: newDate,
+                    leadDays: 0,
+                    enabled: true,
+                    label: "Check in with \(order.vendor)",
+                    order: order
+                )
+                modelContext.insert(reminder)
+                order.reminders.append(reminder)
+            }
+        } else if let previousDate {
+            for reminder in checkIns where reminder.triggerAt == previousDate {
+                reminder.enabled = false
+            }
+        }
     }
 
     func applyNotesUpdate(_ draft: OrderNotesDraft) throws {

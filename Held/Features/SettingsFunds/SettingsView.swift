@@ -124,7 +124,7 @@ public struct SettingsView: View {
                 Text("Held, on your terms.")
                     .heldDisplay(size: 28)
                     .foregroundStyle(HeldColor.ink)
-                Text("Your records remain yours: quiet preferences, portable backups, and no core feature hidden behind a purchase.")
+                Text("Your records remain yours: quiet preferences, portable backups, and full access to every order you have saved.")
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
@@ -273,7 +273,7 @@ public struct SettingsView: View {
                             Text("Held Pro")
                                 .heldTitle()
                                 .foregroundStyle(HeldColor.ink)
-                            Text("Lifetime support, never a gate.")
+                            Text("One lifetime upgrade. Unlimited active orders.")
                                 .font(.subheadline)
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
@@ -283,7 +283,7 @@ public struct SettingsView: View {
                         }
                     }
 
-                    Text("Held Pro is an optional, one-time lifetime upgrade for people who want to support Held’s careful, local-first approach. Your orders, evidence, backups, CSV exports, PDF reports, and restore remain fully available without it.")
+                    Text("The free version includes up to 3 active orders. Held Pro is an optional, one-time lifetime upgrade with unlimited active orders. Your existing orders, evidence, backups, CSV exports, PDF reports, and restore remain available in both versions.")
                         .heldBody()
                         .foregroundStyle(HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)

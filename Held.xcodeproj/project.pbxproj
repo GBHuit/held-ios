@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10000000000000000000000A /* KeyptShareExtension.appex in Embed App Extensions */ = {
+		10000000000000000000000A /* KeyvowShareExtension.appex in Embed App Extensions */ = {
 			isa = PBXBuildFile;
-			fileRef = 100000000000000000000002 /* KeyptShareExtension.appex */;
+			fileRef = 100000000000000000000002 /* KeyvowShareExtension.appex */;
 			platformFilter = ios;
 			settings = {
 				ATTRIBUTES = (
@@ -25,7 +25,7 @@
 			containerPortal = 00000000000000000000000A /* Project object */;
 			proxyType = 1;
 			remoteGlobalID = 100000000000000000000006;
-			remoteInfo = KeyptShareExtension;
+			remoteInfo = KeyvowShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -36,7 +36,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				10000000000000000000000A /* KeyptShareExtension.appex in Embed App Extensions */,
+				10000000000000000000000A /* KeyvowShareExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,22 +48,22 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 			);
-			explicitFileTypes = {
-			};
-			explicitFolders = {
-			};
+			explicitFileTypes = (
+			);
+			explicitFolders = (
+			);
 			path = Held;
 			sourceTree = "<group>";
 		};
-		100000000000000000000001 /* KeyptShareExtension */ = {
+		100000000000000000000001 /* KeyvowShareExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 			);
-			explicitFileTypes = {
-			};
-			explicitFolders = {
-			};
-			path = KeyptShareExtension;
+			explicitFileTypes = (
+			);
+			explicitFolders = (
+			);
+			path = KeyvowShareExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -76,11 +76,11 @@
 			path = Held.app;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		100000000000000000000002 /* KeyptShareExtension.appex */ = {
+		100000000000000000000002 /* KeyvowShareExtension.appex */ = {
 			isa = PBXFileReference;
 			explicitFileType = wrapper.app-extension;
 			includeInIndex = 0;
-			path = KeyptShareExtension.appex;
+			path = KeyvowShareExtension.appex;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXFileReference section */
@@ -107,7 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000001 /* Held */,
-				100000000000000000000001 /* KeyptShareExtension */,
+				100000000000000000000001 /* KeyvowShareExtension */,
 				000000000000000000000004 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -116,7 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000005 /* Held.app */,
-				100000000000000000000002 /* KeyptShareExtension.appex */,
+				100000000000000000000002 /* KeyvowShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,9 +146,9 @@
 			productReference = 000000000000000000000005 /* Held.app */;
 			productType = "com.apple.product-type.application";
 		};
-		100000000000000000000006 /* KeyptShareExtension */ = {
+		100000000000000000000006 /* KeyvowShareExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 100000000000000000000007 /* Build configuration list for PBXNativeTarget "KeyptShareExtension" */;
+			buildConfigurationList = 100000000000000000000007 /* Build configuration list for PBXNativeTarget "KeyvowShareExtension" */;
 			buildPhases = (
 				100000000000000000000004 /* Frameworks */,
 				100000000000000000000003 /* Sources */,
@@ -159,11 +159,11 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				100000000000000000000001 /* KeyptShareExtension */,
+				100000000000000000000001 /* KeyvowShareExtension */,
 			);
-			name = KeyptShareExtension;
-			productName = KeyptShareExtension;
-			productReference = 100000000000000000000002 /* KeyptShareExtension.appex */;
+			name = KeyvowShareExtension;
+			productName = KeyvowShareExtension;
+			productReference = 100000000000000000000002 /* KeyvowShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -190,6 +190,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"zh-Hans",
 				Base,
 			);
 			mainGroup = 000000000000000000000003;
@@ -200,7 +201,7 @@
 			projectRoot = "";
 			targets = (
 				000000000000000000000006 /* Held */,
-				100000000000000000000006 /* KeyptShareExtension */,
+				100000000000000000000006 /* KeyvowShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -242,7 +243,7 @@
 /* Begin PBXTargetDependency section */
 		100000000000000000000009 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 100000000000000000000006 /* KeyptShareExtension */;
+			target = 100000000000000000000006 /* KeyvowShareExtension */;
 			targetProxy = 10000000000000000000000B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -368,9 +369,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Held uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Keyvow uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them.";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_CFBundleDisplayName = Held;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = Keyvow;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -394,9 +396,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Held uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Keyvow uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them.";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_CFBundleDisplayName = Held;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = Keyvow;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -416,11 +419,11 @@
 		10000000000000000000000C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = KeyptShareExtension/KeyptShareExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KeyvowShareExtension/KeyvowShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = KeyptShareExtension/Info.plist;
+				INFOPLIST_FILE = KeyvowShareExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -439,11 +442,11 @@
 		10000000000000000000000D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = KeyptShareExtension/KeyptShareExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KeyvowShareExtension/KeyvowShareExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = KeyptShareExtension/Info.plist;
+				INFOPLIST_FILE = KeyvowShareExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -480,7 +483,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		100000000000000000000007 /* Build configuration list for PBXNativeTarget "KeyptShareExtension" */ = {
+		100000000000000000000007 /* Build configuration list for PBXNativeTarget "KeyvowShareExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				10000000000000000000000C /* Debug */,

@@ -5,10 +5,13 @@ import UserNotifications
 @main
 struct HeldApp: App {
     @UIApplicationDelegateAdaptor(HeldAppDelegate.self) private var appDelegate
+    @StateObject private var localization = LocalizationCenter.shared
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(localization)
+                .environment(\.locale, localization.locale)
         }
         .modelContainer(for: [
             HeldOrder.self,

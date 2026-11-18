@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import VisionKit
 
 /// Live text scanner for iOS 16+. Check `DocumentScanner.isSupported` before

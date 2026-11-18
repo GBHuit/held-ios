@@ -39,11 +39,11 @@ enum PendingShareStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .appGroupUnavailable:
-            return "The shared Keypt inbox is unavailable. The shared item has not been removed."
+            return "The shared Keyvow inbox is unavailable. The shared item has not been removed."
         case .invalidPayload(let id):
             return "Shared item \(id) could not be read. It remains in the shared inbox."
         case .unsupportedSchema(let version):
-            return "Shared item format version \(version) is not supported by this version of Keypt. It remains in the shared inbox."
+            return "Shared item format version \(version) is not supported by this version of Keyvow. It remains in the shared inbox."
         }
     }
 }

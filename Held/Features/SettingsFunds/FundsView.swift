@@ -111,6 +111,33 @@ public struct FundsView: View {
                     )
                 }
 
+                if fund.refundedMinor > 0 || fund.cancelledMinor > 0 {
+                    HStack(alignment: .top, spacing: HeldSpacing.medium) {
+                        valueBlock(
+                            title: "Refunded",
+                            minor: fund.refundedMinor,
+                            currency: fund.currency,
+                            color: HeldColor.secondaryInk
+                        )
+                        valueBlock(
+                            title: "Cancelled",
+                            minor: fund.cancelledMinor,
+                            currency: fund.currency,
+                            color: HeldColor.terracotta
+                        )
+                    }
+                }
+
+                if fund.refundPendingMinor > 0 {
+                    Label(
+                        "Refund or dispute pending: \(formatMoney(minor: fund.refundPendingMinor, currency: fund.currency)). This is unresolved order value, not a confirmed refund.",
+                        systemImage: "arrow.uturn.backward.circle"
+                    )
+                    .font(.caption)
+                    .foregroundStyle(HeldColor.amber)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+
                 VStack(alignment: .leading, spacing: HeldSpacing.small) {
                     HStack {
                         Text("Delivered value")
@@ -150,8 +177,16 @@ public struct FundsView: View {
     }
 
     private func valueBlock(title: String, minor: Int64, currency: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-            Label(title, systemImage: title == "Pending" ? "clock" : "checkmark.circle")
+        let icon: String
+        switch title {
+        case "Pending": icon = "clock"
+        case "Refunded": icon = "arrow.uturn.backward.circle"
+        case "Cancelled": icon = "xmark.circle"
+        default: icon = "checkmark.circle"
+        }
+
+        return VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
+            Label(title, systemImage: icon)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(color)
             Text(formatMoney(minor: minor, currency: currency))
@@ -178,16 +213,31 @@ public struct FundsView: View {
                     }
                 }
                 Spacer(minLength: HeldSpacing.small)
-                HeldBadge(text: row.order.fulfillmentStatus.displayLabel, tone: badgeTone(for: row.order))
+                VStack(alignment: .trailing, spacing: HeldSpacing.extraSmall) {
+                    HeldBadge(text: row.order.fulfillmentStatus.displayLabel, tone: badgeTone(for: row.order))
+                    if row.order.resolutionStatus != .none {
+                        HeldBadge(text: row.order.resolutionStatus.displayLabel, tone: .warning)
+                    }
+                }
             }
 
-            Text(formatMoney(minor: row.order.amountMinor, currency: row.order.currencyCode))
+            Text("Charged \(formatMoney(minor: row.value.totalMinor, currency: row.order.currencyCode))")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(HeldColor.ink)
 
-            HStack(alignment: .top, spacing: HeldSpacing.medium) {
-                Text("Pending \(formatMoney(minor: row.pendingMinor, currency: row.order.currencyCode))")
-                Text("Delivered \(formatMoney(minor: row.deliveredMinor, currency: row.order.currencyCode))")
+            VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
+                Text("Pending \(formatMoney(minor: row.value.pendingMinor, currency: row.order.currencyCode))")
+                Text("Net delivered \(formatMoney(minor: row.value.deliveredMinor, currency: row.order.currencyCode))")
+                if row.value.refundedMinor > 0 {
+                    Text("Refunded \(formatMoney(minor: row.value.refundedMinor, currency: row.order.currencyCode))")
+                }
+                if row.value.cancelledMinor > 0 {
+                    Text("Cancelled \(formatMoney(minor: row.value.cancelledMinor, currency: row.order.currencyCode))")
+                }
+                if row.value.refundPendingMinor > 0 {
+                    Text("Refund or dispute pending \(formatMoney(minor: row.value.refundPendingMinor, currency: row.order.currencyCode))")
+                        .foregroundStyle(HeldColor.amber)
+                }
             }
             .font(.caption)
             .foregroundStyle(HeldColor.secondaryInk)
@@ -202,17 +252,17 @@ public struct FundsView: View {
                     .foregroundStyle(HeldColor.secondaryInk)
             }
 
-            if row.usesPartialFallback {
+            if row.value.usesDeliveryFallback {
                 Label(
-                    "Item allocations are missing or incomplete, so the full order value remains pending.",
+                    "Item allocations are missing or incomplete. Unknown delivery value remains pending; only explicit item refunds or cancellations are counted.",
                     systemImage: "info.circle"
                 )
                 .font(.caption)
                 .foregroundStyle(HeldColor.amber)
                 .fixedSize(horizontal: false, vertical: true)
-            } else if row.order.fulfillmentStatus == .partiallyShipped {
+            } else if !row.order.items.isEmpty && row.value.deliveredMinor > 0 {
                 Label(
-                    "Delivered value is prorated from exact item amounts and delivered quantities.",
+                    "Net delivered value is prorated from exact item amounts and quantities, excluding refunded and cancelled lines.",
                     systemImage: "checklist"
                 )
                 .font(.caption)
@@ -232,15 +282,19 @@ public struct FundsView: View {
                     .foregroundStyle(HeldColor.accent)
                     .accessibilityAddTraits(.isHeader)
 
-                Text("Delivered orders count at their full order amount. Ordered, in-production, and shipped orders remain pending until delivery.")
+                Text("Charged is the gross order amount. A cancelled or fully refunded order moves its full amount to that category. For partial outcomes, only line items explicitly marked refunded or cancelled contribute their recorded line amounts.")
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
 
-                Text("For a partially shipped order, Held uses item amounts only when every line has a nonnegative amount and those amounts add up exactly to the order total. Delivered quantities are prorated per line. If that allocation is incomplete, the entire order amount stays pending rather than guessing.")
+                Text("Net delivered value excludes confirmed refunds and cancellations. Delivered orders without line items use the remaining order amount. With items, Held prorates delivered quantities only when every line has a nonnegative amount and all line amounts add up exactly to the order total; otherwise unknown value stays pending.")
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
 
-                Text("Each currency has its own ledger. Held never invents an exchange rate or a combined total.")
+                Text("Refund requested or disputed shows the remaining unresolved order value separately. It is not a confirmed refund and can coexist with delivered value because no requested refund amount is stored.")
+                    .heldBody()
+                    .foregroundStyle(HeldColor.secondaryInk)
+
+                Text("Each currency has its own ledger. Held never invents an exchange rate, refund amount, or combined total.")
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
@@ -252,58 +306,9 @@ public struct FundsView: View {
         orders
             .filter { $0.currencyCode.rawValue == currency }
             .map { order in
-                let delivered = deliveredMinor(for: order)
-                return FundsOrderRow(
-                    order: order,
-                    deliveredMinor: delivered,
-                    pendingMinor: order.amountMinor - delivered,
-                    usesPartialFallback: order.fulfillmentStatus == .partiallyShipped && exactPartialDeliveredMinor(order: order) == nil
-                )
+                FundsOrderRow(order: order, value: AttentionEngine.fundsBreakdown(for: order))
             }
             .sorted { $0.order.orderedAt > $1.order.orderedAt }
-    }
-
-    /// Matches AttentionEngine's public funds calculation, including its
-    /// conservative fallback for partially allocated orders.
-    private func deliveredMinor(for order: HeldOrder) -> Int64 {
-        switch order.fulfillmentStatus {
-        case .delivered:
-            return order.amountMinor
-        case .partiallyShipped:
-            return exactPartialDeliveredMinor(order: order) ?? 0
-        case .ordered, .inProduction, .shipped:
-            return 0
-        }
-    }
-
-    private func exactPartialDeliveredMinor(order: HeldOrder) -> Int64? {
-        guard !order.items.isEmpty else { return nil }
-
-        var allocatedTotal: Int64 = 0
-        for item in order.items {
-            guard let amountMinor = item.amountMinor,
-                  amountMinor >= 0,
-                  item.quantity > 0 else {
-                return nil
-            }
-            allocatedTotal += amountMinor
-        }
-        guard allocatedTotal == order.amountMinor else { return nil }
-
-        var deliveredMinor: Int64 = 0
-        for item in order.items {
-            guard let amountMinor = item.amountMinor else { return nil }
-            let deliveredQuantity = item.status == .delivered
-                ? item.quantity
-                : min(item.quantity, max(0, item.deliveredQuantity))
-            var unrounded = Decimal(amountMinor)
-                * Decimal(deliveredQuantity)
-                / Decimal(item.quantity)
-            var rounded = Decimal()
-            NSDecimalRound(&rounded, &unrounded, 0, .plain)
-            deliveredMinor += NSDecimalNumber(decimal: rounded).int64Value
-        }
-        return min(order.amountMinor, max(0, deliveredMinor))
     }
 
     private func progressRatio(delivered: Int64, total: Int64) -> Double {
@@ -332,9 +337,7 @@ public struct FundsView: View {
 
 private struct FundsOrderRow: Identifiable {
     let order: HeldOrder
-    let deliveredMinor: Int64
-    let pendingMinor: Int64
-    let usesPartialFallback: Bool
+    let value: OrderFundsBreakdown
 
     var id: String { order.id }
 }

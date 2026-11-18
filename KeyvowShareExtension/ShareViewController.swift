@@ -79,7 +79,7 @@ final class ShareImportModel: ObservableObject {
         sourceURL = foundURL ?? ""
         sharedText = textParts.joined(separator: "\n")
         if !canSave {
-            errorMessage = "Share an https link or some text to add it to Keypt."
+            errorMessage = "Share an https link or some text to add it to Keyvow."
         }
     }
 
@@ -154,7 +154,7 @@ private struct ShareImportView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Shared with Keypt") {
+                Section("Shared with Keyvow") {
                     if !model.sourceURL.isEmpty {
                         Label(model.sourceURL, systemImage: "link")
                             .textSelection(.enabled)
@@ -174,7 +174,7 @@ private struct ShareImportView: View {
                 }
 
                 Section {
-                    Text("This queues the shared details on this device. You will review them before creating an order in Keypt.")
+                    Text("This queues the shared details on this device. You will review them before creating an order in Keyvow.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     if let errorMessage = model.errorMessage {
@@ -185,7 +185,7 @@ private struct ShareImportView: View {
                     }
                 }
             }
-            .navigationTitle("Add to Keypt")
+            .navigationTitle("Add to Keyvow")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

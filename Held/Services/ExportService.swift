@@ -1335,7 +1335,7 @@ private enum HeldEvidencePDFWriter {
 
         var lines = [Line(text: "Held Evidence Report", font: titleFont, color: .label, indent: 0, spaceAfter: 8)]
         lines.append(Line(
-            text: "Generated \(ISO8601DateFormatter().string(from: Date())) • \(orders.count) orders",
+            text: "Generated \(Date().formatted(date: .abbreviated, time: .shortened)) • \(orders.count) orders",
             font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 18
         ))
 
@@ -1346,7 +1346,7 @@ private enum HeldEvidencePDFWriter {
                 font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 3
             ))
             lines.append(Line(
-                text: "Ordered \(ISO8601DateFormatter().string(from: order.orderedAt)) • \(order.fulfillmentStatusRaw) • \(order.resolutionStatusRaw)",
+                text: "Ordered \(order.orderedAt.formatted(date: .abbreviated, time: .shortened)) • \(order.fulfillmentStatusRaw) • \(order.resolutionStatusRaw)",
                 font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 8
             ))
             if order.evidence.isEmpty {
@@ -1359,7 +1359,7 @@ private enum HeldEvidencePDFWriter {
                         font: bodyFont, color: .label, indent: 18, spaceAfter: 2
                     ))
                     lines.append(Line(
-                        text: "Captured \(ISO8601DateFormatter().string(from: evidence.capturedAt)) • \(evidence.fileSize) bytes",
+                        text: "Captured \(evidence.capturedAt.formatted(date: .abbreviated, time: .shortened)) • \(evidence.fileSize) bytes",
                         font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 2
                     ))
                     if !evidence.note.isEmpty {

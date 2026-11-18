@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import UIKit
 
 private enum AddOrderStep: Int, CaseIterable {
     case basics
@@ -628,6 +629,8 @@ struct AddOrderView: View {
         validationMessage = nil
         isSaving = true
         defer { isSaving = false }
+        var importedReceiptPaths: [String] = []
+        var didPersistOrder = false
 
         do {
             let trimmedTitle = HomeOrdersText.trimmed(title)
@@ -715,9 +718,15 @@ struct AddOrderView: View {
                 return
             }
 
+            // Minimal receipt addition: keep the existing validation and save flow intact.
+            try attachReviewedReceiptImages(to: order, importedPaths: &importedReceiptPaths)
             modelContext.insert(order)
             try modelContext.save()
+            didPersistOrder = true
 
+            if let pendingShare {
+                PendingShareStore.shared.consumeAfterImport(id: pendingShare.id)
+            }
             if appSettings.remindersEnabled && !reminders.isEmpty,
                reminderScheduler.authorizationStatus == .notDetermined {
                 _ = await reminderScheduler.requestAuthorization()
@@ -726,8 +735,76 @@ struct AddOrderView: View {
             dismiss()
         } catch {
             modelContext.rollback()
-            validationMessage = "The order could not be saved. Please check the details and try again."
+            if !didPersistOrder, let store = try? AttachmentStore() {
+                for path in importedReceiptPaths {
+                    try? store.remove(relativePath: path)
+                }
+            }
+            if let inputError = error as? AddOrderInputError {
+                validationMessage = inputError.message
+            } else {
+                validationMessage = "The order could not be saved. Please check the details and try again."
+            }
         }
+    }
+
+    // MARK: Shared-share prefill and OCR intake
+
+    private func attachReviewedReceiptImages(
+        to order: HeldOrder,
+        importedPaths: inout [String]
+    ) throws {
+        guard !reviewedReceiptImages.isEmpty else { return }
+        do {
+            let store = try AttachmentStore()
+            for image in reviewedReceiptImages {
+                let metadata = try store.importData(
+                    image.data,
+                    originalFilename: image.filename,
+                    mimeType: image.mimeType
+                )
+                importedPaths.append(metadata.relativePath)
+                order.evidence.append(Evidence(
+                    kind: .receipt,
+                    title: "Reviewed OCR receipt",
+                    filename: metadata.filename,
+                    capturedAt: Date(),
+                    source: "New order OCR review",
+                    note: "Original image retained only after user-confirmed OCR review.",
+                    localRelativePath: metadata.relativePath,
+                    mimeType: metadata.mimeType,
+                    fileSize: metadata.fileSize,
+                    sha256: metadata.sha256,
+                    order: order
+                ))
+            }
+        } catch {
+            throw AddOrderInputError(
+                "The order was not saved because the reviewed OCR image could not be stored. \(error.localizedDescription)"
+            )
+        }
+    }
+
+    private func applyPendingShareIfNeeded() {
+        guard !didApplyPendingShare, let pendingShare else { return }
+        didApplyPendingShare = true
+        title = pendingShare.suggestedTitle
+        sourceURL = pendingShare.sourceURL
+        // Vendor is deliberately not inferred from a URL or shared text.
+        ocrStatusMessage = "Shared details are pre-filled only. Add the vendor and review everything before saving."
+    }
+
+    private func cancelNewOrder() {
+        if let pendingShare {
+            PendingShareStore.shared.discardAfterCancellation(id: pendingShare.id)
+        }
+        dismiss()
+    }
+
+    private func cancelOCRReview() {
+        ocrResult = nil
+        ocrReviewImages = []
+        ocrStatusMessage = "OCR review cancelled. No suggestions or receipt image were added."
     }
 
     private func recognizePhoto(_ item: PhotosPickerItem) async {
@@ -744,13 +821,48 @@ struct AddOrderView: View {
                 return
             }
             let result = try await OCREngine().recognizeText(data: data)
+            ocrReviewImages = [OCRReviewedImage(data: data, pageNumber: 1)]
             ocrResult = result
         } catch {
+            ocrReviewImages = []
             ocrStatusMessage = "Text recognition could not read this image. \(error.localizedDescription) You can continue manually."
         }
     }
 
+    private func recognizeScannedImages(_ images: [UIImage]) async {
+        isRecognizing = true
+        ocrStatusMessage = nil
+        defer { isRecognizing = false }
+
+        let dataItems = images.compactMap { $0.jpegData(compressionQuality: 0.92) }
+        guard dataItems.count == images.count, !dataItems.isEmpty else {
+            ocrReviewImages = []
+            ocrStatusMessage = "The scanned pages could not be prepared for OCR. Choose a photo or continue manually."
+            return
+        }
+
+        do {
+            let result = try await OCREngine().recognizeText(dataItems: dataItems)
+            ocrReviewImages = dataItems.enumerated().map {
+                OCRReviewedImage(data: $0.element, pageNumber: $0.offset + 1)
+            }
+            ocrResult = result
+        } catch {
+            ocrReviewImages = []
+            ocrStatusMessage = "Text recognition could not read this scan. \(error.localizedDescription) You can continue manually."
+        }
+    }
+
     private func applyOCRSuggestions(_ suggestions: OCRConfirmedSuggestions) {
+        if let suggestedTitle = suggestions.productTitle {
+            title = suggestedTitle
+        }
+        if let suggestedVendor = suggestions.vendor {
+            vendor = suggestedVendor
+        }
+        if let suggestedDeliveryText = suggestions.estimatedDeliveryText {
+            estimateText = suggestedDeliveryText
+        }
         if let suggestedOrderNumber = suggestions.orderNumber {
             orderNumber = suggestedOrderNumber
         }
@@ -763,8 +875,10 @@ struct AddOrderView: View {
         if let suggestedCurrency = suggestions.currency {
             currency = suggestedCurrency
         }
+        reviewedReceiptImages = ocrReviewImages
+        ocrReviewImages = []
         ocrResult = nil
-        ocrStatusMessage = "OCR suggestions applied. Review the updated fields before saving."
+        ocrStatusMessage = "OCR review complete. Review the fields before saving; the original image will be stored as receipt evidence."
         validationMessage = nil
     }
 }
