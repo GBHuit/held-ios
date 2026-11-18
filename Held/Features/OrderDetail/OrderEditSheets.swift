@@ -11,7 +11,10 @@ struct OrderEditDraft {
     var currencyCode: CurrencyCode
     var paymentMethod: String
     var sourceURL: String
+    var estimateStart: Date?
     var estimateEnd: Date?
+    var estimatePrecision: EstimatePrecision
+    var estimateReferenceDate: Date
     var nextCheckAt: Date?
     var estimateRevisionNote: String
 }
@@ -22,7 +25,6 @@ struct EditOrderSheet: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var draft: OrderEditDraft
-    @State private var hasEstimate: Bool
     @State private var hasNextCheck: Bool
     @State private var errorMessage: String?
 
@@ -38,12 +40,14 @@ struct EditOrderSheet: View {
             currencyCode: order.currencyCode,
             paymentMethod: order.paymentMethod,
             sourceURL: order.sourceURL,
+            estimateStart: order.estimateStart ?? order.estimateEnd,
             estimateEnd: order.estimateEnd,
+            estimatePrecision: order.estimatePrecision,
+            estimateReferenceDate: order.estimateStart ?? order.estimateEnd ?? Date(),
             nextCheckAt: order.nextCheckAt,
             estimateRevisionNote: ""
         )
         _draft = State(initialValue: draft)
-        _hasEstimate = State(initialValue: order.estimateEnd != nil)
         _hasNextCheck = State(initialValue: order.nextCheckAt != nil)
     }
 
@@ -96,21 +100,21 @@ struct EditOrderSheet: View {
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
 
-                    Toggle("Current estimate end", isOn: $hasEstimate.animation())
-                    if hasEstimate {
-                        DatePicker(
-                            "Estimate end",
-                            selection: estimateBinding,
-                            displayedComponents: [.date, .hourAndMinute]
-                        )
-                        TextField("Revision note (optional)", text: $draft.estimateRevisionNote, axis: .vertical)
-                            .lineLimit(2...5)
-                        Text("Saving a changed estimate date adds a timeline milestone. Original estimate text and original evidence are never overwritten.")
-                            .heldCaption()
-                            .foregroundStyle(HeldColor.secondaryInk)
+                    Picker("Estimate precision", selection: $draft.estimatePrecision) {
+                        ForEach(EstimatePrecision.allCases, id: \.self) { precision in
+                            Text(precision.displayLabel).tag(precision)
+                        }
                     }
+                    estimateFields
+                    TextField("Revision note (optional)", text: $draft.estimateRevisionNote, axis: .vertical)
+                        .lineLimit(2...5)
+                    Text("Saving a changed estimate or precision adds a timeline milestone. Original estimate text and original evidence are never overwritten.")
+                        .heldCaption()
+                        .foregroundStyle(HeldColor.secondaryInk)
                 } header: {
                     Text("Current estimate")
+                } footer: {
+                    Text("Month, quarter, and season remain approximate in display. Attention is based on the end of the stored range.")
                 }
 
                 Section("Next check") {
@@ -142,9 +146,38 @@ struct EditOrderSheet: View {
         }
     }
 
-    private var estimateBinding: Binding<Date> {
+    @ViewBuilder
+    private var estimateFields: some View {
+        switch draft.estimatePrecision {
+        case .unknown:
+            Text("No estimated dates will be stored.")
+                .heldCaption()
+                .foregroundStyle(HeldColor.secondaryInk)
+        case .day:
+            DatePicker("Estimated start", selection: estimateStartBinding, displayedComponents: .date)
+            DatePicker("Estimated end", selection: estimateEndBinding, displayedComponents: .date)
+        case .month:
+            DatePicker("Any date in the estimated month", selection: $draft.estimateReferenceDate, displayedComponents: .date)
+        case .quarter:
+            DatePicker("Any date in the estimated quarter", selection: $draft.estimateReferenceDate, displayedComponents: .date)
+        case .season:
+            DatePicker("Any date in the estimated season", selection: $draft.estimateReferenceDate, displayedComponents: .date)
+            Text("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February.")
+                .heldCaption()
+                .foregroundStyle(HeldColor.secondaryInk)
+        }
+    }
+
+    private var estimateStartBinding: Binding<Date> {
         Binding(
-            get: { draft.estimateEnd ?? Date() },
+            get: { draft.estimateStart ?? draft.estimateEnd ?? Date() },
+            set: { draft.estimateStart = $0 }
+        )
+    }
+
+    private var estimateEndBinding: Binding<Date> {
+        Binding(
+            get: { draft.estimateEnd ?? draft.estimateStart ?? Date() },
             set: { draft.estimateEnd = $0 }
         )
     }
@@ -164,7 +197,18 @@ struct EditOrderSheet: View {
     }
 
     private func save() {
-        draft.estimateEnd = hasEstimate ? (draft.estimateEnd ?? Date()) : nil
+        let range = DeliveryEstimate.resolve(
+            precision: draft.estimatePrecision,
+            start: draft.estimateStart,
+            end: draft.estimateEnd,
+            referenceDate: draft.estimateReferenceDate
+        )
+        guard range.isChronological else {
+            errorMessage = "Estimated start must be on or before estimated end."
+            return
+        }
+        draft.estimateStart = range.start
+        draft.estimateEnd = range.end
         draft.nextCheckAt = hasNextCheck ? (draft.nextCheckAt ?? Date()) : nil
         do {
             try onSave(draft)
@@ -442,6 +486,12 @@ struct AddReminderSheet: View {
                     Text("The selected lead time is subtracted from the event date to calculate the actual notification time.")
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
+                    if draft.kind == .deadline {
+                        Text("Custom deadlines are organizational aids, not payment-protection decisions. Verify current rules with your payment provider; Keyvow does not determine eligibility, file disputes, or guarantee recovery.")
+                            .heldCaption()
+                            .foregroundStyle(HeldColor.secondaryInk)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     if draft.notificationAt <= Date() {
                         Text("This notification time is in the past. Choose a later date or reduce the lead time.")
                             .heldCaption()

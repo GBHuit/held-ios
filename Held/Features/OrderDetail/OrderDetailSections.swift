@@ -216,9 +216,15 @@ struct OrderEstimateSection: View {
                 HeldCard {
                     VStack(alignment: .leading, spacing: HeldSpacing.medium) {
                         OrderDetailMetadataRow(
-                            title: "Current estimate end",
-                            value: order.estimateEnd.map(formatDate) ?? "Not set"
+                            title: "Current estimate · \(order.estimatePrecision.displayLabel)",
+                            value: order.estimateDisplayText
                         )
+                        if let range = order.estimateRangeDisplayText {
+                            OrderDetailMetadataRow(
+                                title: "Stored range boundaries",
+                                value: range
+                            )
+                        }
                         OrderDetailMetadataRow(
                             title: "Next check",
                             value: order.nextCheckAt.map(orderDetailDateTime) ?? "Not scheduled"

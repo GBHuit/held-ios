@@ -40,7 +40,7 @@ final class PurchaseService: ObservableObject {
             let products = try await Product.products(for: [Self.lifetimeProductID])
             product = products.first(where: { $0.id == Self.lifetimeProductID && $0.type == .nonConsumable })
             if product == nil {
-                errorMessage = "Held Pro is not available in the App Store right now."
+                errorMessage = "Keyvow Pro is not available in the App Store right now."
             }
         } catch {
             product = nil
@@ -69,7 +69,7 @@ final class PurchaseService: ObservableObject {
             }
         }
         guard let product else {
-            errorMessage = "Held Pro is not available in the App Store right now."
+            errorMessage = "Keyvow Pro is not available in the App Store right now."
             return false
         }
 
@@ -81,7 +81,7 @@ final class PurchaseService: ObservableObject {
                 await transaction.finish()
                 isPro = true
                 settings.proUnlocked = true
-                statusMessage = "Held Pro is unlocked. Thank you."
+                statusMessage = "Keyvow Pro is unlocked. Thank you."
                 return true
             case .userCancelled:
                 statusMessage = "The purchase was cancelled."
@@ -102,7 +102,7 @@ final class PurchaseService: ObservableObject {
         }
     }
 
-    /// Restores App Store transactions and returns whether a verified Held Pro
+    /// Restores App Store transactions and returns whether a verified Keyvow Pro
     /// entitlement exists. A missing purchase is not reported as success.
     @discardableResult
     func restorePurchases(settings: AppSettings) async -> Bool {
@@ -116,8 +116,8 @@ final class PurchaseService: ObservableObject {
             await refreshEntitlements()
             settings.proUnlocked = isPro
             statusMessage = isPro
-                ? "Held Pro was restored."
-                : "No Held Pro purchase was found for this App Store account."
+                ? "Keyvow Pro was restored."
+                : "No Keyvow Pro purchase was found for this App Store account."
             return isPro
         } catch {
             errorMessage = "Purchases could not be restored. Check your App Store connection and try again."
@@ -153,9 +153,9 @@ final class PurchaseService: ObservableObject {
             await refreshEntitlements()
             registeredSettings?.proUnlocked = isPro
             if transaction.revocationDate != nil {
-                statusMessage = "The Held Pro purchase is no longer active."
+                statusMessage = "The Keyvow Pro purchase is no longer active."
             } else if isPro {
-                statusMessage = "Held Pro is unlocked."
+                statusMessage = "Keyvow Pro is unlocked."
             }
         } catch {
             errorMessage = "An App Store transaction could not be verified."

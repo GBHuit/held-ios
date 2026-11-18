@@ -58,8 +58,10 @@ struct AddOrderView: View {
     @State private var sourceURL = ""
 
     @State private var estimateText = ""
-    @State private var hasEstimateEnd = false
+    @State private var estimatePrecision: EstimatePrecision = .unknown
+    @State private var estimateStart = Date()
     @State private var estimateEnd = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
+    @State private var estimateReferenceDate = Calendar.current.date(byAdding: .day, value: 30, to: Date()) ?? Date()
     @State private var trackingNumber = ""
     @State private var carrier = ""
 
@@ -186,11 +188,11 @@ struct AddOrderView: View {
             Label("Free includes up to 3 active orders", systemImage: "shippingbox")
                 .font(.headline)
                 .foregroundStyle(HeldColor.accent)
-            Text("This new order would be a fourth active order. Upgrade to Held Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit.")
+            Text("This new order would be a fourth active order. Upgrade to Keyvow Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit.")
                 .heldBody()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("View Held Pro upgrade") {
+            Button("View Keyvow Pro upgrade") {
                 showingProUpgrade = true
             }
             .heldButtonStyle(.primary)
@@ -205,7 +207,7 @@ struct AddOrderView: View {
                         Text("Keep every order in view.")
                             .heldDisplay(size: 30)
                             .foregroundStyle(HeldColor.ink)
-                        Text("Held Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available.")
+                        Text("Keyvow Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available.")
                             .heldBody()
                             .foregroundStyle(HeldColor.secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
@@ -220,17 +222,22 @@ struct AddOrderView: View {
                     }
 
                     if let price = purchaseService.displayPrice {
-                        Button("Get Held Pro — \(price)", action: purchasePro)
+                        Button("Get Keyvow Pro — \(price)", action: purchasePro)
                             .heldButtonStyle(.primary)
                             .disabled(purchaseService.isLoading)
-                    } else {
-                        Button("Load Held Pro") {
-                            Task { @MainActor in
-                                await purchaseService.loadProduct()
+                    } else if !purchaseService.isLoading {
+                        VStack(alignment: .leading, spacing: HeldSpacing.small) {
+                            Text("Keyvow Pro is not available for purchase right now. Your orders, evidence, exports, and backups remain fully available.")
+                                .heldBody()
+                                .foregroundStyle(HeldColor.secondaryInk)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Button("Check App Store availability again") {
+                                Task { @MainActor in
+                                    await purchaseService.loadProduct()
+                                }
                             }
+                            .heldButtonStyle(.secondary)
                         }
-                        .heldButtonStyle(.secondary)
-                        .disabled(purchaseService.isLoading)
                     }
 
                     Button("Restore Purchases", action: restorePro)
@@ -253,12 +260,17 @@ struct AddOrderView: View {
                 .padding(HeldSpacing.large)
             }
             .heldScreenBackground()
-            .navigationTitle("Held Pro")
+            .navigationTitle("Keyvow Pro")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Not now") { showingProUpgrade = false }
                         .disabled(purchaseService.isLoading)
+                }
+            }
+            .task {
+                if !purchaseService.isAvailable && !purchaseService.isLoading {
+                    await purchaseService.loadProduct()
                 }
             }
         }
@@ -414,14 +426,46 @@ struct AddOrderView: View {
             )
             .lineLimit(3...7)
 
-            Toggle("Include an estimated end date", isOn: $hasEstimateEnd)
-            if hasEstimateEnd {
+            Picker("Estimate precision", selection: $estimatePrecision) {
+                ForEach(EstimatePrecision.allCases, id: \.self) { precision in
+                    Text(precision.displayLabel).tag(precision)
+                }
+            }
+
+            switch estimatePrecision {
+            case .unknown:
+                Text("No estimated dates will be stored. You can keep only the original wording above.")
+                    .heldCaption()
+                    .foregroundStyle(HeldColor.secondaryInk)
+            case .day:
+                DatePicker("Estimated start", selection: $estimateStart, displayedComponents: .date)
                 DatePicker("Estimated end", selection: $estimateEnd, displayedComponents: .date)
+            case .month:
+                DatePicker("Any date in the estimated month", selection: $estimateReferenceDate, displayedComponents: .date)
+            case .quarter:
+                DatePicker("Any date in the estimated quarter", selection: $estimateReferenceDate, displayedComponents: .date)
+            case .season:
+                DatePicker("Any date in the estimated season", selection: $estimateReferenceDate, displayedComponents: .date)
+                Text("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February.")
+                    .heldCaption()
+                    .foregroundStyle(HeldColor.secondaryInk)
+            }
+
+            if estimatePrecision != .unknown {
+                let range = DeliveryEstimate.resolve(
+                    precision: estimatePrecision,
+                    start: estimateStart,
+                    end: estimateEnd,
+                    referenceDate: estimateReferenceDate
+                )
+                Text("Saved as: \(DeliveryEstimate.displayText(precision: estimatePrecision, start: range.start, end: range.end))")
+                    .heldCaption()
+                    .foregroundStyle(HeldColor.accent)
             }
         } header: {
             Text("The original promise")
         } footer: {
-            Text("Held saves this wording with the purchase milestone. Later updates will not rewrite the original promise.")
+            Text("Held saves this wording with the purchase milestone. Later updates will not rewrite the original promise. Approximate estimates use the end of their range for attention, not a fake exact-day promise.")
         }
 
         Section {
@@ -497,11 +541,21 @@ struct AddOrderView: View {
                     displayedComponents: [.date, .hourAndMinute]
                 )
                 Stepper("Lead time: \(deadlineLeadDays) \(deadlineLeadDays == 1 ? "day" : "days")", value: $deadlineLeadDays, in: 0...90)
+                Text("Keyvow organizes dates and documents. It does not determine dispute eligibility, file disputes, or guarantee recovery. Verify current rules with your payment provider.")
+                    .heldCaption()
+                    .foregroundStyle(HeldColor.secondaryInk)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let informationURL = URL(string: HomeOrdersText.trimmed(sourceURL)),
+                   let scheme = informationURL.scheme?.lowercased(),
+                   ["http", "https"].contains(scheme) {
+                    Link("Open the saved order or official information link", destination: informationURL)
+                        .heldCaption()
+                }
             }
         } header: {
             Text("Reminders")
         } footer: {
-            Text("New orders include a check-in by default. Notifications follow your Held settings; reminder dates are saved even when system notifications are off.")
+            Text("New orders include a check-in by default. Notifications follow your Keyvow settings; reminder dates are saved even when system notifications are off.")
         }
     }
 
@@ -553,6 +607,8 @@ struct AddOrderView: View {
         do {
             if step == .basics {
                 try validateBasics()
+            } else if step == .promise {
+                try validateEstimate()
             }
             validationMessage = nil
             step = AddOrderStep(rawValue: step.rawValue + 1) ?? .itemsAndReminder
@@ -580,6 +636,18 @@ struct AddOrderView: View {
         _ = try AddOrderMoney.minorUnits(from: amountText, fieldName: "Order amount")
         guard !containsFullCardNumber(paymentMethod) else {
             throw AddOrderInputError("For your security, enter only the payment method and optional last four digits. Full card numbers are never saved.")
+        }
+    }
+
+    private func validateEstimate() throws {
+        let range = DeliveryEstimate.resolve(
+            precision: estimatePrecision,
+            start: estimateStart,
+            end: estimateEnd,
+            referenceDate: estimateReferenceDate
+        )
+        guard range.isChronological else {
+            throw AddOrderInputError("Estimated start must be on or before estimated end.")
         }
     }
 
@@ -620,6 +688,7 @@ struct AddOrderView: View {
 
         do {
             try validateBasics()
+            try validateEstimate()
             try validateItems()
         } catch {
             validationMessage = error.localizedDescription
@@ -638,6 +707,12 @@ struct AddOrderView: View {
             let trimmedEstimate = HomeOrdersText.trimmed(estimateText)
             let trimmedSourceURL = HomeOrdersText.trimmed(sourceURL)
             let amountMinor = try AddOrderMoney.minorUnits(from: amountText, fieldName: "Order amount") ?? 0
+            let estimateRange = DeliveryEstimate.resolve(
+                precision: estimatePrecision,
+                start: estimateStart,
+                end: estimateEnd,
+                referenceDate: estimateReferenceDate
+            )
 
             let order = HeldOrder(
                 title: trimmedTitle,
@@ -651,7 +726,9 @@ struct AddOrderView: View {
                 estimateText: trimmedEstimate,
                 fulfillmentStatus: .ordered,
                 resolutionStatus: .none,
-                estimateEnd: hasEstimateEnd ? estimateEnd : nil,
+                estimateStart: estimateRange.start,
+                estimateEnd: estimateRange.end,
+                estimatePrecision: estimatePrecision,
                 nextCheckAt: nextCheckEnabled ? nextCheckAt : nil,
                 trackingNumber: HomeOrdersText.trimmed(trackingNumber),
                 carrier: HomeOrdersText.trimmed(carrier)

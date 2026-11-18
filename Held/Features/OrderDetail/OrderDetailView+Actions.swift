@@ -81,7 +81,9 @@ extension OrderDetailView {
         let amountMinor = try OrderDetailValidation.minorUnits(from: draft.amountText)
         let paymentMethod = try OrderDetailValidation.paymentMethod(draft.paymentMethod)
         let sourceURL = try OrderDetailValidation.optionalURL(draft.sourceURL)
-        let previousEstimate = order.estimateEnd
+        let previousStart = order.estimateStart
+        let previousEnd = order.estimateEnd
+        let previousPrecision = order.estimatePrecision
         let previousNextCheck = order.nextCheckAt
 
         order.title = title
@@ -92,20 +94,22 @@ extension OrderDetailView {
         order.currencyCode = draft.currencyCode
         order.paymentMethod = paymentMethod
         order.sourceURL = sourceURL
+        order.estimateStart = draft.estimateStart
         order.estimateEnd = draft.estimateEnd
+        order.estimatePrecision = draft.estimatePrecision
         order.nextCheckAt = draft.nextCheckAt
         order.lastUserUpdateAt = Date()
 
         // estimateText and every existing Evidence value deliberately remain untouched.
-        if previousEstimate != draft.estimateEnd {
+        if previousStart != draft.estimateStart || previousEnd != draft.estimateEnd || previousPrecision != draft.estimatePrecision {
             let isDelay: Bool
-            if let previousEstimate, let revised = draft.estimateEnd {
-                isDelay = revised > previousEstimate
+            if let previousEnd, let revised = draft.estimateEnd {
+                isDelay = revised > previousEnd
             } else {
                 isDelay = false
             }
-            var note = "Previous estimate end: \(previousEstimate.map(formatDate) ?? "Not set").\n"
-            note += "Revised estimate end: \(draft.estimateEnd.map(formatDate) ?? "Not set")."
+            var note = "Previous estimate: \(DeliveryEstimate.displayText(precision: previousPrecision, start: previousStart, end: previousEnd)).\n"
+            note += "Revised estimate: \(DeliveryEstimate.displayText(precision: draft.estimatePrecision, start: draft.estimateStart, end: draft.estimateEnd))."
             if !order.estimateText.isEmpty {
                 note += "\nOriginal estimate preserved: \(order.estimateText)"
             }

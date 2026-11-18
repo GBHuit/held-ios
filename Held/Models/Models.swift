@@ -222,7 +222,10 @@ final class HeldOrder {
     var estimateText: String
     var fulfillmentStatusRaw: String
     var resolutionStatusRaw: String
+    var estimateStart: Date?
     var estimateEnd: Date?
+    // Existing persisted rows had one exact end date, so their migration default is day.
+    var estimatePrecisionRaw: String = EstimatePrecision.day.rawValue
     var nextCheckAt: Date?
     var lastUserUpdateAt: Date
     var notes: String
@@ -315,7 +318,9 @@ final class HeldOrder {
         estimateText: String = "",
         fulfillmentStatus: FulfillmentStatus = .ordered,
         resolutionStatus: ResolutionStatus = .none,
+        estimateStart: Date? = nil,
         estimateEnd: Date? = nil,
+        estimatePrecision: EstimatePrecision? = nil,
         nextCheckAt: Date? = nil,
         lastUserUpdateAt: Date? = nil,
         notes: String = "",
@@ -335,7 +340,10 @@ final class HeldOrder {
         self.estimateText = estimateText
         self.fulfillmentStatusRaw = fulfillmentStatus.rawValue
         self.resolutionStatusRaw = resolutionStatus.rawValue
+        self.estimateStart = estimateStart
         self.estimateEnd = estimateEnd
+        self.estimatePrecisionRaw = estimatePrecision?.rawValue
+            ?? (estimateEnd == nil ? EstimatePrecision.unknown.rawValue : EstimatePrecision.day.rawValue)
         self.nextCheckAt = nextCheckAt
         self.lastUserUpdateAt = lastUserUpdateAt ?? orderedAt
         self.notes = notes

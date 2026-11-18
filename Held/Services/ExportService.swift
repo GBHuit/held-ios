@@ -30,7 +30,10 @@ struct PortableOrder: Codable {
     var estimateText: String
     var fulfillmentStatusRaw: String
     var resolutionStatusRaw: String
+    var estimateStart: Date?
     var estimateEnd: Date?
+    // Optional in the DTO so version-1 backups written before range support decode.
+    var estimatePrecisionRaw: String?
     var nextCheckAt: Date?
     var lastUserUpdateAt: Date
     var notes: String
@@ -129,7 +132,9 @@ private struct WebHeldOrder: Decodable {
     let fulfillmentStatus: String
     let resolutionStatus: String
     let estimateText: String
+    let estimateStart: String?
     let estimateEnd: String?
+    let estimatePrecision: String?
     let nextCheckAt: String?
     let lastUserUpdateAt: String
     let items: [WebHeldOrderItem]
@@ -341,7 +346,9 @@ final class ExportService {
             estimateText: web.estimateText,
             fulfillmentStatusRaw: web.fulfillmentStatus,
             resolutionStatusRaw: web.resolutionStatus,
+            estimateStart: try optionalWebDate(web.estimateStart),
             estimateEnd: try optionalWebDate(web.estimateEnd),
+            estimatePrecisionRaw: web.estimatePrecision,
             nextCheckAt: try optionalWebDate(web.nextCheckAt),
             lastUserUpdateAt: try webDate(web.lastUserUpdateAt),
             notes: web.notes ?? "",
@@ -600,9 +607,9 @@ final class ExportService {
     func writeCSV(orders: [HeldOrder]) throws -> URL {
         let headers = [
             "ID", "Title", "Vendor", "Order number", "Ordered at", "Amount minor",
-            "Currency", "Payment method", "Source URL", "Estimate", "Estimate end",
-            "Next check", "Last user update", "Fulfillment", "Resolution", "Notes",
-            "Created at", "Tracking number", "Carrier", "Items"
+            "Currency", "Payment method", "Source URL", "Estimate", "Estimate start",
+            "Estimate end", "Estimate precision", "Next check", "Last user update",
+            "Fulfillment", "Resolution", "Notes", "Created at", "Tracking number", "Carrier", "Items"
         ]
         var rows = [headers]
         for order in orders {
@@ -613,7 +620,8 @@ final class ExportService {
                 order.id, order.title, order.vendor, order.orderNumber,
                 Self.isoDate(order.orderedAt), String(order.amountMinor), order.currencyCodeRaw,
                 order.paymentMethod, order.sourceURL, order.estimateText,
-                order.estimateEnd.map(Self.isoDate) ?? "",
+                order.estimateStart.map(Self.isoDate) ?? "",
+                order.estimateEnd.map(Self.isoDate) ?? "", order.estimatePrecisionRaw,
                 order.nextCheckAt.map(Self.isoDate) ?? "",
                 Self.isoDate(order.lastUserUpdateAt), order.fulfillmentStatusRaw,
                 order.resolutionStatusRaw, order.notes, Self.isoDate(order.createdAt),
@@ -668,7 +676,9 @@ final class ExportService {
             estimateText: order.estimateText,
             fulfillmentStatusRaw: order.fulfillmentStatusRaw,
             resolutionStatusRaw: order.resolutionStatusRaw,
+            estimateStart: order.estimateStart,
             estimateEnd: order.estimateEnd,
+            estimatePrecisionRaw: order.estimatePrecisionRaw,
             nextCheckAt: order.nextCheckAt,
             lastUserUpdateAt: order.lastUserUpdateAt,
             notes: order.notes,
@@ -725,7 +735,10 @@ final class ExportService {
             estimateText: portable.estimateText,
             fulfillmentStatus: FulfillmentStatus(rawValue: portable.fulfillmentStatusRaw)!,
             resolutionStatus: ResolutionStatus(rawValue: portable.resolutionStatusRaw)!,
+            estimateStart: portable.estimateStart,
             estimateEnd: portable.estimateEnd,
+            estimatePrecision: EstimatePrecision(rawValue: portable.estimatePrecisionRaw ?? "")
+                ?? (portable.estimateEnd == nil ? .unknown : .day),
             nextCheckAt: portable.nextCheckAt,
             lastUserUpdateAt: portable.lastUserUpdateAt,
             notes: portable.notes,
@@ -782,7 +795,10 @@ final class ExportService {
         order.estimateText = portable.estimateText
         order.fulfillmentStatusRaw = portable.fulfillmentStatusRaw
         order.resolutionStatusRaw = portable.resolutionStatusRaw
+        order.estimateStart = portable.estimateStart
         order.estimateEnd = portable.estimateEnd
+        order.estimatePrecisionRaw = portable.estimatePrecisionRaw
+            ?? (portable.estimateEnd == nil ? EstimatePrecision.unknown.rawValue : EstimatePrecision.day.rawValue)
         order.nextCheckAt = portable.nextCheckAt
         order.lastUserUpdateAt = portable.lastUserUpdateAt
         order.notes = portable.notes
@@ -922,7 +938,14 @@ final class ExportService {
             try require(ResolutionStatus(rawValue: order.resolutionStatusRaw) != nil, "An order has an unsupported resolution status.")
             try require(order.amountMinor >= 0, "An order amount is negative.")
             try require(isFinite(order.orderedAt) && isFinite(order.createdAt) && isFinite(order.lastUserUpdateAt), "An order date is invalid.")
-            try require(order.estimateEnd.map(isFinite) ?? true, "An estimate date is invalid.")
+            try require(order.estimateStart.map(isFinite) ?? true, "An estimate start date is invalid.")
+            try require(order.estimateEnd.map(isFinite) ?? true, "An estimate end date is invalid.")
+            if let start = order.estimateStart, let end = order.estimateEnd {
+                try require(start <= end, "An estimate start date is after its end date.")
+            }
+            if let precision = order.estimatePrecisionRaw {
+                try require(EstimatePrecision(rawValue: precision) != nil, "An order has an unsupported estimate precision.")
+            }
             try require(order.nextCheckAt.map(isFinite) ?? true, "A check-in date is invalid.")
             try require(validURL(order.sourceURL), "An order source URL is invalid.")
             try require([order.paymentMethod, order.estimateText, order.trackingNumber, order.carrier].allSatisfy { validText($0, max: 2_000) }, "An order field is too long.")

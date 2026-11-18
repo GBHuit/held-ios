@@ -43,6 +43,7 @@ enum AttachmentStoreError: LocalizedError {
 final class AttachmentStore {
     private let fileManager: FileManager
     private let evidenceDirectory: URL
+    private let pendingDeletionDirectory: URL
 
     /// A defensive ceiling for single in-memory restores/imports. Normal file
     /// imports use mapped data for hashing and do not retain the mapped bytes.
@@ -62,11 +63,15 @@ final class AttachmentStore {
             ).appendingPathComponent("Held", isDirectory: true)
         }
         evidenceDirectory = root.appendingPathComponent("Evidence", isDirectory: true)
-        try fileManager.createDirectory(
-            at: evidenceDirectory,
-            withIntermediateDirectories: true,
-            attributes: [FileAttributeKey.protectionKey: FileProtectionType.completeUnlessOpen]
-        )
+        pendingDeletionDirectory = root.appendingPathComponent("PendingAttachmentDeletions", isDirectory: true)
+        for directory in [evidenceDirectory, pendingDeletionDirectory] {
+            try fileManager.createDirectory(
+                at: directory,
+                withIntermediateDirectories: true,
+                attributes: [FileAttributeKey.protectionKey: FileProtectionType.completeUnlessOpen]
+            )
+        }
+        try? processPendingDeletions()
     }
 
     /// Imports a security-scoped file selected by the user. The source is never
@@ -96,20 +101,29 @@ final class AttachmentStore {
         let originalFilename = Self.safeOriginalFilename(sourceURL.lastPathComponent)
         let ext = sourceURL.pathExtension
         let destination = uniqueDestination(pathExtension: ext)
+        let temporary = evidenceDirectory.appendingPathComponent(".\(UUID().uuidString).importing")
 
         do {
-            try fileManager.copyItem(at: sourceURL, to: destination)
-        } catch {
-            throw AttachmentStoreError.sourceIsNotReadable
-        }
-
-        do {
-            return try metadata(
-                for: destination,
+            try fileManager.copyItem(at: sourceURL, to: temporary)
+            let validated = try metadata(
+                for: temporary,
                 originalFilename: originalFilename,
                 explicitMIMEType: nil
             )
+            try fileManager.setAttributes(
+                [.protectionKey: FileProtectionType.completeUnlessOpen],
+                ofItemAtPath: temporary.path
+            )
+            try fileManager.moveItem(at: temporary, to: destination)
+            return AttachmentMetadata(
+                filename: validated.filename,
+                relativePath: destination.lastPathComponent,
+                mimeType: validated.mimeType,
+                fileSize: validated.fileSize,
+                sha256: validated.sha256
+            )
         } catch {
+            try? fileManager.removeItem(at: temporary)
             try? fileManager.removeItem(at: destination)
             throw error
         }
@@ -144,7 +158,37 @@ final class AttachmentStore {
     func remove(relativePath: String) throws {
         let fileURL = try url(forRelativePath: relativePath)
         guard fileManager.fileExists(atPath: fileURL.path) else { return }
-        try fileManager.removeItem(at: fileURL)
+        do {
+            try fileManager.removeItem(at: fileURL)
+        } catch {
+            // Preserve a durable, path-validated cleanup request. A later store
+            // initialization retries it without restoring any database record.
+            let marker = pendingDeletionDirectory.appendingPathComponent(UUID().uuidString)
+            try? Data(relativePath.utf8).write(to: marker, options: [.atomic, .completeFileProtectionUnlessOpen])
+            throw error
+        }
+    }
+
+    private func processPendingDeletions() throws {
+        let markers = try fileManager.contentsOfDirectory(
+            at: pendingDeletionDirectory,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        )
+        for marker in markers {
+            do {
+                let data = try Data(contentsOf: marker, options: .mappedIfSafe)
+                guard let path = String(data: data, encoding: .utf8) else { continue }
+                let fileURL = try url(forRelativePath: path)
+                if fileManager.fileExists(atPath: fileURL.path) {
+                    try fileManager.removeItem(at: fileURL)
+                }
+                try fileManager.removeItem(at: marker)
+            } catch {
+                // Keep the marker for the next launch or storage-maintenance pass.
+                continue
+            }
+        }
     }
 
     func url(forRelativePath relativePath: String) throws -> URL {

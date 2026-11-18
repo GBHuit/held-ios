@@ -19,13 +19,12 @@ enum AttentionEngine {
                 reasons.append(reason)
             }
 
-            if let estimateEnd = order.estimateEnd,
-               order.fulfillmentStatus != .delivered,
-               Calendar.current.compare(now, to: estimateEnd, toGranularity: .day) == .orderedDescending {
+            if order.fulfillmentStatus != .delivered,
+               DeliveryEstimate.hasPassed(end: order.estimateEnd, now: now) {
                 addReason(AttentionReason(
                     kind: .estimate,
-                    title: "Original estimate has passed",
-                    description: "\(order.estimateText) Last promised date: \(formatDate(estimateEnd))."
+                    title: "Current estimate has passed",
+                    description: "\(order.estimateDisplayText). The end of that estimated range has passed."
                 ))
             }
 
