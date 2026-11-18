@@ -94,14 +94,14 @@ final class KeyvowUITests: XCTestCase {
         chooseLanguageOption("简体中文")
         requireExists(app.staticTexts["语言"], "Switching to Simplified Chinese did not localize Settings")
         requireHittable(languageRow(named: "语言"), "The Chinese language picker did not become ready")
-        XCTAssertTrue(app.buttons["设置"].isSelected, "The selected tab did not switch to Chinese")
+        requireSelectedTab("设置")
         attachScreenshot(named: "06-settings-zh-Hans")
 
         openLanguagePicker(named: "语言")
         chooseLanguageOption("English")
         requireExists(app.staticTexts["Language"], "Switching back to English did not localize Settings")
         requireHittable(languageRow(named: "Language"), "The English language picker did not become ready")
-        XCTAssertTrue(app.buttons["Settings"].isSelected, "The selected tab did not switch back to English")
+        requireSelectedTab("Settings")
     }
 
     private func showEnglishHome() {
@@ -132,6 +132,14 @@ final class KeyvowUITests: XCTestCase {
             requireHittable(tab, "The \(label) tab was not available")
             tab.tap()
         }
+    }
+
+    private func requireSelectedTab(_ label: String) {
+        let selectedTab = app.buttons
+            .matching(NSPredicate(format: "label == %@", label))
+            .matching(NSPredicate(format: "selected == true"))
+            .firstMatch
+        requireExists(selectedTab, "The selected tab did not switch to \(label)")
     }
 
     private func firstOrderCard() -> XCUIElement {
@@ -180,7 +188,7 @@ final class KeyvowUITests: XCTestCase {
     }
 
     private func attachScreenshot(named name: String) {
-        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
