@@ -13,6 +13,18 @@ on:
         required: true
         type: boolean
         default: false
+  workflow_call:
+    inputs:
+      team_id:
+        description: "Apple Developer Team ID"
+        required: true
+        type: string
+        default: FLVKJ8ZLZV
+      upload_testflight:
+        description: "Upload the verified IPA to TestFlight after export"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read

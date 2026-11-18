@@ -15,12 +15,23 @@ on:
         description: "Apple Developer Team ID (signed IPA only)"
         required: false
         type: string
+        default: FLVKJ8ZLZV
       provisioning_profile_name:
         description: "Development provisioning profile name (signed IPA only)"
         required: false
         type: string
       capture_native_screenshots:
         description: "Also run native iPhone/iPad UI tests and export screenshots"
+        required: true
+        type: boolean
+        default: false
+      app_store_release:
+        description: "Run Apple Distribution archive/export (requires release secrets)"
+        required: true
+        type: boolean
+        default: false
+      upload_testflight:
+        description: "Upload the App Store IPA to TestFlight (release API secrets required)"
         required: true
         type: boolean
         default: false
@@ -259,3 +270,11 @@ jobs:
   screenshots:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.capture_native_screenshots }}
     uses: ./.github/workflows/ios-screenshots.yml
+
+  app_store_release:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.app_store_release }}
+    uses: ./.github/workflows/ios-release.yml
+    secrets: inherit
+    with:
+      team_id: ${{ inputs.team_id }}
+      upload_testflight: ${{ inputs.upload_testflight }}
