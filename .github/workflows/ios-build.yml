@@ -169,7 +169,7 @@ jobs:
           unzip -l "$IPA_PATH"
           ditto -x -k "$IPA_PATH" "$RUNNER_TEMP/Held-IPA-Inspect"
           codesign -dv --verbose=4 "$RUNNER_TEMP/Held-IPA-Inspect/Payload/Held.app"
-          plutil -p "$RUNNER_TEMP/Held-IPA-Inspect/Payload/Held.app/embedded.mobileprovision"
+          security cms -D -i "$RUNNER_TEMP/Held-IPA-Inspect/Payload/Held.app/embedded.mobileprovision" | plutil -p -
           cp "$IPA_PATH" Held.ipa
 
       - name: Upload simulator build log
