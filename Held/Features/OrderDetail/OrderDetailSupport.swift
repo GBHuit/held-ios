@@ -37,23 +37,23 @@ enum OrderExportKind: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .json: return "Order JSON"
-        case .csv: return "Order CSV"
-        case .pdf: return "Evidence report PDF"
-        case .evidenceZIP: return "Evidence ZIP"
+        case .json: return L("Order JSON")
+        case .csv: return L("Order CSV")
+        case .pdf: return L("Evidence report PDF")
+        case .evidenceZIP: return L("Evidence ZIP")
         }
     }
 
     var subtitle: String {
         switch self {
         case .json:
-            return "A portable, single-order backup with items, milestones, reminders, notes, and evidence metadata."
+            return L("A portable, single-order backup with items, milestones, reminders, notes, and evidence metadata.")
         case .csv:
-            return "A spreadsheet-compatible summary of this order and its line-item delivery state."
+            return L("A spreadsheet-compatible summary of this order and its line-item delivery state.")
         case .pdf:
-            return "A readable evidence report with source details, notes, file sizes, and checksums."
+            return L("A readable evidence report with source details, notes, file sizes, and checksums.")
         case .evidenceZIP:
-            return "The single-order manifest plus original evidence attachments, verified against their recorded metadata."
+            return L("The single-order manifest plus original evidence attachments, verified against their recorded metadata.")
         }
     }
 
@@ -102,19 +102,19 @@ enum OrderDetailValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .required(let field):
-            return "\(field) is required."
+            return L("%@ is required.", field)
         case .invalidAmount:
-            return "Enter a nonnegative order amount with no more than two decimal places."
+            return L("Enter a nonnegative order amount with no more than two decimal places.")
         case .invalidPaymentMethod:
-            return "For your security, enter only the payment method and optional last four digits. Full card numbers are never saved."
+            return L("For your security, enter only the payment method and optional last four digits. Full card numbers are never saved.")
         case .invalidURL:
-            return "Enter a complete http or https URL, or leave the URL field empty."
+            return L("Enter a complete http or https URL, or leave the URL field empty.")
         case .invalidReminderDate:
-            return "The reminder’s calculated notification time must be in the future. Adjust the date or lead time."
+            return L("The reminder’s calculated notification time must be in the future. Adjust the date or lead time.")
         case .incompleteDelivery:
-            return "Delivered can be selected for an order without line items, or when every noncancelled line item is fully delivered. Update delivery quantities first."
+            return L("Delivered can be selected for an order without line items, or when every noncancelled line item is fully delivered. Update delivery quantities first.")
         case .attachmentStoreUnavailable:
-            return "Evidence storage is unavailable. Check the storage error on the order screen and try again."
+            return L("Evidence storage is unavailable. Check the storage error on the order screen and try again.")
         }
     }
 }
@@ -195,7 +195,90 @@ func orderDetailFileSize(_ bytes: Int64) -> String {
 }
 
 func orderDetailDateTime(_ date: Date) -> String {
-    date.formatted(date: .abbreviated, time: .shortened)
+    let formatter = DateFormatter()
+    formatter.locale = LocalizationCenter.shared.locale
+    formatter.calendar = .current
+    formatter.timeZone = .current
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .short
+    return formatter.string(from: date)
+}
+
+func localizedEstimatePrecisionLabel(_ precision: EstimatePrecision) -> String {
+    switch precision {
+    case .day: return L("Exact day or date range")
+    case .month: return L("Month")
+    case .quarter: return L("Quarter")
+    case .season: return L("Season")
+    case .unknown: return L("Unknown")
+    }
+}
+
+func localizedEstimateText(precision: EstimatePrecision, start: Date?, end: Date?) -> String {
+    DeliveryEstimate.displayText(precision: precision, start: start, end: end)
+}
+
+func localizedEstimateRangeText(start: Date?, end: Date?) -> String? {
+    DeliveryEstimate.rangeText(start: start, end: end)
+}
+
+func localizedFulfillmentStatusLabel(_ status: FulfillmentStatus) -> String {
+    switch status {
+    case .ordered: return L("Ordered")
+    case .inProduction: return L("In production")
+    case .partiallyShipped: return L("Partially shipped")
+    case .shipped: return L("Shipped")
+    case .delivered: return L("Delivered")
+    }
+}
+
+func localizedResolutionStatusLabel(_ status: ResolutionStatus) -> String {
+    switch status {
+    case .none: return L("No resolution")
+    case .cancelled: return L("Cancelled")
+    case .refundRequested: return L("Refund requested")
+    case .refunded: return L("Refunded")
+    case .disputed: return L("Disputed")
+    }
+}
+
+func localizedItemStatusLabel(_ status: ItemStatus) -> String {
+    switch status {
+    case .pending: return L("Pending")
+    case .shipped: return L("Shipped")
+    case .delivered: return L("Delivered")
+    case .cancelled: return L("Cancelled")
+    case .refunded: return L("Refunded")
+    }
+}
+
+func localizedMilestoneKindLabel(_ kind: MilestoneKind) -> String {
+    switch kind {
+    case .purchase: return L("Purchase")
+    case .update: return L("Update")
+    case .delay: return L("Delay")
+    case .shipment: return L("Shipment")
+    case .delivery: return L("Delivery")
+    case .refund: return L("Refund")
+    case .dispute: return L("Dispute")
+    }
+}
+
+func localizedEvidenceKindLabel(_ kind: EvidenceKind) -> String {
+    switch kind {
+    case .receipt: return L("Receipt")
+    case .originalListing: return L("Original listing")
+    case .terms: return L("Terms")
+    case .communication: return L("Communication")
+    case .shipping: return L("Shipping")
+    }
+}
+
+func localizedReminderKindLabel(_ kind: ReminderKind) -> String {
+    switch kind {
+    case .checkIn: return L("Check-in")
+    case .deadline: return L("Deadline")
+    }
 }
 
 func orderDetailFilename(for order: HeldOrder, kind: OrderExportKind) -> String {
@@ -210,6 +293,7 @@ func orderDetailFilename(for order: HeldOrder, kind: OrderExportKind) -> String 
 }
 
 struct OrderDetailCallout: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let title: String
     let message: String
     let symbolName: String
@@ -224,7 +308,7 @@ struct OrderDetailCallout: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                Text(title)
+                Text(L(title))
                     .font(.headline)
                     .foregroundStyle(HeldColor.ink)
                 Text(message)
@@ -259,13 +343,14 @@ struct OrderDetailCallout: View {
 }
 
 struct OrderDetailMetadataRow: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let title: String
     let value: String
     var monospaced = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-            Text(title)
+            Text(L(title))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
             Text(value)

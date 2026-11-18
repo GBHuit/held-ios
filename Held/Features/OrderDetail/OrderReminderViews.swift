@@ -2,6 +2,7 @@ import SwiftUI
 import UserNotifications
 
 struct OrderRemindersSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let scheduler: ReminderScheduler
     let onAdd: () -> Void
@@ -18,28 +19,28 @@ struct OrderRemindersSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Reminders",
-                subtitle: scheduler.authorizationStatusDescription
+                title: L("Reminders"),
+                subtitle: L(scheduler.authorizationStatusDescription)
             ) {
                 Button(action: onAdd) {
-                    Label("Add reminder", systemImage: "plus")
+                    Label(L("Add reminder"), systemImage: "plus")
                 }
                 .heldButtonStyle(.secondary)
             }
 
             if scheduler.authorizationStatus == .notDetermined {
                 OrderDetailCallout(
-                    title: "Allow notifications",
-                    message: "Held only asks for notification access after your explicit action. Reminder changes are saved even when system notifications are unavailable.",
+                    title: L("Allow notifications"),
+                    message: L("Keyvow only asks for notification access after your explicit action. Reminder changes are saved even when system notifications are unavailable."),
                     symbolName: "bell.badge",
                     tone: .info
                 )
-                Button("Enable notifications", action: onRequestAuthorization)
+                Button(L("Enable notifications"), action: onRequestAuthorization)
                     .heldButtonStyle(.secondary)
             } else if scheduler.authorizationStatus == .denied {
                 OrderDetailCallout(
-                    title: "Notifications are off",
-                    message: "Your reminder list remains available here. Enable Held notifications in iOS Settings to receive system alerts.",
+                    title: L("Notifications are off"),
+                    message: L("Your reminder list remains available here. Enable Keyvow notifications in iOS Settings to receive system alerts."),
                     symbolName: "bell.slash",
                     tone: .warning
                 )
@@ -47,7 +48,7 @@ struct OrderRemindersSection: View {
 
             if reminders.isEmpty {
                 HeldCard {
-                    Text("No reminders yet. Add a check-in or deadline to keep the next step visible.")
+                    Text(L("No reminders yet. Add a check-in or deadline to keep the next step visible."))
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             } else {
@@ -69,6 +70,7 @@ struct OrderRemindersSection: View {
 }
 
 private struct ReminderRow: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let reminder: HeldReminder
     let onToggle: (HeldReminder, Bool) -> Void
 
@@ -88,8 +90,8 @@ private struct ReminderRow: View {
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
                 Text(reminder.leadDays == 0
-                     ? "\(reminder.kind.displayLabel) · No lead time"
-                     : "\(reminder.kind.displayLabel) · \(reminder.leadDays)-day lead")
+                     ? L("%@ · No lead time", localizedReminderKindLabel(reminder.kind))
+                     : L("%1$@ · %2$lld-day lead", localizedReminderKindLabel(reminder.kind), reminder.leadDays))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
@@ -97,14 +99,14 @@ private struct ReminderRow: View {
             Spacer(minLength: HeldSpacing.small)
 
             Toggle(
-                "Reminder enabled",
+                L("Reminder enabled"),
                 isOn: Binding(
                     get: { reminder.enabled },
                     set: { onToggle(reminder, $0) }
                 )
             )
             .labelsHidden()
-            .accessibilityLabel("Enable \(reminder.label)")
+            .accessibilityLabel(L("Enable %@", reminder.label))
         }
         .padding(HeldSpacing.medium)
     }

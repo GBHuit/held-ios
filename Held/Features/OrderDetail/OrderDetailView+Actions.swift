@@ -12,9 +12,9 @@ private enum OrderDetailActionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .save(let action, let reason):
-            return "\(action) could not be saved. \(reason)"
+            return L("%1$@ could not be saved. %2$@", action, reason)
         case .missingPhoto:
-            return "The selected photo could not be read. Choose it again or import the original file instead."
+            return L("The selected photo could not be read. Choose it again or import the original file instead.")
         case .cleanup(let reason):
             return reason
         }
@@ -46,7 +46,7 @@ extension OrderDetailView {
     func currentSettings() throws -> AppSettings {
         if let settings = settings.first { return settings }
         let created = try AppSettings.fetchOrCreate(context: modelContext)
-        try saveContext(action: "Settings")
+        try saveContext(action: L("Settings"))
         return created
     }
 
@@ -58,7 +58,7 @@ extension OrderDetailView {
         order.fulfillmentStatus = newValue
         order.lastUserUpdateAt = Date()
         do {
-            try saveContext(action: "Fulfillment status")
+            try saveContext(action: L("Fulfillment status"))
             synchronizeReminders()
         } catch {
             errorMessage = error.localizedDescription
@@ -69,7 +69,7 @@ extension OrderDetailView {
         order.resolutionStatus = newValue
         order.lastUserUpdateAt = Date()
         do {
-            try saveContext(action: "Resolution status")
+            try saveContext(action: L("Resolution status"))
             synchronizeReminders()
         } catch {
             errorMessage = error.localizedDescription
@@ -77,7 +77,7 @@ extension OrderDetailView {
     }
 
     func applyOrderEdit(_ draft: OrderEditDraft) throws {
-        let title = try OrderDetailValidation.require(draft.title, field: "Order title")
+        let title = try OrderDetailValidation.require(draft.title, field: L("Order title"))
         let amountMinor = try OrderDetailValidation.minorUnits(from: draft.amountText)
         let paymentMethod = try OrderDetailValidation.paymentMethod(draft.paymentMethod)
         let sourceURL = try OrderDetailValidation.optionalURL(draft.sourceURL)
@@ -108,10 +108,10 @@ extension OrderDetailView {
             } else {
                 isDelay = false
             }
-            var note = "Previous estimate: \(DeliveryEstimate.displayText(precision: previousPrecision, start: previousStart, end: previousEnd)).\n"
-            note += "Revised estimate: \(DeliveryEstimate.displayText(precision: draft.estimatePrecision, start: draft.estimateStart, end: draft.estimateEnd))."
+            var note = L("Previous estimate: %@\n", localizedEstimateText(precision: previousPrecision, start: previousStart, end: previousEnd))
+            note += L("Revised estimate: %@.", localizedEstimateText(precision: draft.estimatePrecision, start: draft.estimateStart, end: draft.estimateEnd))
             if !order.estimateText.isEmpty {
-                note += "\nOriginal estimate preserved: \(order.estimateText)"
+                note += L("\nOriginal estimate preserved: %@", order.estimateText)
             }
             let revisionNote = OrderDetailValidation.trimmed(draft.estimateRevisionNote)
             if !revisionNote.isEmpty { note += "\n\(revisionNote)" }
@@ -119,7 +119,7 @@ extension OrderDetailView {
             let milestone = Milestone(
                 kind: isDelay ? .delay : .update,
                 occurredAt: Date(),
-                title: "Delivery estimate revised",
+                title: L("Delivery estimate revised"),
                 note: note,
                 sourceURL: sourceURL.isEmpty ? nil : sourceURL,
                 order: order
@@ -132,7 +132,7 @@ extension OrderDetailView {
             synchronizeCheckInReminder(from: previousNextCheck, to: draft.nextCheckAt)
         }
 
-        try saveContext(action: "Order changes")
+        try saveContext(action: L("Order changes"))
         synchronizeReminders(requestAuthorization: previousNextCheck != draft.nextCheckAt)
     }
 
@@ -149,7 +149,7 @@ extension OrderDetailView {
                     triggerAt: newDate,
                     leadDays: 0,
                     enabled: true,
-                    label: "Check in with \(order.vendor)",
+                    label: L("Check in with %@", order.vendor),
                     order: order
                 )
                 modelContext.insert(reminder)
@@ -167,7 +167,7 @@ extension OrderDetailView {
         order.trackingNumber = OrderDetailValidation.trimmed(draft.trackingNumber)
         order.carrier = OrderDetailValidation.trimmed(draft.carrier)
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Notes and tracking")
+        try saveContext(action: L("Notes and tracking"))
     }
 }
 
@@ -213,7 +213,7 @@ extension OrderDetailView {
         }
 
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Delivery update")
+        try saveContext(action: L("Delivery update"))
         synchronizeReminders()
     }
 }
@@ -222,7 +222,7 @@ extension OrderDetailView {
 
 extension OrderDetailView {
     func addMilestone(_ draft: MilestoneDraft) throws {
-        let title = try OrderDetailValidation.require(draft.title, field: "Milestone title")
+        let title = try OrderDetailValidation.require(draft.title, field: L("Milestone title"))
         let source = try OrderDetailValidation.optionalURL(draft.sourceURL)
         let milestone = Milestone(
             kind: draft.kind,
@@ -235,11 +235,11 @@ extension OrderDetailView {
         modelContext.insert(milestone)
         order.milestones.append(milestone)
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Milestone")
+        try saveContext(action: L("Milestone"))
     }
 
     func addReminder(_ draft: ReminderDraft) throws {
-        let label = try OrderDetailValidation.require(draft.label, field: "Reminder label")
+        let label = try OrderDetailValidation.require(draft.label, field: L("Reminder label"))
         let triggerAt = draft.triggerAt
         guard draft.notificationAt > Date() else {
             throw OrderDetailValidationError.invalidReminderDate
@@ -255,7 +255,7 @@ extension OrderDetailView {
         modelContext.insert(reminder)
         order.reminders.append(reminder)
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Reminder")
+        try saveContext(action: L("Reminder"))
         synchronizeReminders(requestAuthorization: true)
     }
 
@@ -263,7 +263,7 @@ extension OrderDetailView {
         reminder.enabled = enabled
         order.lastUserUpdateAt = Date()
         do {
-            try saveContext(action: "Reminder")
+            try saveContext(action: L("Reminder"))
             synchronizeReminders(requestAuthorization: enabled)
         } catch {
             errorMessage = error.localizedDescription
@@ -290,7 +290,7 @@ extension OrderDetailView {
                 }
                 await reminderScheduler.sync(orders: orders, settings: currentSettings)
                 if let schedulerError = reminderScheduler.lastErrorMessage {
-                    errorMessage = schedulerError
+                    errorMessage = L(schedulerError)
                 }
             } catch {
                 errorMessage = error.localizedDescription
@@ -312,7 +312,7 @@ extension OrderDetailView {
             let metadata = try attachmentStore.importFile(from: url)
             var draft = EvidenceDraft()
             draft.title = URL(fileURLWithPath: metadata.filename).deletingPathExtension().lastPathComponent
-            draft.source = "Imported file"
+            draft.source = L("Imported file")
             draft.attachment = metadata
             activeSheet = .evidence(draft)
         } catch {
@@ -345,7 +345,7 @@ extension OrderDetailView {
                 let metadata = try attachmentStore.importFile(from: tempURL)
                 var draft = EvidenceDraft()
                 draft.title = URL(fileURLWithPath: metadata.filename).deletingPathExtension().lastPathComponent
-                draft.source = "Imported photo"
+                draft.source = L("Imported photo")
                 draft.attachment = metadata
                 activeSheet = .evidence(draft)
             } catch {
@@ -355,12 +355,12 @@ extension OrderDetailView {
     }
 
     func saveEvidence(_ draft: EvidenceDraft) throws {
-        let title = try OrderDetailValidation.require(draft.title, field: "Evidence title")
+        let title = try OrderDetailValidation.require(draft.title, field: L("Evidence title"))
         let filename: String
         if let attachment = draft.attachment {
             filename = attachment.filename
         } else {
-            filename = try OrderDetailValidation.require(draft.referenceFilename, field: "Reference filename")
+            filename = try OrderDetailValidation.require(draft.referenceFilename, field: L("Reference filename"))
         }
 
         let evidence = Evidence(
@@ -379,7 +379,7 @@ extension OrderDetailView {
         modelContext.insert(evidence)
         order.evidence.append(evidence)
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Evidence")
+        try saveContext(action: L("Evidence"))
     }
 
     func cancelEvidenceImport(_ draft: EvidenceDraft) {
@@ -390,7 +390,7 @@ extension OrderDetailView {
             }
             try attachmentStore.remove(relativePath: path)
         } catch {
-            errorMessage = "The import was cancelled, but its temporary attachment could not be removed: \(error.localizedDescription)"
+            errorMessage = L("The import was cancelled, but its temporary attachment could not be removed: %@", error.localizedDescription)
         }
     }
 
@@ -398,7 +398,7 @@ extension OrderDetailView {
         let path = evidence.localRelativePath
         modelContext.delete(evidence)
         order.lastUserUpdateAt = Date()
-        try saveContext(action: "Evidence deletion")
+        try saveContext(action: L("Evidence deletion"))
 
         guard let path else { return }
         do {
@@ -408,7 +408,7 @@ extension OrderDetailView {
             try attachmentStore.remove(relativePath: path)
         } catch {
             throw OrderDetailActionError.cleanup(
-                "The evidence metadata was deleted, but its attachment could not be removed: \(error.localizedDescription)"
+                L("The evidence metadata was deleted, but its attachment could not be removed: %@", error.localizedDescription)
             )
         }
     }
@@ -465,7 +465,7 @@ extension OrderDetailView {
 
         do {
             modelContext.delete(order)
-            try saveContext(action: "Order deletion")
+            try saveContext(action: L("Order deletion"))
         } catch {
             isWorking = false
             errorMessage = error.localizedDescription
@@ -487,14 +487,14 @@ extension OrderDetailView {
                     }
                 }
             } else {
-                cleanupFailures.append("Attachment storage was unavailable; imported files may remain on device.")
+                cleanupFailures.append(L("Attachment storage was unavailable; imported files may remain on device."))
             }
 
             isWorking = false
             if cleanupFailures.isEmpty {
                 dismiss()
             } else {
-                deletionCleanupWarning = "The order and its notifications were deleted. Some attachment files could not be removed:\n\n\(cleanupFailures.joined(separator: "\n"))"
+                deletionCleanupWarning = L("The order and its notifications were deleted. Some attachment files could not be removed:\n\n%@", cleanupFailures.joined(separator: "\n"))
             }
         }
     }

@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 /// The complete native order detail screen. The parent owns the NavigationStack.
 @MainActor
 struct OrderDetailView: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
 
     @Environment(\.modelContext) var modelContext
@@ -105,29 +106,29 @@ struct OrderDetailView: View {
             if let newValue { importSelectedPhoto(newValue) }
         }
         .task { await prepareAttachmentStore() }
-        .heldLoadingOverlay(isPresented: isWorking, title: "Working…")
-        .alert("Order action needs attention", isPresented: errorPresented) {
-            Button("OK") { errorMessage = nil }
+        .heldLoadingOverlay(isPresented: isWorking, title: L("Working…"))
+        .alert(L("Order action needs attention"), isPresented: errorPresented) {
+            Button(L("OK")) { errorMessage = nil }
         } message: {
-            Text(errorMessage ?? "Unknown error")
+            Text(L(errorMessage ?? "Unknown error"))
         }
-        .alert("Delete this order?", isPresented: $isDeleteOrderConfirmationPresented) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete order", role: .destructive, action: deleteOrder)
+        .alert(L("Delete this order?"), isPresented: $isDeleteOrderConfirmationPresented) {
+            Button(L("Cancel"), role: .cancel) {}
+            Button(L("Delete order"), role: .destructive, action: deleteOrder)
         } message: {
-            Text("This permanently deletes the order, its reminders, milestones, evidence metadata, and imported attachments. This cannot be undone.")
+            Text(L("This permanently deletes the order, its reminders, milestones, evidence metadata, and imported attachments. This cannot be undone."))
         }
-        .alert("Order deleted", isPresented: deletionWarningPresented) {
-            Button("Done") { dismiss() }
+        .alert(L("Order deleted"), isPresented: deletionWarningPresented) {
+            Button(L("Done")) { dismiss() }
         } message: {
-            Text(deletionCleanupWarning ?? "")
+            Text(L(deletionCleanupWarning ?? ""))
         }
     }
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button("Edit") { activeSheet = .edit }
+            Button(L("Edit")) { activeSheet = .edit }
         }
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
@@ -139,9 +140,9 @@ struct OrderDetailView: View {
                     }
                 }
             } label: {
-                Label("Export", systemImage: "square.and.arrow.up")
+                Label(L("Export"), systemImage: "square.and.arrow.up")
             }
-            .accessibilityLabel("Export order")
+            .accessibilityLabel(L("Export order"))
         }
     }
 
@@ -172,8 +173,8 @@ struct OrderDetailView: View {
             OrderLiveTextSheet { text in
                 var draft = EvidenceDraft()
                 draft.kind = .communication
-                draft.title = "Scanned text"
-                draft.source = "Live text scan"
+                draft.title = L("Scanned text")
+                draft.source = L("Live text scan")
                 draft.note = text
                 activeSheet = .evidence(draft)
             }

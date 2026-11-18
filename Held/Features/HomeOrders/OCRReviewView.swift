@@ -11,6 +11,7 @@ struct OCRConfirmedSuggestions {
 }
 
 struct OCRReviewView: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let result: OCRResult
     let canKeepReceipt: Bool
     let onApply: (OCRConfirmedSuggestions) -> Void
@@ -43,11 +44,11 @@ struct OCRReviewView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: HeldSpacing.large) {
                     VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                        Text("OCR suggestions need your confirmation")
+                        Text(L("OCR suggestions need your confirmation"))
                             .heldTitle()
                             .foregroundStyle(HeldColor.ink)
                             .accessibilityAddTraits(.isHeader)
-                        Text(result.limitations)
+                        Text(L(result.limitations))
                             .heldBody()
                             .foregroundStyle(HeldColor.secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
@@ -55,32 +56,32 @@ struct OCRReviewView: View {
 
                     if !hasCandidates {
                         HomeOrdersMessage(
-                            title: "No fields to apply",
-                            message: "The image did not yield a supported order field. You can keep the reviewed image as receipt evidence, or return to the form and enter everything manually.",
+                            title: L("No fields to apply"),
+                            message: L("The image did not yield a supported order field. You can keep the reviewed image as receipt evidence, or return to the form and enter everything manually."),
                             systemImage: "text.viewfinder"
                         )
                     } else {
                         textCandidateSection(
-                            title: "Product title",
-                            subtitle: "Choose only a recognized product or item name; check its source line.",
+                            title: L("Product title"),
+                            subtitle: L("Choose only a recognized product or item name; check its source line."),
                             candidates: result.candidates.productTitles,
                             selection: $selectedProductTitle
                         )
                         textCandidateSection(
-                            title: "Vendor",
-                            subtitle: "Seller extraction can confuse stores, carriers, and marketplaces.",
+                            title: L("Vendor"),
+                            subtitle: L("Seller extraction can confuse stores, carriers, and marketplaces."),
                             candidates: result.candidates.vendors,
                             selection: $selectedVendor
                         )
                         textCandidateSection(
-                            title: "Estimated delivery text",
-                            subtitle: "This preserves the recognized wording; it does not calculate a delivery date.",
+                            title: L("Estimated delivery text"),
+                            subtitle: L("This preserves the recognized wording; it does not calculate a delivery date."),
                             candidates: result.candidates.estimatedDeliveryTexts,
                             selection: $selectedDeliveryText
                         )
                         textCandidateSection(
-                            title: "Order number",
-                            subtitle: "Choose at most one recognized value.",
+                            title: L("Order number"),
+                            subtitle: L("Choose at most one recognized value."),
                             candidates: result.candidates.orderNumbers,
                             selection: $selectedOrderNumber
                         )
@@ -89,7 +90,7 @@ struct OCRReviewView: View {
                     }
 
                     if !result.fullText.isEmpty {
-                        DisclosureGroup("Recognized text") {
+                        DisclosureGroup(L("Recognized text")) {
                             Text(result.fullText)
                                 .heldCaption()
                                 .foregroundStyle(HeldColor.secondaryInk)
@@ -104,30 +105,30 @@ struct OCRReviewView: View {
                 .padding(HeldSpacing.medium)
             }
             .heldScreenBackground()
-            .navigationTitle("Review OCR")
+            .navigationTitle(L("Review OCR"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Not now", action: onCancel)
+                    Button(L("Not now"), action: onCancel)
                         .frame(minWidth: 44, minHeight: 44)
                 }
             }
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: HeldSpacing.small) {
                     if hasCandidates {
-                        Button("Apply selected suggestions") {
+                        Button(L("Apply selected suggestions")) {
                             applySelections()
                         }
                         .heldButtonStyle()
                         .disabled(!hasSelection)
                     }
                     if canKeepReceipt {
-                        Button("Keep receipt without OCR changes") {
+                        Button(L("Keep receipt without OCR changes")) {
                             onApply(OCRConfirmedSuggestions())
                         }
                         .heldButtonStyle(.secondary)
                     }
-                    Button("Continue manually", action: onCancel)
+                    Button(L("Continue manually"), action: onCancel)
                         .heldButtonStyle(.quiet)
                 }
                 .padding(.horizontal, HeldSpacing.medium)
@@ -166,14 +167,14 @@ struct OCRReviewView: View {
     @ViewBuilder
     private var dateCandidates: some View {
         if !result.candidates.dates.isEmpty {
-            candidateSection(title: "Order date", subtitle: "Dates can refer to delivery or payment, so check the source line.") {
+            candidateSection(title: L("Order date"), subtitle: L("Dates can refer to delivery or payment, so check the source line.")) {
                 ForEach(Array(result.candidates.dates.enumerated()), id: \.offset) { index, candidate in
                     OCRSelectionCard(
                         isSelected: selectedDate == index,
                         action: { selectedDate = selectedDate == index ? nil : index }
                     ) {
                         OCRCandidateText(
-                            value: formatDate(candidate.value),
+                            value: localization.date(candidate.value),
                             sourceText: candidate.sourceText,
                             confidence: candidate.confidence
                         )
@@ -186,7 +187,7 @@ struct OCRReviewView: View {
     @ViewBuilder
     private var totalCandidates: some View {
         if !result.candidates.totals.isEmpty {
-            candidateSection(title: "Order total", subtitle: "Unsupported or uncertain currency codes leave your selected currency unchanged.") {
+            candidateSection(title: L("Order total"), subtitle: L("Unsupported or uncertain currency codes leave your selected currency unchanged.")) {
                 ForEach(Array(result.candidates.totals.enumerated()), id: \.offset) { index, candidate in
                     OCRSelectionCard(
                         isSelected: selectedTotal == index,
@@ -226,11 +227,16 @@ struct OCRReviewView: View {
     }
 
     private func amountDescription(_ candidate: OCRAmountCandidate) -> String {
-        let amount = NSDecimalNumber(decimal: candidate.value).stringValue
+        let formatter = NumberFormatter()
+        formatter.locale = localization.locale
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        let amount = formatter.string(from: NSDecimalNumber(decimal: candidate.value))
+            ?? NSDecimalNumber(decimal: candidate.value).stringValue
         if let currencyCode = candidate.currencyCode {
-            return "\(amount) \(currencyCode)"
+            return L("%1$@ %2$@", amount, currencyCode)
         }
-        return "\(amount) — currency not recognized"
+        return L("%@ — currency not recognized", amount)
     }
 
     private func applySelections() {
@@ -268,6 +274,7 @@ struct OCRReviewView: View {
 }
 
 private struct OCRCandidateText: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let value: String
     let sourceText: String
     let confidence: Double
@@ -278,11 +285,11 @@ private struct OCRCandidateText: View {
                 .font(.headline)
                 .foregroundStyle(HeldColor.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Seen in: \(sourceText)")
+            Text(L("Seen in: %@", sourceText))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Extraction confidence \(Int((confidence * 100).rounded()))% — a hint, not certainty")
+            Text(L("Extraction confidence %@ — a hint, not certainty", localization.percentage(confidence)))
                 .font(.caption2)
                 .foregroundStyle(HeldColor.secondaryInk)
         }
@@ -290,6 +297,7 @@ private struct OCRCandidateText: View {
 }
 
 private struct OCRSelectionCard<Content: View>: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let isSelected: Bool
     let action: () -> Void
     private let content: Content
@@ -329,6 +337,6 @@ private struct OCRSelectionCard<Content: View>: View {
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityHint(isSelected ? "Double-tap to remove this suggestion" : "Double-tap to choose this suggestion")
+        .accessibilityHint(isSelected ? L("Double-tap to remove this suggestion") : L("Double-tap to choose this suggestion"))
     }
 }

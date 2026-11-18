@@ -3,6 +3,7 @@ import SwiftUI
 // MARK: - Header
 
 struct OrderDetailHeader: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
 
     var body: some View {
@@ -15,7 +16,7 @@ struct OrderDetailHeader: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader)
 
-                    Text(order.vendor.isEmpty ? "Vendor not recorded" : order.vendor)
+                    Text(order.vendor.isEmpty ? L("Vendor not recorded") : order.vendor)
                         .font(.title3)
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
@@ -34,13 +35,13 @@ struct OrderDetailHeader: View {
                 }
 
                 VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                    Label("Ordered \(formatDate(order.orderedAt))", systemImage: "calendar")
+                    Label(L("Ordered %@", localization.date(order.orderedAt)), systemImage: "calendar")
                     if !order.paymentMethod.isEmpty {
                         Label(order.paymentMethod, systemImage: "creditcard")
                     }
                     if let sourceURL = URL(string: order.sourceURL), !order.sourceURL.isEmpty {
                         Link(destination: sourceURL) {
-                            Label("Open original order source", systemImage: "safari")
+                            Label(L("Open original order source"), systemImage: "safari")
                         }
                     }
                 }
@@ -52,15 +53,15 @@ struct OrderDetailHeader: View {
 
     private var orderNumber: some View {
         OrderDetailMetadataRow(
-            title: "Order number",
-            value: order.orderNumber.isEmpty ? "Not recorded" : order.orderNumber
+            title: L("Order number"),
+            value: order.orderNumber.isEmpty ? L("Not recorded") : order.orderNumber
         )
     }
 
     private var amount: some View {
         OrderDetailMetadataRow(
-            title: "Order amount",
-            value: formatMoney(minor: order.amountMinor, currency: order.currencyCode)
+            title: L("Order amount"),
+            value: localization.money(minor: order.amountMinor, currency: order.currencyCode)
         )
     }
 }
@@ -68,6 +69,7 @@ struct OrderDetailHeader: View {
 // MARK: - Independent statuses and progress
 
 struct OrderStatusSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let onFulfillmentChange: (FulfillmentStatus) -> Void
     let onResolutionChange: (ResolutionStatus) -> Void
@@ -75,18 +77,18 @@ struct OrderStatusSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Status",
-                subtitle: "Physical delivery and refund or dispute resolution are tracked independently."
+                title: L("Status"),
+                subtitle: L("Physical delivery and refund or dispute resolution are tracked independently.")
             )
 
             HeldCard {
                 VStack(alignment: .leading, spacing: HeldSpacing.large) {
                     VStack(alignment: .leading, spacing: HeldSpacing.small) {
                         HStack {
-                            Text("Order progress")
+                            Text(L("Order progress"))
                                 .font(.headline)
                             Spacer()
-                            Text(order.progress.formatted(.percent.precision(.fractionLength(0))))
+                            Text(localization.percentage(order.progress))
                                 .font(.subheadline.monospacedDigit())
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
@@ -110,38 +112,38 @@ struct OrderStatusSection: View {
 
     private var fulfillmentMenu: some View {
         Menu {
-            Picker("Fulfillment status", selection: fulfillmentBinding) {
+            Picker(L("Fulfillment status"), selection: fulfillmentBinding) {
                 ForEach(FulfillmentStatus.allCases, id: \.self) { status in
-                    Label(status.displayLabel, systemImage: status.symbolName).tag(status)
+                    Label(localizedFulfillmentStatusLabel(status), systemImage: status.symbolName).tag(status)
                 }
             }
         } label: {
             StatusMenuLabel(
-                title: "Fulfillment",
-                value: order.fulfillmentStatus.displayLabel,
+                title: L("Fulfillment"),
+                value: localizedFulfillmentStatusLabel(order.fulfillmentStatus),
                 symbolName: order.fulfillmentStatus.symbolName
             )
         }
-        .accessibilityLabel("Fulfillment status: \(order.fulfillmentStatus.displayLabel)")
-        .accessibilityHint("Changes physical delivery status only")
+        .accessibilityLabel(L("Fulfillment status: %@", localizedFulfillmentStatusLabel(order.fulfillmentStatus)))
+        .accessibilityHint(L("Changes physical delivery status only"))
     }
 
     private var resolutionMenu: some View {
         Menu {
-            Picker("Resolution status", selection: resolutionBinding) {
+            Picker(L("Resolution status"), selection: resolutionBinding) {
                 ForEach(ResolutionStatus.allCases, id: \.self) { status in
-                    Label(status.displayLabel, systemImage: status.symbolName).tag(status)
+                    Label(localizedResolutionStatusLabel(status), systemImage: status.symbolName).tag(status)
                 }
             }
         } label: {
             StatusMenuLabel(
-                title: "Resolution",
-                value: order.resolutionStatus.displayLabel,
+                title: L("Resolution"),
+                value: localizedResolutionStatusLabel(order.resolutionStatus),
                 symbolName: order.resolutionStatus.symbolName
             )
         }
-        .accessibilityLabel("Resolution status: \(order.resolutionStatus.displayLabel)")
-        .accessibilityHint("Changes cancellation, refund, or dispute status only")
+        .accessibilityLabel(L("Resolution status: %@", localizedResolutionStatusLabel(order.resolutionStatus)))
+        .accessibilityHint(L("Changes cancellation, refund, or dispute status only"))
     }
 
     private var fulfillmentBinding: Binding<FulfillmentStatus> {
@@ -166,6 +168,7 @@ struct OrderStatusSection: View {
 }
 
 private struct StatusMenuLabel: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let title: String
     let value: String
     let symbolName: String
@@ -197,17 +200,18 @@ private struct StatusMenuLabel: View {
 // MARK: - Estimate and follow-up
 
 struct OrderEstimateSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
 
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
-            HeldSectionHeader(title: "Promise & follow-up")
+            HeldSectionHeader(title: L("Promise & follow-up"))
 
             VStack(spacing: HeldSpacing.medium) {
                 OrderDetailCallout(
-                    title: "Original estimate · locked",
+                    title: L("Original estimate · locked"),
                     message: order.estimateText.isEmpty
-                        ? "No original estimate text was recorded. Revisions are added as milestones without replacing this field."
+                        ? L("No original estimate text was recorded. Revisions are added as milestones without replacing this field.")
                         : order.estimateText,
                     symbolName: "lock.fill",
                     tone: .warning
@@ -216,21 +220,21 @@ struct OrderEstimateSection: View {
                 HeldCard {
                     VStack(alignment: .leading, spacing: HeldSpacing.medium) {
                         OrderDetailMetadataRow(
-                            title: "Current estimate · \(order.estimatePrecision.displayLabel)",
-                            value: order.estimateDisplayText
+                            title: L("Current estimate · %@", localizedEstimatePrecisionLabel(order.estimatePrecision)),
+                            value: localizedEstimateText(precision: order.estimatePrecision, start: order.estimateStart, end: order.estimateEnd)
                         )
-                        if let range = order.estimateRangeDisplayText {
+                        if let range = localizedEstimateRangeText(start: order.estimateStart, end: order.estimateEnd) {
                             OrderDetailMetadataRow(
-                                title: "Stored range boundaries",
+                                title: L("Stored range boundaries"),
                                 value: range
                             )
                         }
                         OrderDetailMetadataRow(
-                            title: "Next check",
-                            value: order.nextCheckAt.map(orderDetailDateTime) ?? "Not scheduled"
+                            title: L("Next check"),
+                            value: order.nextCheckAt.map(orderDetailDateTime) ?? L("Not scheduled")
                         )
                         OrderDetailMetadataRow(
-                            title: "Last user update",
+                            title: L("Last user update"),
                             value: orderDetailDateTime(order.lastUserUpdateAt)
                         )
                     }
@@ -243,22 +247,23 @@ struct OrderEstimateSection: View {
 // MARK: - Line items
 
 struct OrderItemsSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let onUpdate: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Items",
-                subtitle: "Record partial arrivals without completing the whole order."
+                title: L("Items"),
+                subtitle: L("Record partial arrivals without completing the whole order.")
             ) {
-                Button("Update delivery", action: onUpdate)
+                Button(L("Update delivery"), action: onUpdate)
                     .heldButtonStyle(.secondary)
             }
 
             if order.items.isEmpty {
                 HeldCard {
-                    Text("No line items are recorded for this order.")
+                    Text(L("No line items are recorded for this order."))
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             } else {
@@ -273,6 +278,7 @@ struct OrderItemsSection: View {
 }
 
 private struct OrderItemRow: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let item: OrderItem
 
     var body: some View {
@@ -290,17 +296,17 @@ private struct OrderItemRow: View {
                         }
                     }
                     Spacer(minLength: HeldSpacing.small)
-                    HeldBadge(text: item.status.displayLabel, tone: item.status.badgeTone)
+                    HeldBadge(text: localizedItemStatusLabel(item.status), tone: item.status.badgeTone)
                 }
 
                 HStack {
                     Label(
-                        "\(min(item.deliveredQuantity, item.quantity)) of \(item.quantity) delivered",
+                        L("%1$lld of %2$lld delivered", min(item.deliveredQuantity, item.quantity), item.quantity),
                         systemImage: "shippingbox"
                     )
                     Spacer()
                     if let amountMinor = item.amountMinor {
-                        Text(formatMoney(minor: amountMinor, currency: item.order?.currencyCode ?? .USD))
+                        Text(localization.money(minor: amountMinor, currency: item.order?.currencyCode ?? .USD))
                     }
                 }
                 .heldCaption()
@@ -329,6 +335,7 @@ extension ItemStatus {
 // MARK: - Timeline
 
 struct OrderTimelineSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let onAdd: () -> Void
 
@@ -342,18 +349,18 @@ struct OrderTimelineSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Timeline",
-                subtitle: "A chronological record of the promise and what changed."
+                title: L("Timeline"),
+                subtitle: L("A chronological record of the promise and what changed.")
             ) {
                 Button(action: onAdd) {
-                    Label("Add milestone", systemImage: "plus")
+                    Label(L("Add milestone"), systemImage: "plus")
                 }
                 .heldButtonStyle(.secondary)
             }
 
             if milestones.isEmpty {
                 HeldCard {
-                    Text("No milestones yet. Add the first vendor update, shipment, delivery, or resolution event.")
+                    Text(L("No milestones yet. Add the first vendor update, shipment, delivery, or resolution event."))
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             } else {
@@ -370,6 +377,7 @@ struct OrderTimelineSection: View {
 }
 
 private struct MilestoneRow: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let milestone: Milestone
     let isLast: Bool
 
@@ -394,7 +402,7 @@ private struct MilestoneRow: View {
                 Text(milestone.title)
                     .font(.headline)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("\(milestone.kind.displayLabel) · \(orderDetailDateTime(milestone.occurredAt))")
+                Text(L("%1$@ · %2$@", localizedMilestoneKindLabel(milestone.kind), orderDetailDateTime(milestone.occurredAt)))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
                 if !milestone.note.isEmpty {
@@ -405,7 +413,7 @@ private struct MilestoneRow: View {
                 }
                 if let source = milestone.sourceURL,
                    let url = URL(string: source), !source.isEmpty {
-                    Link("View milestone source", destination: url)
+                    Link(L("View milestone source"), destination: url)
                         .heldCaption()
                 }
             }
@@ -417,23 +425,24 @@ private struct MilestoneRow: View {
 // MARK: - Notes and tracking
 
 struct OrderNotesSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let onEdit: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
-            HeldSectionHeader(title: "Notes & tracking") {
-                Button("Edit", action: onEdit)
+            HeldSectionHeader(title: L("Notes & tracking")) {
+                Button(L("Edit"), action: onEdit)
                     .heldButtonStyle(.quiet)
             }
 
             HeldCard {
                 VStack(alignment: .leading, spacing: HeldSpacing.medium) {
                     VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                        Text("Notes")
+                        Text(L("Notes"))
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
-                        Text(order.notes.isEmpty ? "No notes recorded." : order.notes)
+                        Text(order.notes.isEmpty ? L("No notes recorded.") : order.notes)
                             .heldBody()
                             .foregroundStyle(order.notes.isEmpty ? HeldColor.secondaryInk : HeldColor.ink)
                             .textSelection(.enabled)
@@ -441,12 +450,12 @@ struct OrderNotesSection: View {
                     }
                     Divider().overlay(HeldColor.separator)
                     OrderDetailMetadataRow(
-                        title: "Carrier",
-                        value: order.carrier.isEmpty ? "Not recorded" : order.carrier
+                        title: L("Carrier"),
+                        value: order.carrier.isEmpty ? L("Not recorded") : order.carrier
                     )
                     OrderDetailMetadataRow(
-                        title: "Tracking number",
-                        value: order.trackingNumber.isEmpty ? "Not recorded" : order.trackingNumber,
+                        title: L("Tracking number"),
+                        value: order.trackingNumber.isEmpty ? L("Not recorded") : order.trackingNumber,
                         monospaced: !order.trackingNumber.isEmpty
                     )
                 }
@@ -458,18 +467,19 @@ struct OrderNotesSection: View {
 // MARK: - Destructive action
 
 struct OrderDangerSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let onDelete: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             Divider().overlay(HeldColor.separator)
             Button(role: .destructive, action: onDelete) {
-                Label("Delete order", systemImage: "trash")
+                Label(L("Delete order"), systemImage: "trash")
                     .frame(maxWidth: .infinity)
             }
             .heldButtonStyle(.quiet)
             .foregroundStyle(HeldColor.danger)
-            .accessibilityHint("Deletes this order, its reminders, evidence metadata, and imported attachments after confirmation")
+            .accessibilityHint(L("Deletes this order, its reminders, evidence metadata, and imported attachments after confirmation"))
         }
     }
 }

@@ -10,9 +10,9 @@ private enum AddOrderStep: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .basics: return "Basics"
-        case .promise: return "Promise"
-        case .itemsAndReminder: return "Items & reminder"
+        case .basics: return L("Basics")
+        case .promise: return L("Promise")
+        case .itemsAndReminder: return L("Items & reminder")
         }
     }
 }
@@ -36,6 +36,7 @@ private struct AddOrderInputError: LocalizedError {
 }
 
 struct AddOrderView: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let pendingShare: PendingShare?
 
     @Query private var orders: [HeldOrder]
@@ -124,11 +125,11 @@ struct AddOrderView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
             .heldScreenBackground()
-            .navigationTitle("New order")
+            .navigationTitle(L("New order"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: cancelNewOrder)
+                    Button(L("Cancel"), action: cancelNewOrder)
                         .disabled(isSaving)
                 }
             }
@@ -136,7 +137,7 @@ struct AddOrderView: View {
                 bottomControls
             }
             .interactiveDismissDisabled(isSaving)
-            .heldLoadingOverlay(isPresented: isSaving, title: "Saving your order…")
+            .heldLoadingOverlay(isPresented: isSaving, title: L("Saving your order…"))
             .sheet(isPresented: ocrReviewPresented) {
                 if let ocrResult {
                     OCRReviewView(
@@ -185,14 +186,14 @@ struct AddOrderView: View {
 
     private var orderLimitSection: some View {
         Section {
-            Label("Free includes up to 3 active orders", systemImage: "shippingbox")
+            Label(L("Free includes up to 3 active orders"), systemImage: "shippingbox")
                 .font(.headline)
                 .foregroundStyle(HeldColor.accent)
-            Text("This new order would be a fourth active order. Upgrade to Keyvow Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit.")
+            Text(L("This new order would be a fourth active order. Upgrade to Keyvow Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit."))
                 .heldBody()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("View Keyvow Pro upgrade") {
+            Button(L("View Keyvow Pro upgrade")) {
                 showingProUpgrade = true
             }
             .heldButtonStyle(.primary)
@@ -204,10 +205,10 @@ struct AddOrderView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: HeldSpacing.large) {
                     VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                        Text("Keep every order in view.")
+                        Text(L("Keep every order in view."))
                             .heldDisplay(size: 30)
                             .foregroundStyle(HeldColor.ink)
-                        Text("Keyvow Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available.")
+                        Text(L("Keyvow Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available."))
                             .heldBody()
                             .foregroundStyle(HeldColor.secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
@@ -216,22 +217,22 @@ struct AddOrderView: View {
                     if purchaseService.isLoading {
                         HStack(spacing: HeldSpacing.small) {
                             ProgressView()
-                            Text("Contacting the App Store…")
+                            Text(L("Contacting the App Store…"))
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
                     }
 
                     if let price = purchaseService.displayPrice {
-                        Button("Get Keyvow Pro — \(price)", action: purchasePro)
+                        Button(L("Get Keyvow Pro — %@", price), action: purchasePro)
                             .heldButtonStyle(.primary)
                             .disabled(purchaseService.isLoading)
                     } else if !purchaseService.isLoading {
                         VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                            Text("Keyvow Pro is not available for purchase right now. Your orders, evidence, exports, and backups remain fully available.")
+                            Text(L("Keyvow Pro is not available for purchase right now. Your orders, evidence, exports, and backups remain fully available."))
                                 .heldBody()
                                 .foregroundStyle(HeldColor.secondaryInk)
                                 .fixedSize(horizontal: false, vertical: true)
-                            Button("Check App Store availability again") {
+                            Button(L("Check App Store availability again")) {
                                 Task { @MainActor in
                                     await purchaseService.loadProduct()
                                 }
@@ -240,18 +241,18 @@ struct AddOrderView: View {
                         }
                     }
 
-                    Button("Restore Purchases", action: restorePro)
+                    Button(L("Restore Purchases"), action: restorePro)
                         .heldButtonStyle(.quiet)
                         .disabled(purchaseService.isLoading)
 
                     if let status = purchaseService.statusMessage {
-                        Label(status, systemImage: "info.circle")
+                        Label(L(status), systemImage: "info.circle")
                             .heldCaption()
                             .foregroundStyle(HeldColor.accent)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if let error = purchaseService.errorMessage {
-                        Label(error, systemImage: "exclamationmark.triangle")
+                        Label(L(error), systemImage: "exclamationmark.triangle")
                             .heldCaption()
                             .foregroundStyle(HeldColor.danger)
                             .fixedSize(horizontal: false, vertical: true)
@@ -260,11 +261,11 @@ struct AddOrderView: View {
                 .padding(HeldSpacing.large)
             }
             .heldScreenBackground()
-            .navigationTitle("Keyvow Pro")
+            .navigationTitle(L("Keyvow Pro"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Not now") { showingProUpgrade = false }
+                    Button(L("Not now")) { showingProUpgrade = false }
                         .disabled(purchaseService.isLoading)
                 }
             }
@@ -287,7 +288,7 @@ struct AddOrderView: View {
                     showingProUpgrade = false
                 }
             } catch {
-                validationMessage = "The upgrade could not be saved. Please try again."
+                validationMessage = L("The upgrade could not be saved. Please try again.")
             }
         }
     }
@@ -303,7 +304,7 @@ struct AddOrderView: View {
                     showingProUpgrade = false
                 }
             } catch {
-                validationMessage = "The restored purchase could not be saved. Please try again."
+                validationMessage = L("The restored purchase could not be saved. Please try again.")
             }
         }
     }
@@ -320,19 +321,19 @@ struct AddOrderView: View {
             }
             .accessibilityHidden(true)
 
-            Text("\(step.title) — Step \(step.rawValue + 1) of \(AddOrderStep.allCases.count)")
+            Text(L("%1$@ — Step %2$lld of %3$lld", step.title, step.rawValue + 1, AddOrderStep.allCases.count))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Step \(step.rawValue + 1) of \(AddOrderStep.allCases.count): \(step.title)")
+        .accessibilityLabel(L("Step %1$lld of %2$lld: %3$@", step.rawValue + 1, AddOrderStep.allCases.count, step.title))
     }
 
     @ViewBuilder
     private var basicsSection: some View {
         Section {
             PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                Label("Choose a receipt or confirmation", systemImage: "photo.on.rectangle")
+                Label(L("Choose a receipt or confirmation"), systemImage: "photo.on.rectangle")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(minHeight: 44)
             }
@@ -342,7 +343,7 @@ struct AddOrderView: View {
                 Button {
                     showingDocumentScanner = true
                 } label: {
-                    Label("Scan with camera", systemImage: "doc.text.viewfinder")
+                    Label(L("Scan with camera"), systemImage: "doc.text.viewfinder")
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .frame(minHeight: 44)
                 }
@@ -352,67 +353,67 @@ struct AddOrderView: View {
             if isRecognizing {
                 HStack(spacing: HeldSpacing.small) {
                     ProgressView()
-                    Text("Looking for order details…")
+                    Text(L("Looking for order details…"))
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
                 .frame(minHeight: 44)
                 .accessibilityElement(children: .combine)
             }
 
-            Text("OCR suggestions need your confirmation. Nothing is added to the form until you review them.")
+            Text(L("OCR suggestions need your confirmation. Nothing is added to the form until you review them."))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
 
             if !reviewedReceiptImages.isEmpty {
-                Label("Reviewed receipt image ready to save as evidence", systemImage: "checkmark.circle")
+                Label(L("Reviewed receipt image ready to save as evidence"), systemImage: "checkmark.circle")
                     .heldCaption()
                     .foregroundStyle(HeldColor.accent)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             if let ocrStatusMessage {
-                Text(ocrStatusMessage)
+                Text(L(ocrStatusMessage))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
         } header: {
-            Text("Start with a photo or scan — optional")
+            Text(L("Start with a photo or scan — optional"))
         } footer: {
-            Text("No image? Continue with the manual fields below. Camera scans and selected photos both open OCR review before changing any field.")
+            Text(L("No image? Continue with the manual fields below. Camera scans and selected photos both open OCR review before changing any field."))
         }
 
         Section {
-            TextField("Order title", text: $title, axis: .vertical)
+            TextField(L("Order title"), text: $title, axis: .vertical)
                 .textInputAutocapitalization(.words)
-            TextField("Vendor", text: $vendor)
+            TextField(L("Vendor"), text: $vendor)
                 .textInputAutocapitalization(.words)
-            TextField("Order number — optional", text: $orderNumber)
+            TextField(L("Order number — optional"), text: $orderNumber)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-            DatePicker("Order date", selection: $orderDate, displayedComponents: .date)
+            DatePicker(L("Order date"), selection: $orderDate, displayedComponents: .date)
         } header: {
-            Text("The essentials")
+            Text(L("The essentials"))
         } footer: {
-            Text("Title and vendor are required.")
+            Text(L("Title and vendor are required."))
         }
 
         Section {
-            TextField("Amount — for example, 249.00", text: $amountText)
+            TextField(L("Amount — for example, 249.00"), text: $amountText)
                 .keyboardType(.decimalPad)
-            Picker("Currency", selection: $currency) {
+            Picker(L("Currency"), selection: $currency) {
                 ForEach(CurrencyCode.allCases, id: \.self) { code in
                     Text(code.rawValue).tag(code)
                 }
             }
-            TextField("Payment method — optional", text: $paymentMethod)
-            TextField("Order or listing URL — optional", text: $sourceURL)
+            TextField(L("Payment method — optional"), text: $paymentMethod)
+            TextField(L("Order or listing URL — optional"), text: $sourceURL)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
         } header: {
-            Text("Payment")
+            Text(L("Payment"))
         } footer: {
-            Text("Leave the amount blank if it is not known yet. Use at most two decimal places. For payment, enter only the method and optional last four digits; never enter a full card number.")
+            Text(L("Leave the amount blank if it is not known yet. Use at most two decimal places. For payment, enter only the method and optional last four digits; never enter a full card number."))
         }
     }
 
@@ -420,33 +421,33 @@ struct AddOrderView: View {
     private var promiseSection: some View {
         Section {
             TextField(
-                "Original estimate — for example, “Ships in 8–10 weeks”",
+                L("Original estimate — for example, “Ships in 8–10 weeks”"),
                 text: $estimateText,
                 axis: .vertical
             )
             .lineLimit(3...7)
 
-            Picker("Estimate precision", selection: $estimatePrecision) {
+            Picker(L("Estimate precision"), selection: $estimatePrecision) {
                 ForEach(EstimatePrecision.allCases, id: \.self) { precision in
-                    Text(precision.displayLabel).tag(precision)
+                    Text(localizedEstimatePrecisionLabel(precision)).tag(precision)
                 }
             }
 
             switch estimatePrecision {
             case .unknown:
-                Text("No estimated dates will be stored. You can keep only the original wording above.")
+                Text(L("No estimated dates will be stored. You can keep only the original wording above."))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             case .day:
-                DatePicker("Estimated start", selection: $estimateStart, displayedComponents: .date)
-                DatePicker("Estimated end", selection: $estimateEnd, displayedComponents: .date)
+                DatePicker(L("Estimated start"), selection: $estimateStart, displayedComponents: .date)
+                DatePicker(L("Estimated end"), selection: $estimateEnd, displayedComponents: .date)
             case .month:
-                DatePicker("Any date in the estimated month", selection: $estimateReferenceDate, displayedComponents: .date)
+                DatePicker(L("Any date in the estimated month"), selection: $estimateReferenceDate, displayedComponents: .date)
             case .quarter:
-                DatePicker("Any date in the estimated quarter", selection: $estimateReferenceDate, displayedComponents: .date)
+                DatePicker(L("Any date in the estimated quarter"), selection: $estimateReferenceDate, displayedComponents: .date)
             case .season:
-                DatePicker("Any date in the estimated season", selection: $estimateReferenceDate, displayedComponents: .date)
-                Text("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February.")
+                DatePicker(L("Any date in the estimated season"), selection: $estimateReferenceDate, displayedComponents: .date)
+                Text(L("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February."))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
@@ -458,23 +459,23 @@ struct AddOrderView: View {
                     end: estimateEnd,
                     referenceDate: estimateReferenceDate
                 )
-                Text("Saved as: \(DeliveryEstimate.displayText(precision: estimatePrecision, start: range.start, end: range.end))")
+                Text(L("Saved as: %@", localizedEstimateText(precision: estimatePrecision, start: range.start, end: range.end)))
                     .heldCaption()
                     .foregroundStyle(HeldColor.accent)
             }
         } header: {
-            Text("The original promise")
+            Text(L("The original promise"))
         } footer: {
-            Text("Held saves this wording with the purchase milestone. Later updates will not rewrite the original promise. Approximate estimates use the end of their range for attention, not a fake exact-day promise.")
+            Text(L("Keyvow saves this wording with the purchase milestone. Later updates will not rewrite the original promise. Approximate estimates use the end of their range for attention, not a fake exact-day promise."))
         }
 
         Section {
-            TextField("Tracking number — optional", text: $trackingNumber)
+            TextField(L("Tracking number — optional"), text: $trackingNumber)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-            TextField("Carrier — optional", text: $carrier)
+            TextField(L("Carrier — optional"), text: $carrier)
         } header: {
-            Text("Shipping — optional")
+            Text(L("Shipping — optional"))
         }
     }
 
@@ -482,7 +483,7 @@ struct AddOrderView: View {
     private var itemsAndReminderSection: some View {
         Section {
             if itemDrafts.isEmpty {
-                Text("No line items yet. You can save without them, or add the items that make up this order.")
+                Text(L("No line items yet. You can save without them, or add the items that make up this order."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
@@ -491,21 +492,21 @@ struct AddOrderView: View {
             ForEach($itemDrafts) { $item in
                 VStack(alignment: .leading, spacing: HeldSpacing.small) {
                     HStack {
-                        Text("Item")
+                        Text(L("Item"))
                             .font(.headline)
                         Spacer()
-                        Button("Remove", role: .destructive) {
+                        Button(L("Remove"), role: .destructive) {
                             itemDrafts.removeAll { $0.id == item.id }
                         }
                         .font(.subheadline)
                         .frame(minWidth: 44, minHeight: 44)
                     }
 
-                    TextField("Item name", text: $item.name)
-                    TextField("Variant — optional", text: $item.variant)
-                    TextField("Quantity", text: $item.quantityText)
+                    TextField(L("Item name"), text: $item.name)
+                    TextField(L("Variant — optional"), text: $item.variant)
+                    TextField(L("Quantity"), text: $item.quantityText)
                         .keyboardType(.numberPad)
-                    TextField("Line amount in \(currency.rawValue) — optional", text: $item.amountText)
+                    TextField(L("Line amount in %@ — optional", currency.rawValue), text: $item.amountText)
                         .keyboardType(.decimalPad)
                 }
                 .padding(.vertical, HeldSpacing.extraSmall)
@@ -514,55 +515,55 @@ struct AddOrderView: View {
             Button {
                 itemDrafts.append(AddOrderItemDraft())
             } label: {
-                Label("Add an item", systemImage: "plus")
+                Label(L("Add an item"), systemImage: "plus")
                     .frame(minHeight: 44)
             }
         } header: {
-            Text("Items — optional")
+            Text(L("Items — optional"))
         } footer: {
-            Text("Each item needs a name and a quantity of at least 1. A line amount is the total for that line, not a unit price.")
+            Text(L("Each item needs a name and a quantity of at least 1. A line amount is the total for that line, not a unit price."))
         }
 
         Section {
-            Toggle("Check in on this order", isOn: $nextCheckEnabled)
+            Toggle(L("Check in on this order"), isOn: $nextCheckEnabled)
             if nextCheckEnabled {
                 DatePicker(
-                    "Next check-in",
+                    L("Next check-in"),
                     selection: $nextCheckAt,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
 
-            Toggle("Add a deadline reminder", isOn: $deadlineReminderEnabled)
+            Toggle(L("Add a deadline reminder"), isOn: $deadlineReminderEnabled)
             if deadlineReminderEnabled {
                 DatePicker(
-                    "Reminder date",
+                    L("Reminder date"),
                     selection: $deadlineReminderAt,
                     displayedComponents: [.date, .hourAndMinute]
                 )
-                Stepper("Lead time: \(deadlineLeadDays) \(deadlineLeadDays == 1 ? "day" : "days")", value: $deadlineLeadDays, in: 0...90)
-                Text("Keyvow organizes dates and documents. It does not determine dispute eligibility, file disputes, or guarantee recovery. Verify current rules with your payment provider.")
+                Stepper(deadlineLeadDays == 1 ? L("Lead time: %lld day", deadlineLeadDays) : L("Lead time: %lld days", deadlineLeadDays), value: $deadlineLeadDays, in: 0...90)
+                Text(L("Keyvow organizes dates and documents. It does not determine dispute eligibility, file disputes, or guarantee recovery. Verify current rules with your payment provider."))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
                 if let informationURL = URL(string: HomeOrdersText.trimmed(sourceURL)),
                    let scheme = informationURL.scheme?.lowercased(),
                    ["http", "https"].contains(scheme) {
-                    Link("Open the saved order or official information link", destination: informationURL)
+                    Link(L("Open the saved order or official information link"), destination: informationURL)
                         .heldCaption()
                 }
             }
         } header: {
-            Text("Reminders")
+            Text(L("Reminders"))
         } footer: {
-            Text("New orders include a check-in by default. Notifications follow your Keyvow settings; reminder dates are saved even when system notifications are off.")
+            Text(L("New orders include a check-in by default. Notifications follow your Keyvow settings; reminder dates are saved even when system notifications are off."))
         }
     }
 
     private var bottomControls: some View {
         VStack(spacing: HeldSpacing.small) {
             if let validationMessage {
-                Text(validationMessage)
+                Text(L(validationMessage))
                     .heldCaption()
                     .foregroundStyle(HeldColor.danger)
                     .multilineTextAlignment(.leading)
@@ -573,7 +574,7 @@ struct AddOrderView: View {
 
             HStack(spacing: HeldSpacing.medium) {
                 if step != .basics {
-                    Button("Back") {
+                    Button(L("Back")) {
                         validationMessage = nil
                         step = AddOrderStep(rawValue: step.rawValue - 1) ?? .basics
                     }
@@ -584,13 +585,13 @@ struct AddOrderView: View {
                 Spacer(minLength: 0)
 
                 if step == .itemsAndReminder {
-                    Button("Save order") {
+                    Button(L("Save order")) {
                         Task { await saveOrder() }
                     }
                     .heldButtonStyle()
                     .disabled(isSaving || isRecognizing)
                 } else {
-                    Button("Continue") {
+                    Button(L("Continue")) {
                         continueToNextStep()
                     }
                     .heldButtonStyle()
@@ -619,10 +620,10 @@ struct AddOrderView: View {
 
     private func validateBasics() throws {
         guard !HomeOrdersText.trimmed(title).isEmpty else {
-            throw AddOrderInputError("Enter an order title before continuing.")
+            throw AddOrderInputError(L("Enter an order title before continuing."))
         }
         guard !HomeOrdersText.trimmed(vendor).isEmpty else {
-            throw AddOrderInputError("Enter the vendor before continuing.")
+            throw AddOrderInputError(L("Enter the vendor before continuing."))
         }
         let trimmedURL = HomeOrdersText.trimmed(sourceURL)
         if !trimmedURL.isEmpty {
@@ -630,12 +631,12 @@ struct AddOrderView: View {
                   let scheme = url.scheme?.lowercased(),
                   ["http", "https"].contains(scheme),
                   url.host != nil else {
-                throw AddOrderInputError("Enter a complete http or https order URL, or leave the URL blank.")
+                throw AddOrderInputError(L("Enter a complete http or https order URL, or leave the URL blank."))
             }
         }
-        _ = try AddOrderMoney.minorUnits(from: amountText, fieldName: "Order amount")
+        _ = try AddOrderMoney.minorUnits(from: amountText, fieldName: L("Order amount"))
         guard !containsFullCardNumber(paymentMethod) else {
-            throw AddOrderInputError("For your security, enter only the payment method and optional last four digits. Full card numbers are never saved.")
+            throw AddOrderInputError(L("For your security, enter only the payment method and optional last four digits. Full card numbers are never saved."))
         }
     }
 
@@ -647,7 +648,7 @@ struct AddOrderView: View {
             referenceDate: estimateReferenceDate
         )
         guard range.isChronological else {
-            throw AddOrderInputError("Estimated start must be on or before estimated end.")
+            throw AddOrderInputError(L("Estimated start must be on or before estimated end."))
         }
     }
 
@@ -655,12 +656,12 @@ struct AddOrderView: View {
         for (index, item) in itemDrafts.enumerated() {
             let itemNumber = index + 1
             guard !HomeOrdersText.trimmed(item.name).isEmpty else {
-                throw AddOrderInputError("Enter a name for item \(itemNumber), or remove that item.")
+                throw AddOrderInputError(L("Enter a name for item %lld, or remove that item.", itemNumber))
             }
             guard let quantity = Int(HomeOrdersText.trimmed(item.quantityText)), quantity >= 1 else {
-                throw AddOrderInputError("Item \(itemNumber) needs a quantity of at least 1.")
+                throw AddOrderInputError(L("Item %lld needs a quantity of at least 1.", itemNumber))
             }
-            _ = try AddOrderMoney.minorUnits(from: item.amountText, fieldName: "Amount for item \(itemNumber)")
+            _ = try AddOrderMoney.minorUnits(from: item.amountText, fieldName: L("Amount for item %lld", itemNumber))
         }
     }
 
@@ -681,7 +682,7 @@ struct AddOrderView: View {
     @MainActor
     private func saveOrder() async {
         guard !isAtActiveOrderLimit else {
-            validationMessage = "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving."
+            validationMessage = L("Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving.")
             showingProUpgrade = true
             return
         }
@@ -706,7 +707,7 @@ struct AddOrderView: View {
             let trimmedVendor = HomeOrdersText.trimmed(vendor)
             let trimmedEstimate = HomeOrdersText.trimmed(estimateText)
             let trimmedSourceURL = HomeOrdersText.trimmed(sourceURL)
-            let amountMinor = try AddOrderMoney.minorUnits(from: amountText, fieldName: "Order amount") ?? 0
+            let amountMinor = try AddOrderMoney.minorUnits(from: amountText, fieldName: L("Order amount")) ?? 0
             let estimateRange = DeliveryEstimate.resolve(
                 precision: estimatePrecision,
                 start: estimateStart,
@@ -739,7 +740,7 @@ struct AddOrderView: View {
                 guard let quantity = Int(HomeOrdersText.trimmed(draft.quantityText)) else { continue }
                 let itemAmount = try AddOrderMoney.minorUnits(
                     from: draft.amountText,
-                    fieldName: "Item amount"
+                    fieldName: L("Item amount")
                 )
                 items.append(OrderItem(
                     name: HomeOrdersText.trimmed(draft.name),
@@ -754,9 +755,9 @@ struct AddOrderView: View {
             let purchase = Milestone(
                 kind: .purchase,
                 occurredAt: orderDate,
-                title: "Order placed",
+                title: L("Order placed"),
                 note: trimmedEstimate.isEmpty
-                    ? "Original purchase details recorded in Held."
+                    ? L("Original purchase details recorded in Keyvow.")
                     : trimmedEstimate,
                 sourceURL: trimmedSourceURL.isEmpty ? nil : trimmedSourceURL,
                 order: order
@@ -770,7 +771,7 @@ struct AddOrderView: View {
                     triggerAt: nextCheckAt,
                     leadDays: 0,
                     enabled: true,
-                    label: "Check in with \(trimmedVendor)",
+                    label: L("Check in with %@", trimmedVendor),
                     order: order
                 ))
             }
@@ -780,7 +781,7 @@ struct AddOrderView: View {
                     triggerAt: deadlineReminderAt,
                     leadDays: deadlineLeadDays,
                     enabled: true,
-                    label: "Review the deadline for \(trimmedTitle)",
+                    label: L("Review the deadline for %@", trimmedTitle),
                     order: order
                 ))
             }
@@ -790,7 +791,7 @@ struct AddOrderView: View {
             let persistedOrders = try modelContext.fetch(FetchDescriptor<HeldOrder>())
             let activeCount = persistedOrders.filter(\.isActive).count
             guard purchaseService.isPro || appSettings.proUnlocked || activeCount < 3 else {
-                validationMessage = "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving."
+                validationMessage = L("Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving.")
                 showingProUpgrade = true
                 return
             }
@@ -820,7 +821,7 @@ struct AddOrderView: View {
             if let inputError = error as? AddOrderInputError {
                 validationMessage = inputError.message
             } else {
-                validationMessage = "The order could not be saved. Please check the details and try again."
+                validationMessage = L("The order could not be saved. Please check the details and try again.")
             }
         }
     }
@@ -843,11 +844,11 @@ struct AddOrderView: View {
                 importedPaths.append(metadata.relativePath)
                 order.evidence.append(Evidence(
                     kind: .receipt,
-                    title: "Reviewed OCR receipt",
+                    title: L("Reviewed OCR receipt"),
                     filename: metadata.filename,
                     capturedAt: Date(),
-                    source: "New order OCR review",
-                    note: "Original image retained only after user-confirmed OCR review.",
+                    source: L("New order OCR review"),
+                    note: L("Original image retained only after user-confirmed OCR review."),
                     localRelativePath: metadata.relativePath,
                     mimeType: metadata.mimeType,
                     fileSize: metadata.fileSize,
@@ -857,7 +858,7 @@ struct AddOrderView: View {
             }
         } catch {
             throw AddOrderInputError(
-                "The order was not saved because the reviewed OCR image could not be stored. \(error.localizedDescription)"
+                L("The order was not saved because the reviewed OCR image could not be stored. %@", error.localizedDescription)
             )
         }
     }
@@ -868,7 +869,7 @@ struct AddOrderView: View {
         title = pendingShare.suggestedTitle
         sourceURL = pendingShare.sourceURL
         // Vendor is deliberately not inferred from a URL or shared text.
-        ocrStatusMessage = "Shared details are pre-filled only. Add the vendor and review everything before saving."
+        ocrStatusMessage = L("Shared details are pre-filled only. Add the vendor and review everything before saving.")
     }
 
     private func cancelNewOrder() {
@@ -881,7 +882,7 @@ struct AddOrderView: View {
     private func cancelOCRReview() {
         ocrResult = nil
         ocrReviewImages = []
-        ocrStatusMessage = "OCR review cancelled. No suggestions or receipt image were added."
+        ocrStatusMessage = L("OCR review cancelled. No suggestions or receipt image were added.")
     }
 
     private func recognizePhoto(_ item: PhotosPickerItem) async {
@@ -894,7 +895,7 @@ struct AddOrderView: View {
 
         do {
             guard let data = try await item.loadTransferable(type: Data.self), !data.isEmpty else {
-                ocrStatusMessage = "No readable image was selected. Continue with the manual form below."
+                ocrStatusMessage = L("No readable image was selected. Continue with the manual form below.")
                 return
             }
             let result = try await OCREngine().recognizeText(data: data)
@@ -902,7 +903,7 @@ struct AddOrderView: View {
             ocrResult = result
         } catch {
             ocrReviewImages = []
-            ocrStatusMessage = "Text recognition could not read this image. \(error.localizedDescription) You can continue manually."
+            ocrStatusMessage = L("Text recognition could not read this image. %@ You can continue manually.", error.localizedDescription)
         }
     }
 
@@ -914,7 +915,7 @@ struct AddOrderView: View {
         let dataItems = images.compactMap { $0.jpegData(compressionQuality: 0.92) }
         guard dataItems.count == images.count, !dataItems.isEmpty else {
             ocrReviewImages = []
-            ocrStatusMessage = "The scanned pages could not be prepared for OCR. Choose a photo or continue manually."
+            ocrStatusMessage = L("The scanned pages could not be prepared for OCR. Choose a photo or continue manually.")
             return
         }
 
@@ -926,7 +927,7 @@ struct AddOrderView: View {
             ocrResult = result
         } catch {
             ocrReviewImages = []
-            ocrStatusMessage = "Text recognition could not read this scan. \(error.localizedDescription) You can continue manually."
+            ocrStatusMessage = L("Text recognition could not read this scan. %@ You can continue manually.", error.localizedDescription)
         }
     }
 
@@ -955,7 +956,7 @@ struct AddOrderView: View {
         reviewedReceiptImages = ocrReviewImages
         ocrReviewImages = []
         ocrResult = nil
-        ocrStatusMessage = "OCR review complete. Review the fields before saving; the original image will be stored as receipt evidence."
+        ocrStatusMessage = L("OCR review complete. Review the fields before saving; the original image will be stored as receipt evidence.")
         validationMessage = nil
     }
 }
@@ -968,7 +969,7 @@ private enum AddOrderMoney {
         let trimmed = HomeOrdersText.trimmed(text)
         guard !trimmed.isEmpty else { return nil }
         guard trimmed.range(of: amountPattern, options: .regularExpression) != nil else {
-            throw AddOrderInputError("\(fieldName) must be a non-negative amount with no more than two decimal places.")
+            throw AddOrderInputError(L("%@ must be a non-negative amount with no more than two decimal places.", fieldName))
         }
 
         let normalized = trimmed
@@ -977,19 +978,19 @@ private enum AddOrderMoney {
         guard let decimal = Decimal(string: normalized, locale: posixLocale),
               !decimal.isNaN,
               decimal >= 0 else {
-            throw AddOrderInputError("\(fieldName) could not be read as an amount.")
+            throw AddOrderInputError(L("%@ could not be read as an amount.", fieldName))
         }
 
         var unrounded = decimal * Decimal(100)
         var rounded = Decimal()
         NSDecimalRound(&rounded, &unrounded, 0, .plain)
         guard !rounded.isNaN, rounded <= Decimal(Int64.max) else {
-            throw AddOrderInputError("\(fieldName) is too large to store safely.")
+            throw AddOrderInputError(L("%@ is too large to store safely.", fieldName))
         }
 
         let minorString = NSDecimalNumber(decimal: rounded).stringValue
         guard let minor = Int64(minorString) else {
-            throw AddOrderInputError("\(fieldName) is too large to store safely.")
+            throw AddOrderInputError(L("%@ is too large to store safely.", fieldName))
         }
         return minor
     }

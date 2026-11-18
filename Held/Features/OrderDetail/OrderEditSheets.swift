@@ -20,6 +20,7 @@ struct OrderEditDraft {
 }
 
 struct EditOrderSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let onSave: (OrderEditDraft) throws -> Void
 
@@ -54,34 +55,34 @@ struct EditOrderSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Order") {
-                    TextField("Title", text: $draft.title)
+                Section(L("Order")) {
+                    TextField(L("Title"), text: $draft.title)
                         .textInputAutocapitalization(.words)
-                    TextField("Vendor", text: $draft.vendor)
+                    TextField(L("Vendor"), text: $draft.vendor)
                         .textInputAutocapitalization(.words)
-                    TextField("Order number", text: $draft.orderNumber)
+                    TextField(L("Order number"), text: $draft.orderNumber)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                    DatePicker("Ordered at", selection: $draft.orderedAt)
+                    DatePicker(L("Ordered at"), selection: $draft.orderedAt)
                 }
 
-                Section("Amount & payment") {
+                Section(L("Amount & payment")) {
                     HStack {
-                        TextField("Amount", text: $draft.amountText)
+                        TextField(L("Amount"), text: $draft.amountText)
                             .keyboardType(.decimalPad)
-                            .accessibilityLabel("Order amount")
-                        Picker("Currency", selection: $draft.currencyCode) {
+                            .accessibilityLabel(L("Order amount"))
+                        Picker(L("Currency"), selection: $draft.currencyCode) {
                             ForEach(CurrencyCode.allCases, id: \.self) { currency in
                                 Text(currency.displayLabel).tag(currency)
                             }
                         }
                         .labelsHidden()
-                        .accessibilityLabel("Currency")
+                        .accessibilityLabel(L("Currency"))
                     }
-                    TextField("Payment method", text: $draft.paymentMethod)
+                    TextField(L("Payment method"), text: $draft.paymentMethod)
                 }
 
-                Section("Source") {
+                Section(L("Source")) {
                     TextField("https://example.com/order", text: $draft.sourceURL)
                         .keyboardType(.URL)
                         .textInputAutocapitalization(.never)
@@ -90,9 +91,9 @@ struct EditOrderSheet: View {
 
                 Section {
                     OrderDetailCallout(
-                        title: "Original estimate is immutable",
+                        title: L("Original estimate is immutable"),
                         message: order.estimateText.isEmpty
-                            ? "No original estimate text is recorded. A date revision creates a milestone and leaves this field untouched."
+                            ? L("No original estimate text is recorded. A date revision creates a milestone and leaves this field untouched.")
                             : order.estimateText,
                         symbolName: "lock.fill",
                         tone: .warning
@@ -100,48 +101,48 @@ struct EditOrderSheet: View {
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
 
-                    Picker("Estimate precision", selection: $draft.estimatePrecision) {
+                    Picker(L("Estimate precision"), selection: $draft.estimatePrecision) {
                         ForEach(EstimatePrecision.allCases, id: \.self) { precision in
-                            Text(precision.displayLabel).tag(precision)
+                            Text(localizedEstimatePrecisionLabel(precision)).tag(precision)
                         }
                     }
                     estimateFields
-                    TextField("Revision note (optional)", text: $draft.estimateRevisionNote, axis: .vertical)
+                    TextField(L("Revision note (optional)"), text: $draft.estimateRevisionNote, axis: .vertical)
                         .lineLimit(2...5)
-                    Text("Saving a changed estimate or precision adds a timeline milestone. Original estimate text and original evidence are never overwritten.")
+                    Text(L("Saving a changed estimate or precision adds a timeline milestone. Original estimate text and original evidence are never overwritten."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 } header: {
-                    Text("Current estimate")
+                    Text(L("Current estimate"))
                 } footer: {
-                    Text("Month, quarter, and season remain approximate in display. Attention is based on the end of the stored range.")
+                    Text(L("Month, quarter, and season remain approximate in display. Attention is based on the end of the stored range."))
                 }
 
-                Section("Next check") {
-                    Toggle("Schedule next check", isOn: $hasNextCheck.animation())
+                Section(L("Next check")) {
+                    Toggle(L("Schedule next check"), isOn: $hasNextCheck.animation())
                     if hasNextCheck {
                         DatePicker(
-                            "Next check",
+                            L("Next check"),
                             selection: nextCheckBinding,
                             displayedComponents: [.date, .hourAndMinute]
                         )
                     }
                 }
             }
-            .navigationTitle("Edit order")
+            .navigationTitle(L("Edit order"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button(L("Save"), action: save)
                 }
             }
-            .alert("Couldn’t save order", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Couldn’t save order"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -150,19 +151,19 @@ struct EditOrderSheet: View {
     private var estimateFields: some View {
         switch draft.estimatePrecision {
         case .unknown:
-            Text("No estimated dates will be stored.")
+            Text(L("No estimated dates will be stored."))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
         case .day:
-            DatePicker("Estimated start", selection: estimateStartBinding, displayedComponents: .date)
-            DatePicker("Estimated end", selection: estimateEndBinding, displayedComponents: .date)
+            DatePicker(L("Estimated start"), selection: estimateStartBinding, displayedComponents: .date)
+            DatePicker(L("Estimated end"), selection: estimateEndBinding, displayedComponents: .date)
         case .month:
-            DatePicker("Any date in the estimated month", selection: $draft.estimateReferenceDate, displayedComponents: .date)
+            DatePicker(L("Any date in the estimated month"), selection: $draft.estimateReferenceDate, displayedComponents: .date)
         case .quarter:
-            DatePicker("Any date in the estimated quarter", selection: $draft.estimateReferenceDate, displayedComponents: .date)
+            DatePicker(L("Any date in the estimated quarter"), selection: $draft.estimateReferenceDate, displayedComponents: .date)
         case .season:
-            DatePicker("Any date in the estimated season", selection: $draft.estimateReferenceDate, displayedComponents: .date)
-            Text("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February.")
+            DatePicker(L("Any date in the estimated season"), selection: $draft.estimateReferenceDate, displayedComponents: .date)
+            Text(L("Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February."))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
         }
@@ -204,7 +205,7 @@ struct EditOrderSheet: View {
             referenceDate: draft.estimateReferenceDate
         )
         guard range.isChronological else {
-            errorMessage = "Estimated start must be on or before estimated end."
+            errorMessage = L("Estimated start must be on or before estimated end.")
             return
         }
         draft.estimateStart = range.start
@@ -231,6 +232,7 @@ struct OrderItemDeliveryDraft: Identifiable {
 }
 
 struct UpdateDeliverySheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let onSave: ([OrderItemDeliveryDraft]) throws -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -255,7 +257,7 @@ struct UpdateDeliverySheet: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("An order without line items can be marked Delivered directly. With items, Delivered is derived when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped.")
+                    Text(L("An order without line items can be marked Delivered directly. With items, Delivered is derived when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
@@ -268,13 +270,13 @@ struct UpdateDeliverySheet: View {
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
                         Stepper(value: deliveredBinding(for: $draft), in: 0...max(0, draft.quantity)) {
-                            Text("\(draft.deliveredQuantity) of \(draft.quantity) delivered")
+                            Text(L("%1$lld of %2$lld delivered", draft.deliveredQuantity, draft.quantity))
                                 .font(.headline.monospacedDigit())
                         }
-                        .accessibilityLabel("Delivered quantity for \(draft.name)")
-                        Picker("Item status", selection: statusBinding(for: $draft)) {
+                        .accessibilityLabel(L("Delivered quantity for %@", draft.name))
+                        Picker(L("Item status"), selection: statusBinding(for: $draft)) {
                             ForEach(ItemStatus.allCases, id: \.self) { status in
-                                Text(status.displayLabel).tag(status)
+                                Text(localizedItemStatusLabel(status)).tag(status)
                             }
                         }
                     } header: {
@@ -282,20 +284,20 @@ struct UpdateDeliverySheet: View {
                     }
                 }
             }
-            .navigationTitle("Update delivery")
+            .navigationTitle(L("Update delivery"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button(L("Save"), action: save)
                 }
             }
-            .alert("Couldn’t update delivery", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Couldn’t update delivery"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -357,6 +359,7 @@ struct MilestoneDraft {
 }
 
 struct AddMilestoneSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let onSave: (MilestoneDraft) throws -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -366,43 +369,43 @@ struct AddMilestoneSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Milestone") {
-                    Picker("Kind", selection: $draft.kind) {
+                Section(L("Milestone")) {
+                    Picker(L("Kind"), selection: $draft.kind) {
                         ForEach(MilestoneKind.allCases, id: \.self) { kind in
-                            Label(kind.displayLabel, systemImage: kind.symbolName).tag(kind)
+                            Label(localizedMilestoneKindLabel(kind), systemImage: kind.symbolName).tag(kind)
                         }
                     }
                     DatePicker(
-                        "Date",
+                        L("Date"),
                         selection: $draft.occurredAt,
                         displayedComponents: [.date, .hourAndMinute]
                     )
-                    TextField("Title", text: $draft.title)
+                    TextField(L("Title"), text: $draft.title)
                 }
 
-                Section("Details") {
-                    TextField("Note", text: $draft.note, axis: .vertical)
+                Section(L("Details")) {
+                    TextField(L("Note"), text: $draft.note, axis: .vertical)
                         .lineLimit(3...8)
-                    TextField("Source URL (optional)", text: $draft.sourceURL)
+                    TextField(L("Source URL (optional)"), text: $draft.sourceURL)
                         .keyboardType(.URL)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 }
             }
-            .navigationTitle("Add milestone")
+            .navigationTitle(L("Add milestone"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add", action: save)
+                    Button(L("Add"), action: save)
                 }
             }
-            .alert("Couldn’t add milestone", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Couldn’t add milestone"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -444,6 +447,7 @@ struct ReminderDraft {
 }
 
 struct AddReminderSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let defaultLeadDays: Int
     let onSave: (ReminderDraft) throws -> Void
 
@@ -460,40 +464,40 @@ struct AddReminderSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Reminder") {
-                    Picker("Kind", selection: $draft.kind) {
+                Section(L("Reminder")) {
+                    Picker(L("Kind"), selection: $draft.kind) {
                         ForEach(ReminderKind.allCases, id: \.self) { kind in
-                            Label(kind.displayLabel, systemImage: kind.symbolName).tag(kind)
+                            Label(localizedReminderKindLabel(kind), systemImage: kind.symbolName).tag(kind)
                         }
                     }
                     DatePicker(
-                        draft.kind == .deadline ? "Deadline date" : "Check-in date",
+                        draft.kind == .deadline ? L("Deadline date") : L("Check-in date"),
                         selection: $draft.date,
                         displayedComponents: [.date, .hourAndMinute]
                     )
                     Stepper(value: $draft.leadDays, in: 0...365) {
-                        Text("Lead time: \(draft.leadDays) \(draft.leadDays == 1 ? "day" : "days")")
+                        Text(draft.leadDays == 1 ? L("Lead time: %lld day", draft.leadDays) : L("Lead time: %lld days", draft.leadDays))
                     }
-                    TextField("Label", text: $draft.label, axis: .vertical)
+                    TextField(L("Label"), text: $draft.label, axis: .vertical)
                         .lineLimit(2...4)
                 }
 
                 Section {
                     Label(
-                        "Notification: \(orderDetailDateTime(draft.notificationAt))",
+                        L("Notification: %@", orderDetailDateTime(draft.notificationAt)),
                         systemImage: "bell"
                     )
-                    Text("The selected lead time is subtracted from the event date to calculate the actual notification time.")
+                    Text(L("The selected lead time is subtracted from the event date to calculate the actual notification time."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                     if draft.kind == .deadline {
-                        Text("Custom deadlines are organizational aids, not payment-protection decisions. Verify current rules with your payment provider; Keyvow does not determine eligibility, file disputes, or guarantee recovery.")
+                        Text(L("Custom deadlines are organizational aids, not payment-protection decisions. Verify current rules with your payment provider; Keyvow does not determine eligibility, file disputes, or guarantee recovery."))
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if draft.notificationAt <= Date() {
-                        Text("This notification time is in the past. Choose a later date or reduce the lead time.")
+                        Text(L("This notification time is in the past. Choose a later date or reduce the lead time."))
                             .heldCaption()
                             .foregroundStyle(HeldColor.danger)
                     }
@@ -507,21 +511,21 @@ struct AddReminderSheet: View {
                     draft.leadDays = min(365, max(0, defaultLeadDays))
                 }
             }
-            .navigationTitle("Add reminder")
+            .navigationTitle(L("Add reminder"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add", action: save)
+                    Button(L("Add"), action: save)
                         .disabled(draft.notificationAt <= Date())
                 }
             }
-            .alert("Couldn’t add reminder", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Couldn’t add reminder"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -552,6 +556,7 @@ struct OrderNotesDraft {
 }
 
 struct EditNotesSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let onSave: (OrderNotesDraft) throws -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -570,32 +575,32 @@ struct EditNotesSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Notes") {
-                    TextField("Order notes", text: $draft.notes, axis: .vertical)
+                Section(L("Notes")) {
+                    TextField(L("Order notes"), text: $draft.notes, axis: .vertical)
                         .lineLimit(6...16)
                 }
-                Section("Tracking") {
-                    TextField("Carrier", text: $draft.carrier)
+                Section(L("Tracking")) {
+                    TextField(L("Carrier"), text: $draft.carrier)
                         .textInputAutocapitalization(.words)
-                    TextField("Tracking number", text: $draft.trackingNumber)
+                    TextField(L("Tracking number"), text: $draft.trackingNumber)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 }
             }
-            .navigationTitle("Notes & tracking")
+            .navigationTitle(L("Notes & tracking"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
+                    Button(L("Save"), action: save)
                 }
             }
-            .alert("Couldn’t save notes", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Couldn’t save notes"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }

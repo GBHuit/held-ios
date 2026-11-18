@@ -40,7 +40,7 @@ final class ShareImportModel: ObservableObject {
             try PendingShareWriter.write(payload)
             extensionContext?.completeRequest(returningItems: nil)
         } catch {
-            errorMessage = "The shared item could not be queued. \(error.localizedDescription)"
+            errorMessage = L("The shared item could not be queued. %@", error.localizedDescription)
             isSaving = false
         }
     }
@@ -79,7 +79,7 @@ final class ShareImportModel: ObservableObject {
         sourceURL = foundURL ?? ""
         sharedText = textParts.joined(separator: "\n")
         if !canSave {
-            errorMessage = "Share an https link or some text to add it to Keyvow."
+            errorMessage = L("Share an https link or some text to add it to Keyvow.")
         }
     }
 
@@ -133,7 +133,7 @@ final class ShareViewController: UIViewController {
         let model = ShareImportModel(extensionContext: extensionContext)
         self.model = model
         let content = ShareImportView(model: model)
-        let hostingController = UIHostingController(rootView: content)
+        let hostingController = UIHostingController(rootView: content.environmentObject(ShareLocalizationCenter.shared))
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
@@ -149,12 +149,13 @@ final class ShareViewController: UIViewController {
 }
 
 private struct ShareImportView: View {
+    @EnvironmentObject private var localization: ShareLocalizationCenter
     @ObservedObject var model: ShareImportModel
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Shared with Keyvow") {
+                Section(L("Shared with Keyvow")) {
                     if !model.sourceURL.isEmpty {
                         Label(model.sourceURL, systemImage: "link")
                             .textSelection(.enabled)
@@ -167,34 +168,34 @@ private struct ShareImportView: View {
                     if model.sourceURL.isEmpty && model.sharedText.isEmpty && model.errorMessage == nil {
                         HStack {
                             ProgressView()
-                            Text("Reading shared content…")
+                            Text(L("Reading shared content…"))
                         }
                         .accessibilityElement(children: .combine)
                     }
                 }
 
                 Section {
-                    Text("This queues the shared details on this device. You will review them before creating an order in Keyvow.")
+                    Text(L("This queues the shared details on this device. You will review them before creating an order in Keyvow."))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     if let errorMessage = model.errorMessage {
-                        Text(errorMessage)
+                        Text(L(errorMessage))
                             .font(.footnote)
                             .foregroundStyle(.red)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
-            .navigationTitle("Add to Keyvow")
+            .navigationTitle(L("Add to Keyvow"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: model.cancel)
+                    Button(L("Cancel"), action: model.cancel)
                         .frame(minWidth: 44, minHeight: 44)
                         .disabled(model.isSaving)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Queue", action: model.save)
+                    Button(L("Queue"), action: model.save)
                         .frame(minWidth: 44, minHeight: 44)
                         .disabled(!model.canSave)
                 }

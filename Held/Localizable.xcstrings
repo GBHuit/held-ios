@@ -4448,6 +4448,6038 @@
           }
         }
       }
+    },
+    "%1$@ could not be saved. %2$@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ could not be saved. %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存%1$@。%2$@"
+          }
+        }
+      }
+    },
+    "%1$@ · %2$@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%1$@ · %2$lld-day lead": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$lld-day lead"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · 提前 %2$lld 天"
+          }
+        }
+      }
+    },
+    "%1$@ — Step %2$lld of %3$lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ — Step %2$lld of %3$lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@——第 %2$lld 步，共 %3$lld 步"
+          }
+        }
+      }
+    },
+    "%1$lld of %2$lld delivered": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld delivered"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已交付 %1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "%@ could not be read as an amount.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ could not be read as an amount."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法将%@读取为金额。"
+          }
+        }
+      }
+    },
+    "%@ is required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is required."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@为必填项。"
+          }
+        }
+      }
+    },
+    "%@ is too large to store safely.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is too large to store safely."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@过大，无法安全存储。"
+          }
+        }
+      }
+    },
+    "%@ must be a non-negative amount with no more than two decimal places.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ must be a non-negative amount with no more than two decimal places."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@必须是非负金额，且最多保留两位小数。"
+          }
+        }
+      }
+    },
+    "%@ · No lead time": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · No lead time"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 无提前提醒"
+          }
+        }
+      }
+    },
+    "%@ — currency not recognized": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — currency not recognized"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@——未识别货币"
+          }
+        }
+      }
+    },
+    "A chronological record of the promise and what changed.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A chronological record of the promise and what changed."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按时间记录最初的承诺及后续变化。"
+          }
+        }
+      }
+    },
+    "A complete restorable backup with the JSON manifest and every referenced original evidence file.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A complete restorable backup with the JSON manifest and every referenced original evidence file."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整、可恢复的备份，包含 JSON 清单和引用的每份原始证据文件。"
+          }
+        }
+      }
+    },
+    "A complete restorable manifest of orders, reminders, evidence metadata, and app preferences. Original evidence files are not embedded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A complete restorable manifest of orders, reminders, evidence metadata, and app preferences. Original evidence files are not embedded."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完整、可恢复的订单、提醒、证据元数据和 App 偏好设置清单，不内嵌原始证据文件。"
+          }
+        }
+      }
+    },
+    "A portable, single-order backup with items, milestones, reminders, notes, and evidence metadata.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A portable, single-order backup with items, milestones, reminders, notes, and evidence metadata."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便于携带的单个订单备份，包含商品、里程碑、提醒、备注和证据元数据。"
+          }
+        }
+      }
+    },
+    "A readable PDF of order and evidence metadata, notes, paths, sizes, and checksums. Original attachments are not embedded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A readable PDF of order and evidence metadata, notes, paths, sizes, and checksums. Original attachments are not embedded."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便于阅读的 PDF，包含订单与证据元数据、备注、路径、大小和校验和，不内嵌原始附件。"
+          }
+        }
+      }
+    },
+    "A readable evidence report with source details, notes, file sizes, and checksums.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A readable evidence report with source details, notes, file sizes, and checksums."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "便于阅读的证据报告，包含来源详情、备注、文件大小和校验和。"
+          }
+        }
+      }
+    },
+    "A spreadsheet of orders and item delivery status. CSV cannot be restored back into Keyvow.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A spreadsheet of orders and item delivery status. CSV cannot be restored back into Keyvow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "包含订单和商品交付状态的电子表格。CSV 无法恢复回键诺。"
+          }
+        }
+      }
+    },
+    "A spreadsheet-compatible summary of this order and its line-item delivery state.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A spreadsheet-compatible summary of this order and its line-item delivery state."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "兼容电子表格的订单摘要及商品明细交付状态。"
+          }
+        }
+      }
+    },
+    "Add": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加"
+          }
+        }
+      }
+    },
+    "Add a deadline reminder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a deadline reminder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加截止日期提醒"
+          }
+        }
+      }
+    },
+    "Add an item": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an item"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加商品"
+          }
+        }
+      }
+    },
+    "Add evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加证据"
+          }
+        }
+      }
+    },
+    "Add evidence details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add evidence details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "填写证据详情"
+          }
+        }
+      }
+    },
+    "Add milestone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add milestone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加里程碑"
+          }
+        }
+      }
+    },
+    "Add reminder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add reminder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加提醒"
+          }
+        }
+      }
+    },
+    "Add to Keyvow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Keyvow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加到键诺"
+          }
+        }
+      }
+    },
+    "Adds new orders and updates orders with matching IDs. Your other existing orders remain in place.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds new orders and updates orders with matching IDs. Your other existing orders remain in place."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加新订单，并更新 ID 相同的订单。其他现有订单保持不变。"
+          }
+        }
+      }
+    },
+    "Allow notifications": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow notifications"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "允许通知"
+          }
+        }
+      }
+    },
+    "Amount": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amount"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金额"
+          }
+        }
+      }
+    },
+    "Amount & payment": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amount & payment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金额与支付"
+          }
+        }
+      }
+    },
+    "Amount for item %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amount for item %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 项商品的金额"
+          }
+        }
+      }
+    },
+    "Amount — for example, 249.00": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amount — for example, 249.00"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金额——例如 249.00"
+          }
+        }
+      }
+    },
+    "An order without line items can be marked Delivered directly. With items, Delivered is derived when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An order without line items can be marked Delivered directly. With items, Delivered is derived when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有商品明细的订单可直接标记为已交付。有商品明细时，只有所有未取消商品的全部数量均已交付，订单才会标记为已交付；否则，只要有商品已发货或部分交付，订单就保持部分发货状态。"
+          }
+        }
+      }
+    },
+    "Any date in the estimated month": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any date in the estimated month"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计月份内的任意日期"
+          }
+        }
+      }
+    },
+    "Any date in the estimated quarter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any date in the estimated quarter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计季度内的任意日期"
+          }
+        }
+      }
+    },
+    "Any date in the estimated season": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any date in the estimated season"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计季节内的任意日期"
+          }
+        }
+      }
+    },
+    "Apply selected suggestions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply selected suggestions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用所选建议"
+          }
+        }
+      }
+    },
+    "Attached files": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attached files"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已附加文件"
+          }
+        }
+      }
+    },
+    "Attachment storage unavailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attachment storage unavailable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附件存储不可用"
+          }
+        }
+      }
+    },
+    "Attachment storage was unavailable; imported files may remain on device.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attachment storage was unavailable; imported files may remain on device."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "附件存储不可用；导入的文件可能仍留在设备上。"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回"
+          }
+        }
+      }
+    },
+    "Backup contents": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup contents"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备份内容"
+          }
+        }
+      }
+    },
+    "Basics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basics"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基本信息"
+          }
+        }
+      }
+    },
+    "Before restoring": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Before restoring"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复前"
+          }
+        }
+      }
+    },
+    "CSV orders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV orders"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV 订单"
+          }
+        }
+      }
+    },
+    "Captured %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Captured %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录于%@"
+          }
+        }
+      }
+    },
+    "Captured at": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Captured at"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录时间"
+          }
+        }
+      }
+    },
+    "Carrier — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrier — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承运商——可选"
+          }
+        }
+      }
+    },
+    "Changes cancellation, refund, or dispute status only": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes cancellation, refund, or dispute status only"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅更改取消、退款或争议状态"
+          }
+        }
+      }
+    },
+    "Changes physical delivery status only": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes physical delivery status only"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅更改实物交付状态"
+          }
+        }
+      }
+    },
+    "Check App Store availability again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check App Store availability again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再次检查 App Store 购买可用性"
+          }
+        }
+      }
+    },
+    "Check in on this order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in on this order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟进此订单"
+          }
+        }
+      }
+    },
+    "Check in with %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check in with %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟进%@"
+          }
+        }
+      }
+    },
+    "Check-in date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check-in date"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟进日期"
+          }
+        }
+      }
+    },
+    "Checked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已勾选"
+          }
+        }
+      }
+    },
+    "Choose a portable format": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a portable format"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择便于携带的格式"
+          }
+        }
+      }
+    },
+    "Choose a receipt or confirmation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a receipt or confirmation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择收据或确认信息"
+          }
+        }
+      }
+    },
+    "Choose at most one recognized value.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose at most one recognized value."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最多选择一个识别值。"
+          }
+        }
+      }
+    },
+    "Choose explicitly": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose explicitly"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请明确选择"
+          }
+        }
+      }
+    },
+    "Choose only a recognized product or item name; check its source line.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose only a recognized product or item name; check its source line."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅选择识别出的产品或商品名称，并核对其来源行。"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续"
+          }
+        }
+      }
+    },
+    "Continue manually": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue manually"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续手动填写"
+          }
+        }
+      }
+    },
+    "Couldn’t add milestone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t add milestone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法添加里程碑"
+          }
+        }
+      }
+    },
+    "Couldn’t add reminder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t add reminder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法添加提醒"
+          }
+        }
+      }
+    },
+    "Couldn’t save notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t save notes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存备注"
+          }
+        }
+      }
+    },
+    "Couldn’t save order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t save order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存订单"
+          }
+        }
+      }
+    },
+    "Couldn’t update delivery": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t update delivery"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法更新交付状态"
+          }
+        }
+      }
+    },
+    "Create & share export": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create & share export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建并分享导出文件"
+          }
+        }
+      }
+    },
+    "Current estimate": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current estimate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前预计"
+          }
+        }
+      }
+    },
+    "Current estimate · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current estimate · %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前预计 · %@"
+          }
+        }
+      }
+    },
+    "Custom deadlines are organizational aids, not payment-protection decisions. Verify current rules with your payment provider; Keyvow does not determine eligibility, file disputes, or guarantee recovery.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom deadlines are organizational aids, not payment-protection decisions. Verify current rules with your payment provider; Keyvow does not determine eligibility, file disputes, or guarantee recovery."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义截止日期仅用于整理事项，并不代表支付保护决定。请向支付服务商核实当前规则；键诺不判定资格、不发起争议，也不保证追回款项。"
+          }
+        }
+      }
+    },
+    "Date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日期"
+          }
+        }
+      }
+    },
+    "Dates can refer to delivery or payment, so check the source line.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dates can refer to delivery or payment, so check the source line."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日期可能指交付或付款时间，请核对来源行。"
+          }
+        }
+      }
+    },
+    "Deadline date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deadline date"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "截止日期"
+          }
+        }
+      }
+    },
+    "Delete evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除证据"
+          }
+        }
+      }
+    },
+    "Delete this evidence?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this evidence?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除这份证据？"
+          }
+        }
+      }
+    },
+    "Deletes all %lld existing orders after validation, then restores this backup. A destructive confirmation is required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes all %lld existing orders after validation, then restores this backup. A destructive confirmation is required."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "验证后删除全部 %lld 个现有订单，再恢复此备份。此操作需要再次确认。"
+          }
+        }
+      }
+    },
+    "Deletes the %lld existing order after validation, then restores this backup. A destructive confirmation is required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes the %lld existing order after validation, then restores this backup. A destructive confirmation is required."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "验证后删除现有的 %lld 个订单，再恢复此备份。此操作需要再次确认。"
+          }
+        }
+      }
+    },
+    "Deletes this order, its reminders, evidence metadata, and imported attachments after confirmation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes this order, its reminders, evidence metadata, and imported attachments after confirmation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认后删除此订单及其提醒、证据元数据和导入的附件"
+          }
+        }
+      }
+    },
+    "Delivered can be selected for an order without line items, or when every noncancelled line item is fully delivered. Update delivery quantities first.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivered can be selected for an order without line items, or when every noncancelled line item is fully delivered. Update delivery quantities first."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有商品明细的订单可以选择已交付；有明细时，须所有未取消商品的全部数量均已交付。请先更新交付数量。"
+          }
+        }
+      }
+    },
+    "Delivered quantity for %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivered quantity for %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@的已交付数量"
+          }
+        }
+      }
+    },
+    "Delivery estimate revised": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivery estimate revised"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计交付已修订"
+          }
+        }
+      }
+    },
+    "Delivery update": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delivery update"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "交付更新"
+          }
+        }
+      }
+    },
+    "Details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详情"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
+        }
+      }
+    },
+    "Double-tap to choose this suggestion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to choose this suggestion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "轻点两下选择此建议"
+          }
+        }
+      }
+    },
+    "Double-tap to remove this suggestion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to remove this suggestion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "轻点两下取消选择此建议"
+          }
+        }
+      }
+    },
+    "Each item needs a name and a quantity of at least 1. A line amount is the total for that line, not a unit price.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each item needs a name and a quantity of at least 1. A line amount is the total for that line, not a unit price."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每项商品需要名称和至少为 1 的数量。行金额是该行总价，而非单价。"
+          }
+        }
+      }
+    },
+    "Edit": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑"
+          }
+        }
+      }
+    },
+    "Edit order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑订单"
+          }
+        }
+      }
+    },
+    "Editable recognized evidence text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editable recognized evidence text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可编辑的识别证据文本"
+          }
+        }
+      }
+    },
+    "Enable %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用%@"
+          }
+        }
+      }
+    },
+    "Enable notifications": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable notifications"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用通知"
+          }
+        }
+      }
+    },
+    "Enter a complete http or https URL, or leave the URL field empty.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a complete http or https URL, or leave the URL field empty."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入完整的 http 或 https URL，或将 URL 字段留空。"
+          }
+        }
+      }
+    },
+    "Enter a complete http or https order URL, or leave the URL blank.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a complete http or https order URL, or leave the URL blank."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入完整的 http 或 https 订单 URL，或将 URL 留空。"
+          }
+        }
+      }
+    },
+    "Enter a name for item %lld, or remove that item.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a name for item %lld, or remove that item."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入第 %lld 项商品的名称，或移除该商品。"
+          }
+        }
+      }
+    },
+    "Enter a nonnegative order amount with no more than two decimal places.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a nonnegative order amount with no more than two decimal places."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入非负订单金额，最多保留两位小数。"
+          }
+        }
+      }
+    },
+    "Enter an order title before continuing.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter an order title before continuing."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先输入订单标题再继续。"
+          }
+        }
+      }
+    },
+    "Enter the vendor before continuing.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the vendor before continuing."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先输入商家再继续。"
+          }
+        }
+      }
+    },
+    "Estimated delivery text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated delivery text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计交付原文"
+          }
+        }
+      }
+    },
+    "Estimated end": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated end"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计结束日期"
+          }
+        }
+      }
+    },
+    "Estimated start": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated start"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计开始日期"
+          }
+        }
+      }
+    },
+    "Estimated start must be on or before estimated end.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated start must be on or before estimated end."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预计开始日期不得晚于预计结束日期。"
+          }
+        }
+      }
+    },
+    "Evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据"
+          }
+        }
+      }
+    },
+    "Evidence ZIP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence ZIP"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据 ZIP"
+          }
+        }
+      }
+    },
+    "Evidence action failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence action failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据操作失败"
+          }
+        }
+      }
+    },
+    "Evidence deletion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence deletion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据删除"
+          }
+        }
+      }
+    },
+    "Evidence details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据详情"
+          }
+        }
+      }
+    },
+    "Evidence needs attention": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence needs attention"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据信息需要注意"
+          }
+        }
+      }
+    },
+    "Evidence note or recognized text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence note or recognized text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据备注或识别文本"
+          }
+        }
+      }
+    },
+    "Evidence records": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence records"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据记录"
+          }
+        }
+      }
+    },
+    "Evidence reference": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence reference"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据引用"
+          }
+        }
+      }
+    },
+    "Evidence report PDF": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence report PDF"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据报告 PDF"
+          }
+        }
+      }
+    },
+    "Evidence storage is unavailable. Check the storage error on the order screen and try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence storage is unavailable. Check the storage error on the order screen and try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据存储不可用。请查看订单页面的存储错误后重试。"
+          }
+        }
+      }
+    },
+    "Evidence storage is unavailable. Choose JSON, CSV, or PDF, or return to Settings and try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence storage is unavailable. Choose JSON, CSV, or PDF, or return to Settings and try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据存储不可用。请选择 JSON、CSV 或 PDF，或返回设置后重试。"
+          }
+        }
+      }
+    },
+    "Evidence title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据标题"
+          }
+        }
+      }
+    },
+    "Export": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出"
+          }
+        }
+      }
+    },
+    "Export and Share": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export and Share"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出并分享"
+          }
+        }
+      }
+    },
+    "Export order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出订单"
+          }
+        }
+      }
+    },
+    "Export preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export preview"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出预览"
+          }
+        }
+      }
+    },
+    "Export type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出类型"
+          }
+        }
+      }
+    },
+    "Exported": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exported"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出时间"
+          }
+        }
+      }
+    },
+    "Extraction confidence %@ — a hint, not certainty": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extraction confidence %@ — a hint, not certainty"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提取置信度 %@——仅供参考，并非确定结果"
+          }
+        }
+      }
+    },
+    "File size": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File size"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件大小"
+          }
+        }
+      }
+    },
+    "Filename": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filename"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件名"
+          }
+        }
+      }
+    },
+    "For your security, enter only the payment method and optional last four digits. Full card numbers are never saved.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For your security, enter only the payment method and optional last four digits. Full card numbers are never saved."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为保安全，请仅填写支付方式及可选的末四位数字，绝不保存完整卡号。"
+          }
+        }
+      }
+    },
+    "Free includes up to 3 active orders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free includes up to 3 active orders"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "免费版最多包含 3 个进行中订单"
+          }
+        }
+      }
+    },
+    "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "免费版最多包含 3 个进行中订单。请升级以创建不限数量的进行中订单，或先完结一个现有订单再保存。"
+          }
+        }
+      }
+    },
+    "Fulfillment status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fulfillment status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履约状态"
+          }
+        }
+      }
+    },
+    "Fulfillment status: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fulfillment status: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "履约状态：%@"
+          }
+        }
+      }
+    },
+    "I reviewed that CSV excludes evidence records, app preferences, and original attachments.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that CSV excludes evidence records, app preferences, and original attachments."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认 CSV 不包含证据记录、App 偏好设置和原始附件。"
+          }
+        }
+      }
+    },
+    "I reviewed that a backup never restores Pro access; StoreKit remains authoritative.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that a backup never restores Pro access; StoreKit remains authoritative."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认备份不会恢复 Pro 权限，StoreKit 仍是最终判定依据。"
+          }
+        }
+      }
+    },
+    "I reviewed that app preferences are included; a backup never restores Pro access.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that app preferences are included; a backup never restores Pro access."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含 App 偏好设置；备份不会恢复 Pro 权限。"
+          }
+        }
+      }
+    },
+    "I reviewed that evidence metadata and original attached evidence files are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that evidence metadata and original attached evidence files are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含证据元数据和原始证据附件。"
+          }
+        }
+      }
+    },
+    "I reviewed that evidence metadata, filenames, local paths, and checksums are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that evidence metadata, filenames, local paths, and checksums are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含证据元数据、文件名、本地路径和校验和。"
+          }
+        }
+      }
+    },
+    "I reviewed that local paths, file sizes, and SHA-256 checksums are printed in the report.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that local paths, file sizes, and SHA-256 checksums are printed in the report."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认报告中会列出本地路径、文件大小和 SHA-256 校验和。"
+          }
+        }
+      }
+    },
+    "I reviewed that order details and evidence titles, notes, and filenames are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that order details and evidence titles, notes, and filenames are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含订单详情以及证据标题、备注和文件名。"
+          }
+        }
+      }
+    },
+    "I reviewed that order details, notes, and item delivery status are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that order details, notes, and item delivery status are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含订单详情、备注和商品交付状态。"
+          }
+        }
+      }
+    },
+    "I reviewed that order details, notes, items, milestones, and reminders are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that order details, notes, items, milestones, and reminders are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含订单详情、备注、商品、里程碑和提醒。"
+          }
+        }
+      }
+    },
+    "I reviewed that order details, notes, reminders, and app preferences are included.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed that order details, notes, reminders, and app preferences are included."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已确认包含订单详情、备注、提醒和 App 偏好设置。"
+          }
+        }
+      }
+    },
+    "I reviewed these details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I reviewed these details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已核对这些详情"
+          }
+        }
+      }
+    },
+    "I understand and want to create this export": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I understand and want to create this export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我已了解并希望创建此导出文件"
+          }
+        }
+      }
+    },
+    "Import file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import file"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入文件"
+          }
+        }
+      }
+    },
+    "Import photo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import photo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入照片"
+          }
+        }
+      }
+    },
+    "Imported file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported file"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入的文件"
+          }
+        }
+      }
+    },
+    "Imported file · locked after save": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported file · locked after save"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入的文件 · 保存后锁定"
+          }
+        }
+      }
+    },
+    "Imported photo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported photo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入的照片"
+          }
+        }
+      }
+    },
+    "Item": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品"
+          }
+        }
+      }
+    },
+    "Item %lld needs a quantity of at least 1.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item %lld needs a quantity of at least 1."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 项商品的数量必须至少为 1。"
+          }
+        }
+      }
+    },
+    "Item amount": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item amount"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品金额"
+          }
+        }
+      }
+    },
+    "Item name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item name"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品名称"
+          }
+        }
+      }
+    },
+    "Item status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品状态"
+          }
+        }
+      }
+    },
+    "Items & reminder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items & reminder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品与提醒"
+          }
+        }
+      }
+    },
+    "Items — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品——可选"
+          }
+        }
+      }
+    },
+    "JSON backup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON backup"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON 备份"
+          }
+        }
+      }
+    },
+    "Keep every order in view.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep every order in view."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "让每个订单都在掌握之中。"
+          }
+        }
+      }
+    },
+    "Keep receipt without OCR changes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep receipt without OCR changes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保留收据，不应用 OCR 更改"
+          }
+        }
+      }
+    },
+    "Keyvow Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺 Pro 是一次买断的终身升级，可创建不限数量的进行中订单。免费版最多保留 3 个进行中订单；现有订单、证据、导出和备份始终可用。"
+          }
+        }
+      }
+    },
+    "Keyvow Pro is not available for purchase right now. Your orders, evidence, exports, and backups remain fully available.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow Pro is not available for purchase right now. Your orders, evidence, exports, and backups remain fully available."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺 Pro 目前无法购买。你的订单、证据、导出和备份仍完整可用。"
+          }
+        }
+      }
+    },
+    "Keyvow could not open its shared local inbox. Please try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow could not open its shared local inbox. Please try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺无法打开共享本地收件箱，请重试。"
+          }
+        }
+      }
+    },
+    "Keyvow only asks for notification access after your explicit action. Reminder changes are saved even when system notifications are unavailable.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow only asks for notification access after your explicit action. Reminder changes are saved even when system notifications are unavailable."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺只会在你明确操作后请求通知权限。即使系统通知不可用，提醒更改也会保存。"
+          }
+        }
+      }
+    },
+    "Keyvow organizes dates and documents. It does not determine dispute eligibility, file disputes, or guarantee recovery. Verify current rules with your payment provider.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow organizes dates and documents. It does not determine dispute eligibility, file disputes, or guarantee recovery. Verify current rules with your payment provider."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺用于整理日期和文档，不判定争议资格、不发起争议，也不保证追回款项。请向支付服务商核实当前规则。"
+          }
+        }
+      }
+    },
+    "Keyvow saves this wording with the purchase milestone. Later updates will not rewrite the original promise. Approximate estimates use the end of their range for attention, not a fake exact-day promise.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow saves this wording with the purchase milestone. Later updates will not rewrite the original promise. Approximate estimates use the end of their range for attention, not a fake exact-day promise."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺会将这段原文保存在购买里程碑中，后续更新不会改写原始承诺。大致预计以区间结束时间提醒关注，不会伪装成精确到某一天的承诺。"
+          }
+        }
+      }
+    },
+    "Kind": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kind"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "类型"
+          }
+        }
+      }
+    },
+    "Label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Label"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签"
+          }
+        }
+      }
+    },
+    "Lead time: %lld day": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lead time: %lld day"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提前时间：%lld 天"
+          }
+        }
+      }
+    },
+    "Lead time: %lld days": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lead time: %lld days"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提前时间：%lld 天"
+          }
+        }
+      }
+    },
+    "Leave the amount blank if it is not known yet. Use at most two decimal places. For payment, enter only the method and optional last four digits; never enter a full card number.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave the amount blank if it is not known yet. Use at most two decimal places. For payment, enter only the method and optional last four digits; never enter a full card number."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金额尚未确定时可留空，最多保留两位小数。支付方式仅填写方式及可选的末四位数字，切勿输入完整卡号。"
+          }
+        }
+      }
+    },
+    "Line amount in %@ — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line amount in %@ — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以 %@ 计的行金额——可选"
+          }
+        }
+      }
+    },
+    "Line items": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line items"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "商品明细"
+          }
+        }
+      }
+    },
+    "Live text scan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live text scan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实况文本扫描"
+          }
+        }
+      }
+    },
+    "Live text scanner": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live text scanner"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实况文本扫描器"
+          }
+        }
+      }
+    },
+    "Live text unavailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live text unavailable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实况文本不可用"
+          }
+        }
+      }
+    },
+    "Looking for order details…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for order details…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在查找订单详情…"
+          }
+        }
+      }
+    },
+    "MIME type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIME type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MIME 类型"
+          }
+        }
+      }
+    },
+    "Merge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并"
+          }
+        }
+      }
+    },
+    "Merge Backup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge Backup"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并备份"
+          }
+        }
+      }
+    },
+    "Merge updates matching orders. Replace deletes existing orders after a second confirmation.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge updates matching orders. Replace deletes existing orders after a second confirmation."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并会更新匹配的订单；替换会在再次确认后删除现有订单。"
+          }
+        }
+      }
+    },
+    "Metadata locked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metadata locked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元数据已锁定"
+          }
+        }
+      }
+    },
+    "Milestone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "里程碑"
+          }
+        }
+      }
+    },
+    "Milestone title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestone title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "里程碑标题"
+          }
+        }
+      }
+    },
+    "Milestones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milestones"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "里程碑"
+          }
+        }
+      }
+    },
+    "Month, quarter, and season remain approximate in display. Attention is based on the end of the stored range.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Month, quarter, and season remain approximate in display. Attention is based on the end of the stored range."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月份、季度和季节在显示时仍为大致范围，关注时间以存储区间的结束日期为准。"
+          }
+        }
+      }
+    },
+    "New order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建订单"
+          }
+        }
+      }
+    },
+    "New order OCR review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New order OCR review"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新订单 OCR 核对"
+          }
+        }
+      }
+    },
+    "New orders include a check-in by default. Notifications follow your Keyvow settings; reminder dates are saved even when system notifications are off.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New orders include a check-in by default. Notifications follow your Keyvow settings; reminder dates are saved even when system notifications are off."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新订单默认包含一次跟进。通知遵循你的键诺设置；即使系统通知已关闭，提醒日期也会保存。"
+          }
+        }
+      }
+    },
+    "Next check-in": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next check-in"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下次跟进"
+          }
+        }
+      }
+    },
+    "No estimated dates will be stored.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No estimated dates will be stored."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不会存储预计日期。"
+          }
+        }
+      }
+    },
+    "No estimated dates will be stored. You can keep only the original wording above.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No estimated dates will be stored. You can keep only the original wording above."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不会存储预计日期，你可以只保留上方原文。"
+          }
+        }
+      }
+    },
+    "No evidence yet. Preserve a receipt, original listing, terms, communication, or shipping record.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No evidence yet. Preserve a receipt, original listing, terms, communication, or shipping record."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有证据。可保存收据、原始商品页面、条款、沟通记录或物流记录。"
+          }
+        }
+      }
+    },
+    "No fields to apply": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No fields to apply"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有可应用的字段"
+          }
+        }
+      }
+    },
+    "No image? Continue with the manual fields below. Camera scans and selected photos both open OCR review before changing any field.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No image? Continue with the manual fields below. Camera scans and selected photos both open OCR review before changing any field."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有图片？继续使用下方手动字段即可。相机扫描和所选照片都会先打开 OCR 核对，再更改任何字段。"
+          }
+        }
+      }
+    },
+    "No line items are recorded for this order.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No line items are recorded for this order."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此订单没有记录商品明细。"
+          }
+        }
+      }
+    },
+    "No line items yet. You can save without them, or add the items that make up this order.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No line items yet. You can save without them, or add the items that make up this order."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有商品明细。你可以直接保存，也可以添加此订单包含的商品。"
+          }
+        }
+      }
+    },
+    "No milestones yet. Add the first vendor update, shipment, delivery, or resolution event.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No milestones yet. Add the first vendor update, shipment, delivery, or resolution event."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有里程碑。可添加第一条商家更新、发货、交付或处理结果事件。"
+          }
+        }
+      }
+    },
+    "No note recorded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No note recorded."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录备注。"
+          }
+        }
+      }
+    },
+    "No notes recorded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No notes recorded."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录备注。"
+          }
+        }
+      }
+    },
+    "No original estimate text is recorded. A date revision creates a milestone and leaves this field untouched.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No original estimate text is recorded. A date revision creates a milestone and leaves this field untouched."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录原始预计文本。修订日期会创建里程碑，不会更改此字段。"
+          }
+        }
+      }
+    },
+    "No original estimate text was recorded. Revisions are added as milestones without replacing this field.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No original estimate text was recorded. Revisions are added as milestones without replacing this field."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录原始预计文本。修订会添加为里程碑，不会替换此字段。"
+          }
+        }
+      }
+    },
+    "No readable image was selected. Continue with the manual form below.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No readable image was selected. Continue with the manual form below."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未选择可读取的图片，请继续使用下方手动表单。"
+          }
+        }
+      }
+    },
+    "No reminders yet. Add a check-in or deadline to keep the next step visible.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No reminders yet. Add a check-in or deadline to keep the next step visible."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有提醒。添加跟进或截止日期，让下一步始终清晰可见。"
+          }
+        }
+      }
+    },
+    "No text was recognized. Your existing note is unchanged; enter or edit it manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No text was recognized. Your existing note is unchanged; enter or edit it manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未识别到文本。现有备注保持不变，请手动输入或编辑。"
+          }
+        }
+      }
+    },
+    "Not checked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not checked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未勾选"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂不"
+          }
+        }
+      }
+    },
+    "Not recorded": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not recorded"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录"
+          }
+        }
+      }
+    },
+    "Not scheduled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not scheduled"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未安排"
+          }
+        }
+      }
+    },
+    "Note": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备注"
+          }
+        }
+      }
+    },
+    "Note · editable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note · editable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备注 · 可编辑"
+          }
+        }
+      }
+    },
+    "Notes & tracking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes & tracking"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备注与物流"
+          }
+        }
+      }
+    },
+    "Notes and tracking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes and tracking"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备注与物流"
+          }
+        }
+      }
+    },
+    "Nothing is saved automatically. After saving, original evidence metadata is immutable; deletion requires separate confirmation.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing is saved automatically. After saving, original evidence metadata is immutable; deletion requires separate confirmation."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不会自动保存任何内容。保存后，原始证据元数据不可更改；删除需要单独确认。"
+          }
+        }
+      }
+    },
+    "Notification: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notification: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知时间：%@"
+          }
+        }
+      }
+    },
+    "Notifications are off": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications are off"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通知已关闭"
+          }
+        }
+      }
+    },
+    "OCR review cancelled. No suggestions or receipt image were added.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR review cancelled. No suggestions or receipt image were added."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消 OCR 核对，未添加任何建议或收据图片。"
+          }
+        }
+      }
+    },
+    "OCR review complete. Review the fields before saving; the original image will be stored as receipt evidence.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR review complete. Review the fields before saving; the original image will be stored as receipt evidence."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR 核对完成。保存前请检查各字段；原始图片将作为收据证据保存。"
+          }
+        }
+      }
+    },
+    "OCR suggestions need your confirmation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR suggestions need your confirmation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR 建议需要你确认"
+          }
+        }
+      }
+    },
+    "OCR suggestions need your confirmation. Nothing is added to the form until you review them.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR suggestions need your confirmation. Nothing is added to the form until you review them."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OCR 建议需要你确认，核对前不会向表单添加任何内容。"
+          }
+        }
+      }
+    },
+    "Open original order source": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open original order source"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开原始订单来源"
+          }
+        }
+      }
+    },
+    "Open the saved order or official information link": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the saved order or official information link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开已保存的订单或官方信息链接"
+          }
+        }
+      }
+    },
+    "Opens immutable evidence details and preview actions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens immutable evidence details and preview actions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开不可更改的证据详情和预览操作"
+          }
+        }
+      }
+    },
+    "Order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单"
+          }
+        }
+      }
+    },
+    "Order CSV": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order CSV"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单 CSV"
+          }
+        }
+      }
+    },
+    "Order JSON": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order JSON"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单 JSON"
+          }
+        }
+      }
+    },
+    "Order action needs attention": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order action needs attention"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单操作需要注意"
+          }
+        }
+      }
+    },
+    "Order amount": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order amount"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单金额"
+          }
+        }
+      }
+    },
+    "Order changes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order changes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单更改"
+          }
+        }
+      }
+    },
+    "Order date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order date"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单日期"
+          }
+        }
+      }
+    },
+    "Order deleted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order deleted"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单已删除"
+          }
+        }
+      }
+    },
+    "Order deletion": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order deletion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单删除"
+          }
+        }
+      }
+    },
+    "Order notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order notes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单备注"
+          }
+        }
+      }
+    },
+    "Order number — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order number — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单号——可选"
+          }
+        }
+      }
+    },
+    "Order or listing URL — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order or listing URL — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单或商品页面 URL——可选"
+          }
+        }
+      }
+    },
+    "Order placed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order placed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单已提交"
+          }
+        }
+      }
+    },
+    "Order progress": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order progress"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单进度"
+          }
+        }
+      }
+    },
+    "Order title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单标题"
+          }
+        }
+      }
+    },
+    "Order total": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order total"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单总额"
+          }
+        }
+      }
+    },
+    "Original estimate is immutable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original estimate is immutable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始预计不可更改"
+          }
+        }
+      }
+    },
+    "Original estimate · locked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original estimate · locked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始预计 · 已锁定"
+          }
+        }
+      }
+    },
+    "Original estimate — for example, “Ships in 8–10 weeks”": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original estimate — for example, “Ships in 8–10 weeks”"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始预计——例如“8–10 周内发货”"
+          }
+        }
+      }
+    },
+    "Original image retained only after user-confirmed OCR review.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original image retained only after user-confirmed OCR review."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅在用户确认 OCR 核对结果后保留原始图片。"
+          }
+        }
+      }
+    },
+    "Original metadata is locked": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original metadata is locked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始元数据已锁定"
+          }
+        }
+      }
+    },
+    "Original metadata, notes, sources, capture dates, and checksums remain read-only after saving.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original metadata, notes, sources, capture dates, and checksums remain read-only after saving."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始元数据、备注、来源、记录日期和校验和在保存后保持只读。"
+          }
+        }
+      }
+    },
+    "Original purchase details recorded in Keyvow.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original purchase details recorded in Keyvow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始购买详情已记录在键诺中。"
+          }
+        }
+      }
+    },
+    "PDF evidence report": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF evidence report"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF 证据报告"
+          }
+        }
+      }
+    },
+    "Payment": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付"
+          }
+        }
+      }
+    },
+    "Payment method — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment method — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付方式——可选"
+          }
+        }
+      }
+    },
+    "Physical delivery and refund or dispute resolution are tracked independently.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Physical delivery and refund or dispute resolution are tracked independently."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实物交付与退款或争议处理结果分别独立记录。"
+          }
+        }
+      }
+    },
+    "Preparing your export…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing your export…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在准备导出文件…"
+          }
+        }
+      }
+    },
+    "Preview original file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview original file"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览原始文件"
+          }
+        }
+      }
+    },
+    "Previous estimate: %@\\n": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous estimate: %@\\n"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原预计：%@\\n"
+          }
+        }
+      }
+    },
+    "Privacy preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy preview"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐私预览"
+          }
+        }
+      }
+    },
+    "Privacy review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy review"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐私核对"
+          }
+        }
+      }
+    },
+    "Private data included": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private data included"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "包含隐私数据"
+          }
+        }
+      }
+    },
+    "Product title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Product title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "产品标题"
+          }
+        }
+      }
+    },
+    "Promise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promise"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承诺"
+          }
+        }
+      }
+    },
+    "Promise & follow-up": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promise & follow-up"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承诺与跟进"
+          }
+        }
+      }
+    },
+    "Quantity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quantity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数量"
+          }
+        }
+      }
+    },
+    "Queue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加入队列"
+          }
+        }
+      }
+    },
+    "Reading shared content…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading shared content…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在读取分享内容…"
+          }
+        }
+      }
+    },
+    "Recognition can be wrong. Edit the text before continuing; nothing is saved automatically.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognition can be wrong. Edit the text before continuing; nothing is saved automatically."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别结果可能有误。继续前请编辑文本；不会自动保存任何内容。"
+          }
+        }
+      }
+    },
+    "Recognize text in image": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognize text in image"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别图片中的文本"
+          }
+        }
+      }
+    },
+    "Recognized text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognized text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "识别文本"
+          }
+        }
+      }
+    },
+    "Recognizing text…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognizing text…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在识别文本…"
+          }
+        }
+      }
+    },
+    "Record partial arrivals without completing the whole order.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record partial arrivals without completing the whole order."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录部分到货，而无需将整个订单标记为完成。"
+          }
+        }
+      }
+    },
+    "Recorded attachment size": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recorded attachment size"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录的附件大小"
+          }
+        }
+      }
+    },
+    "Reference filename": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reference filename"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引用文件名"
+          }
+        }
+      }
+    },
+    "Reminder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒"
+          }
+        }
+      }
+    },
+    "Reminder date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder date"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒日期"
+          }
+        }
+      }
+    },
+    "Reminder enabled": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder enabled"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒已启用"
+          }
+        }
+      }
+    },
+    "Reminder label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminder label"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒标签"
+          }
+        }
+      }
+    },
+    "Reminders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除"
+          }
+        }
+      }
+    },
+    "Replace": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "替换"
+          }
+        }
+      }
+    },
+    "Replace Existing Orders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace Existing Orders"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "替换现有订单"
+          }
+        }
+      }
+    },
+    "Replace all existing orders?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace all existing orders?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "替换所有现有订单？"
+          }
+        }
+      }
+    },
+    "Required before creating a file that can be shared outside Keyvow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Required before creating a file that can be shared outside Keyvow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建可分享至键诺之外的文件前必须确认"
+          }
+        }
+      }
+    },
+    "Resolution status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolution status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "处理状态"
+          }
+        }
+      }
+    },
+    "Resolution status: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolution status: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "处理状态：%@"
+          }
+        }
+      }
+    },
+    "Restore mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore mode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复方式"
+          }
+        }
+      }
+    },
+    "Restore preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore preview"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复预览"
+          }
+        }
+      }
+    },
+    "Restoring your backup…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restoring your backup…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在恢复备份…"
+          }
+        }
+      }
+    },
+    "Review OCR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review OCR"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核对 OCR"
+          }
+        }
+      }
+    },
+    "Review Replace…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review Replace…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查替换…"
+          }
+        }
+      }
+    },
+    "Review evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核对证据"
+          }
+        }
+      }
+    },
+    "Review recognized text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review recognized text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核对识别文本"
+          }
+        }
+      }
+    },
+    "Review the deadline for %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review the deadline for %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查%@的截止日期"
+          }
+        }
+      }
+    },
+    "Reviewed OCR receipt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewed OCR receipt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已核对的 OCR 收据"
+          }
+        }
+      }
+    },
+    "Reviewed receipt image ready to save as evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewed receipt image ready to save as evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已核对的收据图片可保存为证据"
+          }
+        }
+      }
+    },
+    "Revised estimate: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revised estimate: %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修订后预计：%@。"
+          }
+        }
+      }
+    },
+    "Revision note (optional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revision note (optional)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修订备注（可选）"
+          }
+        }
+      }
+    },
+    "SHA-256": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHA-256"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SHA-256"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
+          }
+        }
+      }
+    },
+    "Save evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存证据"
+          }
+        }
+      }
+    },
+    "Save order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存订单"
+          }
+        }
+      }
+    },
+    "Save this evidence with the shown source, note, capture date, and file metadata.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save this evidence with the shown source, note, capture date, and file metadata."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按显示的来源、备注、记录日期和文件元数据保存这份证据。"
+          }
+        }
+      }
+    },
+    "Saved as: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved as: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存为：%@"
+          }
+        }
+      }
+    },
+    "Saving a changed estimate or precision adds a timeline milestone. Original estimate text and original evidence are never overwritten.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving a changed estimate or precision adds a timeline milestone. Original estimate text and original evidence are never overwritten."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存预计或精度的更改会添加时间线里程碑，绝不会覆盖原始预计文本和原始证据。"
+          }
+        }
+      }
+    },
+    "Saving your order…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving your order…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在保存订单…"
+          }
+        }
+      }
+    },
+    "Scan live text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan live text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描实况文本"
+          }
+        }
+      }
+    },
+    "Scan with camera": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan with camera"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用相机扫描"
+          }
+        }
+      }
+    },
+    "Scanned text": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanned text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描文本"
+          }
+        }
+      }
+    },
+    "Scanner": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanner"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描器"
+          }
+        }
+      }
+    },
+    "Schedule next check": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule next check"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安排下次跟进"
+          }
+        }
+      }
+    },
+    "Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seasons use meteorological boundaries: March–May, June–August, September–November, and December–February."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "季节按气象界限划分：3–5 月、6–8 月、9–11 月和 12–2 月。"
+          }
+        }
+      }
+    },
+    "Seen in: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seen in: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源行：%@"
+          }
+        }
+      }
+    },
+    "Seller extraction can confuse stores, carriers, and marketplaces.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seller extraction can confuse stores, carriers, and marketplaces."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卖家提取可能混淆商店、承运商和电商平台。"
+          }
+        }
+      }
+    },
+    "Share an https link or some text to add it to Keyvow.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share an https link or some text to add it to Keyvow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享 https 链接或一些文本，即可添加到键诺。"
+          }
+        }
+      }
+    },
+    "Shared details are pre-filled only. Add the vendor and review everything before saving.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared details are pre-filled only. Add the vendor and review everything before saving."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享内容仅用于预填。请添加商家，并在保存前核对所有内容。"
+          }
+        }
+      }
+    },
+    "Shared item %@ could not be read. It remains in the shared inbox.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared item %@ could not be read. It remains in the shared inbox."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取分享项目 %@，该项目仍保留在共享收件箱中。"
+          }
+        }
+      }
+    },
+    "Shared item format version %lld is not supported by this version of Keyvow. It remains in the shared inbox.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared item format version %lld is not supported by this version of Keyvow. It remains in the shared inbox."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前键诺版本不支持分享项目格式版本 %lld，该项目仍保留在共享收件箱中。"
+          }
+        }
+      }
+    },
+    "Shared with Keyvow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared with Keyvow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享给键诺"
+          }
+        }
+      }
+    },
+    "Shipping — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shipping — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物流——可选"
+          }
+        }
+      }
+    },
+    "Source": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源"
+          }
+        }
+      }
+    },
+    "Source URL (optional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source URL (optional)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源 URL（可选）"
+          }
+        }
+      }
+    },
+    "Start with a photo or scan — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start with a photo or scan — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从照片或扫描开始——可选"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "状态"
+          }
+        }
+      }
+    },
+    "Step %1$lld of %2$lld: %3$@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step %1$lld of %2$lld: %3$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %1$lld 步，共 %2$lld 步：%3$@"
+          }
+        }
+      }
+    },
+    "Stored range boundaries": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored range boundaries"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储的区间边界"
+          }
+        }
+      }
+    },
+    "Text recognition and field extraction can be wrong, especially for product names, sellers, delivery wording, currencies, dates, and similar-looking characters. Confidence is a heuristic hint, not certainty. Review every suggestion and its source line before using it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text recognition and field extraction can be wrong, especially for product names, sellers, delivery wording, currencies, dates, and similar-looking characters. Confidence is a heuristic hint, not certainty. Review every suggestion and its source line before using it."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本识别和字段提取可能有误，尤其是产品名称、卖家、交付措辞、货币、日期和形近字符。置信度仅为启发式提示，并非确定结果。使用每条建议前，请核对其内容及来源行。"
+          }
+        }
+      }
+    },
+    "Text recognition could not read this image. %@ You can continue manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text recognition could not read this image. %@ You can continue manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本识别无法读取此图片。%@你可以继续手动填写。"
+          }
+        }
+      }
+    },
+    "Text recognition could not read this scan. %@ You can continue manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text recognition could not read this scan. %@ You can continue manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本识别无法读取此扫描件。%@你可以继续手动填写。"
+          }
+        }
+      }
+    },
+    "The essentials": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The essentials"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "必要信息"
+          }
+        }
+      }
+    },
+    "The evidence metadata was deleted, but its attachment could not be removed: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The evidence metadata was deleted, but its attachment could not be removed: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据元数据已删除，但无法移除其附件：%@"
+          }
+        }
+      }
+    },
+    "The evidence record will be deleted. Any imported attachment will also be removed from Keyvow storage. This cannot be undone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The evidence record will be deleted. Any imported attachment will also be removed from Keyvow storage. This cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "证据记录将被删除，所有导入的附件也会从键诺存储中移除。此操作无法撤销。"
+          }
+        }
+      }
+    },
+    "The file is created in temporary app storage. You decide where it goes in the share sheet.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The file is created in temporary app storage. You decide where it goes in the share sheet."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件会创建在 App 临时存储中，由你在分享面板决定其去向。"
+          }
+        }
+      }
+    },
+    "The image did not yield a supported order field. You can keep the reviewed image as receipt evidence, or return to the form and enter everything manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The image did not yield a supported order field. You can keep the reviewed image as receipt evidence, or return to the form and enter everything manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图片中未提取到支持的订单字段。你可以将已核对图片保留为收据证据，或返回表单手动填写所有内容。"
+          }
+        }
+      }
+    },
+    "The import was cancelled, but its temporary attachment could not be removed: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The import was cancelled, but its temporary attachment could not be removed: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入已取消，但无法移除其临时附件：%@"
+          }
+        }
+      }
+    },
+    "The order and its notifications were deleted. Some attachment files could not be removed:\\n\\n%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The order and its notifications were deleted. Some attachment files could not be removed:\\n\\n%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订单及其通知已删除，但部分附件文件无法移除：\\n\\n%@"
+          }
+        }
+      }
+    },
+    "The order could not be saved. Please check the details and try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The order could not be saved. Please check the details and try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存订单。请检查详情后重试。"
+          }
+        }
+      }
+    },
+    "The order was not saved because the reviewed OCR image could not be stored. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The order was not saved because the reviewed OCR image could not be stored. %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由于无法存储已核对的 OCR 图片，订单未保存。%@"
+          }
+        }
+      }
+    },
+    "The original attachment is missing from Keyvow storage.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The original attachment is missing from Keyvow storage."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺存储中缺少原始附件。"
+          }
+        }
+      }
+    },
+    "The original promise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The original promise"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始承诺"
+          }
+        }
+      }
+    },
+    "The reminder’s calculated notification time must be in the future. Adjust the date or lead time.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The reminder’s calculated notification time must be in the future. Adjust the date or lead time."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒计算出的通知时间必须在未来，请调整日期或提前时间。"
+          }
+        }
+      }
+    },
+    "The restored purchase could not be saved. Please try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The restored purchase could not be saved. Please try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存已恢复的购买，请重试。"
+          }
+        }
+      }
+    },
+    "The scan did not contain a readable page. Choose a photo or continue manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The scan did not contain a readable page. Choose a photo or continue manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "扫描件中没有可读取的页面。请选择照片或继续手动填写。"
+          }
+        }
+      }
+    },
+    "The scanned pages could not be prepared for OCR. Choose a photo or continue manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The scanned pages could not be prepared for OCR. Choose a photo or continue manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法为 OCR 准备扫描页面。请选择照片或继续手动填写。"
+          }
+        }
+      }
+    },
+    "The selected lead time is subtracted from the event date to calculate the actual notification time.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected lead time is subtracted from the event date to calculate the actual notification time."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实际通知时间由事件日期减去所选提前时间计算得出。"
+          }
+        }
+      }
+    },
+    "The selected photo could not be read. Choose it again or import the original file instead.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected photo could not be read. Choose it again or import the original file instead."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法读取所选照片。请重新选择，或改为导入原始文件。"
+          }
+        }
+      }
+    },
+    "The shared Keyvow inbox is unavailable. The shared item has not been removed.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shared Keyvow inbox is unavailable. The shared item has not been removed."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺共享收件箱不可用，分享项目尚未移除。"
+          }
+        }
+      }
+    },
+    "The shared item could not be queued. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shared item could not be queued. %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法将分享项目加入队列。%@"
+          }
+        }
+      }
+    },
+    "The single-order manifest plus original evidence attachments, verified against their recorded metadata.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The single-order manifest plus original evidence attachments, verified against their recorded metadata."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "包含单个订单清单和原始证据附件，并根据记录的元数据进行验证。"
+          }
+        }
+      }
+    },
+    "The upgrade could not be saved. Please try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The upgrade could not be saved. Please try again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法保存升级结果，请重试。"
+          }
+        }
+      }
+    },
+    "These checks confirm that you reviewed the contents; they do not filter fields. Choose another export type to change what leaves this device.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These checks confirm that you reviewed the contents; they do not filter fields. Choose another export type to change what leaves this device."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这些勾选仅确认你已核对内容，不会筛选字段。请选择其他导出类型来更改离开此设备的数据。"
+          }
+        }
+      }
+    },
+    "This CSV contains order, payment, source URL, notes, tracking, and line-item details. Sharing it can expose private purchase information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This CSV contains order, payment, source URL, notes, tracking, and line-item details. Sharing it can expose private purchase information."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 CSV 包含订单、支付、来源 URL、备注、物流和商品明细。分享可能暴露私人购买信息。"
+          }
+        }
+      }
+    },
+    "This JSON contains order, payment, source URL, notes, tracking, reminder, evidence metadata, and app settings. Sharing it can expose private purchase and dispute information.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This JSON contains order, payment, source URL, notes, tracking, reminder, evidence metadata, and app settings. Sharing it can expose private purchase and dispute information."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 JSON 包含订单、支付、来源 URL、备注、物流、提醒、证据元数据和 App 设置。分享可能暴露私人购买和争议信息。"
+          }
+        }
+      }
+    },
+    "This JSON contains records only. Evidence metadata is restored, but unavailable local file references are cleared.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This JSON contains records only. Evidence metadata is restored, but unavailable local file references are cleared."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 JSON 仅包含记录。证据元数据会恢复，但不可用的本地文件引用会被清除。"
+          }
+        }
+      }
+    },
+    "This PDF contains order and payment details plus evidence sources, notes, filenames, capture dates, and checksums. Review the recipient before sharing.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This PDF contains order and payment details plus evidence sources, notes, filenames, capture dates, and checksums. Review the recipient before sharing."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 PDF 包含订单和支付详情，以及证据来源、备注、文件名、记录日期和校验和。分享前请核对接收方。"
+          }
+        }
+      }
+    },
+    "This ZIP contains order, payment, source, and evidence metadata together with original attachment files. Treat it as sensitive private data.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This ZIP contains order, payment, source, and evidence metadata together with original attachment files. Treat it as sensitive private data."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 ZIP 包含订单、支付、来源和证据元数据，以及原始附件文件。请将其视为敏感隐私数据。"
+          }
+        }
+      }
+    },
+    "This ZIP contains original evidence files. Every referenced file is verified before model changes are saved.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This ZIP contains original evidence files. Every referenced file is verified before model changes are saved."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 ZIP 包含原始证据文件。保存数据模型更改前，会验证每个引用文件。"
+          }
+        }
+      }
+    },
+    "This creates an evidence metadata record without an attachment. Add an imported file or photo when the original file is available.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This creates an evidence metadata record without an attachment. Add an imported file or photo when the original file is available."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会创建不含附件的证据元数据记录。获得原始文件后，可添加导入的文件或照片。"
+          }
+        }
+      }
+    },
+    "This deletes the %lld order currently in Keyvow and replaces it with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This deletes the %lld order currently in Keyvow and replaces it with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会删除键诺中当前的 %lld 个订单，并替换为此备份。成功恢复后，未被引用的证据文件也可能移除。若以后可能需要当前数据，请保留另一份备份。"
+          }
+        }
+      }
+    },
+    "This deletes the %lld orders currently in Keyvow and replaces them with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This deletes the %lld orders currently in Keyvow and replaces them with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会删除键诺中当前的 %lld 个订单，并替换为此备份。成功恢复后，未被引用的证据文件也可能移除。若以后可能需要当前数据，请保留另一份备份。"
+          }
+        }
+      }
+    },
+    "This image is too large for on-device text recognition. You can still save it as evidence and enter a note manually.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This image is too large for on-device text recognition. You can still save it as evidence and enter a note manually."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此图片过大，无法进行设备端文本识别。你仍可将其保存为证据并手动输入备注。"
+          }
+        }
+      }
+    },
+    "This new order would be a fourth active order. Upgrade to Keyvow Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This new order would be a fourth active order. Upgrade to Keyvow Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此新订单将成为第 4 个进行中订单。请升级键诺 Pro 以创建不限数量的进行中订单，或先完结一个现有订单再保存。已交付、已取消和已全额退款的订单不计入上限。"
+          }
+        }
+      }
+    },
+    "This notification time is in the past. Choose a later date or reduce the lead time.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This notification time is in the past. Choose a later date or reduce the lead time."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此通知时间已过去。请选择更晚的日期或缩短提前时间。"
+          }
+        }
+      }
+    },
+    "This permanently deletes the order, its reminders, milestones, evidence metadata, and imported attachments. This cannot be undone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This permanently deletes the order, its reminders, milestones, evidence metadata, and imported attachments. This cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会永久删除订单及其提醒、里程碑、证据元数据和导入的附件，且无法撤销。"
+          }
+        }
+      }
+    },
+    "This preserves the recognized wording; it does not calculate a delivery date.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This preserves the recognized wording; it does not calculate a delivery date."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会保留识别原文，不会计算交付日期。"
+          }
+        }
+      }
+    },
+    "This queues the shared details on this device. You will review them before creating an order in Keyvow.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This queues the shared details on this device. You will review them before creating an order in Keyvow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这会将分享详情加入此设备的待处理队列。创建键诺订单前，你还需要核对内容。"
+          }
+        }
+      }
+    },
+    "Thumbnail for %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thumbnail for %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@的缩略图"
+          }
+        }
+      }
+    },
+    "Timeline": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timeline"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "时间线"
+          }
+        }
+      }
+    },
+    "Title and vendor are required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title and vendor are required."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标题和商家为必填项。"
+          }
+        }
+      }
+    },
+    "Tracking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tracking"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物流"
+          }
+        }
+      }
+    },
+    "Tracking number — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tracking number — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物流单号——可选"
+          }
+        }
+      }
+    },
+    "Unsupported or uncertain currency codes leave your selected currency unchanged.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported or uncertain currency codes leave your selected currency unchanged."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不支持或不确定的货币代码不会改变你选择的货币。"
+          }
+        }
+      }
+    },
+    "Update delivery": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update delivery"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新交付状态"
+          }
+        }
+      }
+    },
+    "Use in evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use in evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用于证据"
+          }
+        }
+      }
+    },
+    "Variant — optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Variant — optional"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "规格——可选"
+          }
+        }
+      }
+    },
+    "Vendor not recorded": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendor not recorded"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未记录商家"
+          }
+        }
+      }
+    },
+    "View Keyvow Pro upgrade": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Keyvow Pro upgrade"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看键诺 Pro 升级"
+          }
+        }
+      }
+    },
+    "View milestone source": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View milestone source"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看里程碑来源"
+          }
+        }
+      }
+    },
+    "Working…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在处理…"
+          }
+        }
+      }
+    },
+    "Your reminder list remains available here. Enable Keyvow notifications in iOS Settings to receive system alerts.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your reminder list remains available here. Enable Keyvow notifications in iOS Settings to receive system alerts."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒列表仍会保留在这里。要接收系统提醒，请在 iOS 设置中启用键诺通知。"
+          }
+        }
+      }
+    },
+    "ZIP evidence backup": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP evidence backup"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZIP 证据备份"
+          }
+        }
+      }
+    },
+    "\\nOriginal estimate preserved: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\\nOriginal estimate preserved: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\\n原始预计已保留：%@"
+          }
+        }
+      }
+    },
+    "Loading…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载…"
+          }
+        }
+      }
+    },
+    "Progress": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进度"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

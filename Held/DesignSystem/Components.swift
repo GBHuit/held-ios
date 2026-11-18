@@ -263,6 +263,7 @@ struct HeldProgressView: View {
     private let value: Double
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @EnvironmentObject private var localization: LocalizationCenter
 
     init(value: Double) {
         self.value = value
@@ -283,7 +284,7 @@ struct HeldProgressView: View {
         .frame(height: 4)
         .accessibilityRepresentation {
             ProgressView(value: clampedValue)
-                .accessibilityLabel(Text("Progress"))
+                .accessibilityLabel(Text(L("Progress")))
         }
     }
 
@@ -296,9 +297,9 @@ struct HeldProgressView: View {
 // MARK: - Loading
 
 struct HeldLoadingOverlay: View {
-    private let title: LocalizedStringKey
+    private let title: String
 
-    init(_ title: LocalizedStringKey = "Loading…") {
+    init(_ title: String = L("Loading…")) {
         self.title = title
     }
 
@@ -339,7 +340,7 @@ extension View {
     @ViewBuilder
     func heldLoadingOverlay(
         isPresented: Bool,
-        title: LocalizedStringKey = "Loading…"
+        title: String = L("Loading…")
     ) -> some View {
         if isPresented {
             overlay {

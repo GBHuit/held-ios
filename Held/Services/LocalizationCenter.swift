@@ -43,11 +43,18 @@ enum AppLanguage: String, CaseIterable, Codable {
 final class LocalizationCenter: ObservableObject {
     static let shared = LocalizationCenter()
 
+    private static let appGroupSuite = "group.com.held.groupbuy"
+    private static let languageKey = "preferredLanguageRaw"
+
     @Published private(set) var language: AppLanguage
 
     private init() {
-        let saved = UserDefaults.standard.string(forKey: "preferredLanguageRaw")
+        let sharedDefaults = UserDefaults(suiteName: Self.appGroupSuite)
+        let saved = UserDefaults.standard.string(forKey: Self.languageKey)
+            ?? sharedDefaults?.string(forKey: Self.languageKey)
         language = AppLanguage(rawValueOrSystem: saved)
+        // Also repair older installations that only have the standard default.
+        sharedDefaults?.set(language.rawValue, forKey: Self.languageKey)
     }
 
     var locale: Locale { language.locale }
@@ -55,7 +62,9 @@ final class LocalizationCenter: ObservableObject {
     func setLanguage(_ newValue: AppLanguage) {
         guard newValue != language else { return }
         language = newValue
-        UserDefaults.standard.set(newValue.rawValue, forKey: "preferredLanguageRaw")
+        UserDefaults.standard.set(newValue.rawValue, forKey: Self.languageKey)
+        // The Share Extension reads the same stable raw value on its next launch.
+        UserDefaults(suiteName: Self.appGroupSuite)?.set(newValue.rawValue, forKey: Self.languageKey)
     }
 
     func text(_ key: String) -> String {

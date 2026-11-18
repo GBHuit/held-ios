@@ -5,6 +5,7 @@ import UIKit
 // MARK: - Export privacy preview
 
 struct ExportPrivacyView: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let orders: [HeldOrder]
     let settings: AppSettings
     let attachmentStore: AttachmentStore?
@@ -22,7 +23,7 @@ struct ExportPrivacyView: View {
         NavigationStack {
             Form {
                 Section {
-                    Picker("Export type", selection: $exportKind) {
+                    Picker(L("Export type"), selection: $exportKind) {
                         ForEach(HeldExportKind.allCases) { kind in
                             Text(kind.title).tag(kind)
                         }
@@ -37,32 +38,32 @@ struct ExportPrivacyView: View {
                         .foregroundStyle(HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)
                 } header: {
-                    Text("Choose a portable format")
+                    Text(L("Choose a portable format"))
                 }
 
                 Section {
                     ForEach(exportKind.privacyChecks, id: \.self) { check in
                         Toggle(isOn: confirmationBinding(for: check)) {
-                            Text(check)
+                            Text(L(check))
                                 .heldBody()
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .toggleStyle(HeldCheckboxToggleStyle())
                     }
 
-                    Text("These checks confirm that you reviewed the contents; they do not filter fields. Choose another export type to change what leaves this device.")
+                    Text(L("These checks confirm that you reviewed the contents; they do not filter fields. Choose another export type to change what leaves this device."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)
                 } header: {
-                    Text("Privacy review")
+                    Text(L("Privacy review"))
                 } footer: {
-                    Text("The file is created in temporary app storage. You decide where it goes in the share sheet.")
+                    Text(L("The file is created in temporary app storage. You decide where it goes in the share sheet."))
                 }
 
                 if let errorMessage {
                     Section {
-                        Label(errorMessage, systemImage: "exclamationmark.triangle")
+                        Label(L(errorMessage), systemImage: "exclamationmark.triangle")
                             .foregroundStyle(HeldColor.danger)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -70,7 +71,7 @@ struct ExportPrivacyView: View {
 
                 if exportKind == .archive && attachmentStore == nil {
                     Section {
-                        Label("Evidence storage is unavailable. Choose JSON, CSV, or PDF, or return to Settings and try again.", systemImage: "externaldrive.badge.exclamationmark")
+                        Label(L("Evidence storage is unavailable. Choose JSON, CSV, or PDF, or return to Settings and try again."), systemImage: "externaldrive.badge.exclamationmark")
                             .foregroundStyle(HeldColor.danger)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -84,7 +85,7 @@ struct ExportPrivacyView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Label("Export and Share", systemImage: "square.and.arrow.up")
+                            Label(L("Export and Share"), systemImage: "square.and.arrow.up")
                             Spacer()
                         }
                     }
@@ -96,15 +97,15 @@ struct ExportPrivacyView: View {
             }
             .scrollContentBackground(.hidden)
             .heldScreenBackground()
-            .navigationTitle("Privacy preview")
+            .navigationTitle(L("Privacy preview"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                         .disabled(isPreparing)
                 }
             }
-            .heldLoadingOverlay(isPresented: isPreparing, title: "Preparing your export…")
+            .heldLoadingOverlay(isPresented: isPreparing, title: L("Preparing your export…"))
             .interactiveDismissDisabled(isPreparing)
             .sheet(item: $shareDocument) { document in
                 SettingsFundsActivityShareSheet(activityItems: [document.url])
@@ -174,23 +175,23 @@ enum HeldExportKind: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .json: return "JSON backup"
-        case .csv: return "CSV orders"
-        case .archive: return "ZIP evidence backup"
-        case .evidenceReport: return "PDF evidence report"
+        case .json: return L("JSON backup")
+        case .csv: return L("CSV orders")
+        case .archive: return L("ZIP evidence backup")
+        case .evidenceReport: return L("PDF evidence report")
         }
     }
 
     var summary: String {
         switch self {
         case .json:
-            return "A complete restorable manifest of orders, reminders, evidence metadata, and app preferences. Original evidence files are not embedded."
+            return L("A complete restorable manifest of orders, reminders, evidence metadata, and app preferences. Original evidence files are not embedded.")
         case .csv:
-            return "A spreadsheet of orders and item delivery status. CSV cannot be restored back into Held."
+            return L("A spreadsheet of orders and item delivery status. CSV cannot be restored back into Keyvow.")
         case .archive:
-            return "A complete restorable backup with the JSON manifest and every referenced original evidence file."
+            return L("A complete restorable backup with the JSON manifest and every referenced original evidence file.")
         case .evidenceReport:
-            return "A readable PDF of order and evidence metadata, notes, paths, sizes, and checksums. Original attachments are not embedded."
+            return L("A readable PDF of order and evidence metadata, notes, paths, sizes, and checksums. Original attachments are not embedded.")
         }
     }
 
@@ -246,7 +247,7 @@ private struct HeldCheckboxToggleStyle: ToggleStyle {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityValue(configuration.isOn ? "Checked" : "Not checked")
+        .accessibilityValue(configuration.isOn ? L("Checked") : L("Not checked"))
     }
 }
 
@@ -260,6 +261,7 @@ struct PendingRestore: Identifiable {
 }
 
 struct RestoreConfirmationView: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let pending: PendingRestore
     let currentOrderCount: Int
     let isRestoring: Bool
@@ -274,58 +276,58 @@ struct RestoreConfirmationView: View {
         NavigationStack {
             Form {
                 Section {
-                    LabeledContent("Orders", value: "\(pending.preview.orderCount)")
-                    LabeledContent("Evidence records", value: "\(pending.preview.evidenceCount)")
+                    LabeledContent(L("Orders"), value: "\(pending.preview.orderCount)")
+                    LabeledContent(L("Evidence records"), value: "\(pending.preview.evidenceCount)")
                     LabeledContent(
-                        "Recorded attachment size",
+                        L("Recorded attachment size"),
                         value: ByteCountFormatter.string(
                             fromByteCount: pending.preview.attachmentBytes,
                             countStyle: .file
                         )
                     )
                     LabeledContent(
-                        "Exported",
-                        value: pending.preview.exportedAt.formatted(date: .long, time: .shortened)
+                        L("Exported"),
+                        value: pending.preview.exportedAt.formatted(Date.FormatStyle(date: .long, time: .shortened, locale: localization.locale))
                     )
                 } header: {
-                    Text("Backup contents")
+                    Text(L("Backup contents"))
                 } footer: {
                     Text(pending.isArchive
-                         ? "This ZIP contains original evidence files. Every referenced file is verified before model changes are saved."
-                         : "This JSON contains records only. Evidence metadata is restored, but unavailable local file references are cleared.")
+                         ? L("This ZIP contains original evidence files. Every referenced file is verified before model changes are saved.")
+                         : L("This JSON contains records only. Evidence metadata is restored, but unavailable local file references are cleared."))
                 }
 
                 Section {
-                    Picker("Restore mode", selection: $choice) {
+                    Picker(L("Restore mode"), selection: $choice) {
                         ForEach(RestoreModeChoice.allCases) { mode in
                             Text(mode.title).tag(mode)
                         }
                     }
                     .pickerStyle(.segmented)
-                    .accessibilityHint("Merge updates matching orders. Replace deletes existing orders after a second confirmation.")
+                    .accessibilityHint(L("Merge updates matching orders. Replace deletes existing orders after a second confirmation."))
 
                     Text(choice.explanation(currentOrderCount: currentOrderCount))
                         .heldBody()
                         .foregroundStyle(choice == .replace ? HeldColor.danger : HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)
                 } header: {
-                    Text("Choose explicitly")
+                    Text(L("Choose explicitly"))
                 }
 
                 Section {
                     ForEach(pending.preview.warnings, id: \.self) { warning in
-                        Label(warning, systemImage: "exclamationmark.triangle")
+                        Label(L(warning), systemImage: "exclamationmark.triangle")
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 } header: {
-                    Text("Before restoring")
+                    Text(L("Before restoring"))
                 }
 
                 if let errorMessage {
                     Section {
-                        Label(errorMessage, systemImage: "exclamationmark.octagon")
+                        Label(L(errorMessage), systemImage: "exclamationmark.octagon")
                             .foregroundStyle(HeldColor.danger)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -341,7 +343,7 @@ struct RestoreConfirmationView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text(choice == .merge ? "Merge Backup" : "Review Replace…")
+                            Text(choice == .merge ? L("Merge Backup") : L("Review Replace…"))
                             Spacer()
                         }
                     }
@@ -354,26 +356,26 @@ struct RestoreConfirmationView: View {
             }
             .scrollContentBackground(.hidden)
             .heldScreenBackground()
-            .navigationTitle("Restore preview")
+            .navigationTitle(L("Restore preview"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                         .disabled(isRestoring)
                 }
             }
-            .heldLoadingOverlay(isPresented: isRestoring, title: "Restoring your backup…")
+            .heldLoadingOverlay(isPresented: isRestoring, title: L("Restoring your backup…"))
             .interactiveDismissDisabled(isRestoring)
             .alert(
-                "Replace all existing orders?",
+                L("Replace all existing orders?"),
                 isPresented: $showReplaceConfirmation
             ) {
-                Button("Replace Existing Orders", role: .destructive) {
+                Button(L("Replace Existing Orders"), role: .destructive) {
                     onConfirm(.replace)
                 }
-                Button("Cancel", role: .cancel) {}
+                Button(L("Cancel"), role: .cancel) {}
             } message: {
-                Text("This deletes the \(currentOrderCount) \(currentOrderCount == 1 ? "order" : "orders") currently in Held and replaces them with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later.")
+                Text(currentOrderCount == 1 ? L("This deletes the %lld order currently in Keyvow and replaces it with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later.", currentOrderCount) : L("This deletes the %lld orders currently in Keyvow and replaces them with this backup. Unreferenced evidence files may also be removed after a successful restore. Keep another backup if you may need the current data later.", currentOrderCount))
             }
         }
     }
@@ -384,14 +386,19 @@ private enum RestoreModeChoice: String, CaseIterable, Identifiable {
     case replace
 
     var id: String { rawValue }
-    var title: String { rawValue.capitalized }
+    var title: String {
+        switch self {
+        case .merge: return L("Merge")
+        case .replace: return L("Replace")
+        }
+    }
 
     func explanation(currentOrderCount: Int) -> String {
         switch self {
         case .merge:
-            return "Adds new orders and updates orders with matching IDs. Your other existing orders remain in place."
+            return L("Adds new orders and updates orders with matching IDs. Your other existing orders remain in place.")
         case .replace:
-            return "Deletes all \(currentOrderCount) existing \(currentOrderCount == 1 ? "order" : "orders") after validation, then restores this backup. A destructive confirmation is required."
+            return currentOrderCount == 1 ? L("Deletes the %lld existing order after validation, then restores this backup. A destructive confirmation is required.", currentOrderCount) : L("Deletes all %lld existing orders after validation, then restores this backup. A destructive confirmation is required.", currentOrderCount)
         }
     }
 }

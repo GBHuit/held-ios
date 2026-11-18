@@ -46,6 +46,8 @@ jobs:
           base64 --decode < "${ICON_BASE}.base64" > "${ICON_BASE}.png"
           test -s "${ICON_BASE}.png"
           echo "225f4f83470d92bb64de57fe6e8411794a9d0674524407cbb1ce67b3e1f66d56  ${ICON_BASE}.png" | shasum -a 256 -c -
+          plutil -lint Held/PrivacyInfo.xcprivacy KeyvowShareExtension/PrivacyInfo.xcprivacy
+          plutil -lint Held/Held.entitlements KeyvowShareExtension/KeyvowShareExtension.entitlements
 
       - name: Run release-candidate unit tests
         run: |

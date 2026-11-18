@@ -17,6 +17,7 @@ struct EvidenceDraft: Identifiable {
 }
 
 struct OrderEvidenceSection: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let attachmentStore: AttachmentStore?
     let storageError: String?
@@ -36,24 +37,24 @@ struct OrderEvidenceSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Evidence",
-                subtitle: "Original metadata, notes, sources, capture dates, and checksums remain read-only after saving."
+                title: L("Evidence"),
+                subtitle: L("Original metadata, notes, sources, capture dates, and checksums remain read-only after saving.")
             ) {
                 Menu {
                     Button(action: onAddDetails) {
-                        Label("Add evidence details", systemImage: "square.and.pencil")
+                        Label(L("Add evidence details"), systemImage: "square.and.pencil")
                     }
                     Button(action: onImportFile) {
-                        Label("Import file", systemImage: "folder")
+                        Label(L("Import file"), systemImage: "folder")
                     }
                     Button(action: onImportPhoto) {
-                        Label("Import photo", systemImage: "photo.on.rectangle")
+                        Label(L("Import photo"), systemImage: "photo.on.rectangle")
                     }
                     Button(action: onScanText) {
-                        Label("Scan live text", systemImage: "text.viewfinder")
+                        Label(L("Scan live text"), systemImage: "text.viewfinder")
                     }
                 } label: {
-                    Label("Add evidence", systemImage: "plus")
+                    Label(L("Add evidence"), systemImage: "plus")
                         .font(HeldFont.button)
                         .foregroundStyle(HeldColor.accent)
                         .padding(.horizontal, 12)
@@ -61,12 +62,12 @@ struct OrderEvidenceSection: View {
                         .frame(minHeight: 44)
                         .background(HeldColor.accentSoft.opacity(0.6), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
-                .accessibilityLabel("Add evidence")
+                .accessibilityLabel(L("Add evidence"))
             }
 
             if let storageError {
                 OrderDetailCallout(
-                    title: "Attachment storage unavailable",
+                    title: L("Attachment storage unavailable"),
                     message: storageError,
                     symbolName: "externaldrive.badge.exclamationmark",
                     tone: .danger
@@ -75,7 +76,7 @@ struct OrderEvidenceSection: View {
 
             if evidence.isEmpty {
                 HeldCard {
-                    Text("No evidence yet. Preserve a receipt, original listing, terms, communication, or shipping record.")
+                    Text(L("No evidence yet. Preserve a receipt, original listing, terms, communication, or shipping record."))
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             } else {
@@ -87,7 +88,7 @@ struct OrderEvidenceSection: View {
                             EvidenceRow(evidence: item, attachmentStore: attachmentStore)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityHint("Opens immutable evidence details and preview actions")
+                        .accessibilityHint(L("Opens immutable evidence details and preview actions"))
                     }
                 }
             }
@@ -96,6 +97,7 @@ struct OrderEvidenceSection: View {
 }
 
 private struct EvidenceRow: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let evidence: Evidence
     let attachmentStore: AttachmentStore?
 
@@ -116,16 +118,16 @@ private struct EvidenceRow: View {
                         Image(systemName: "lock.fill")
                             .font(.caption)
                             .foregroundStyle(HeldColor.secondaryInk)
-                            .accessibilityLabel("Metadata locked")
+                            .accessibilityLabel(L("Metadata locked"))
                     }
-                    Text(evidence.kind.displayLabel)
+                    Text(localizedEvidenceKindLabel(evidence.kind))
                         .heldCaption()
                         .foregroundStyle(HeldColor.accent)
                     Text(evidence.filename)
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                         .lineLimit(2)
-                    Text("Captured \(formatDate(evidence.capturedAt))")
+                    Text(L("Captured %@", localization.date(evidence.capturedAt)))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
@@ -135,6 +137,7 @@ private struct EvidenceRow: View {
 }
 
 struct EvidenceThumbnail: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let evidence: Evidence
     let attachmentStore: AttachmentStore?
     let pixelSize: Int
@@ -147,7 +150,7 @@ struct EvidenceThumbnail: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
-                    .accessibilityLabel("Thumbnail for \(evidence.title)")
+                    .accessibilityLabel(L("Thumbnail for %@", evidence.title))
             } else {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(HeldColor.accentSoft)
@@ -169,6 +172,7 @@ struct EvidenceThumbnail: View {
 
 @MainActor
 struct EvidenceEntrySheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let attachmentStore: AttachmentStore?
     let onSave: (EvidenceDraft) throws -> Void
     let onCancel: (EvidenceDraft) -> Void
@@ -195,56 +199,56 @@ struct EvidenceEntrySheet: View {
         NavigationStack {
             Form {
                 if let attachment = draft.attachment {
-                    Section("Imported file · locked after save") {
-                        OrderDetailMetadataRow(title: "Filename", value: attachment.filename)
-                        OrderDetailMetadataRow(title: "MIME type", value: attachment.mimeType)
-                        OrderDetailMetadataRow(title: "File size", value: orderDetailFileSize(attachment.fileSize))
-                        OrderDetailMetadataRow(title: "SHA-256", value: attachment.sha256, monospaced: true)
+                    Section(L("Imported file · locked after save")) {
+                        OrderDetailMetadataRow(title: L("Filename"), value: attachment.filename)
+                        OrderDetailMetadataRow(title: L("MIME type"), value: attachment.mimeType)
+                        OrderDetailMetadataRow(title: L("File size"), value: orderDetailFileSize(attachment.fileSize))
+                        OrderDetailMetadataRow(title: L("SHA-256"), value: attachment.sha256, monospaced: true)
                     }
                 } else {
-                    Section("Evidence reference") {
-                        TextField("Reference filename", text: $draft.referenceFilename)
+                    Section(L("Evidence reference")) {
+                        TextField(L("Reference filename"), text: $draft.referenceFilename)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
-                        Text("This creates an evidence metadata record without an attachment. Add an imported file or photo when the original file is available.")
+                        Text(L("This creates an evidence metadata record without an attachment. Add an imported file or photo when the original file is available."))
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                     }
                 }
 
-                Section("Evidence details") {
-                    Picker("Kind", selection: $draft.kind) {
+                Section(L("Evidence details")) {
+                    Picker(L("Kind"), selection: $draft.kind) {
                         ForEach(EvidenceKind.allCases, id: \.self) { kind in
-                            Label(kind.displayLabel, systemImage: kind.symbolName).tag(kind)
+                            Label(localizedEvidenceKindLabel(kind), systemImage: kind.symbolName).tag(kind)
                         }
                     }
-                    TextField("Title", text: $draft.title)
-                    TextField("Source", text: $draft.source, axis: .vertical)
+                    TextField(L("Title"), text: $draft.title)
+                    TextField(L("Source"), text: $draft.source, axis: .vertical)
                         .lineLimit(2...4)
                     DatePicker(
-                        "Captured at",
+                        L("Captured at"),
                         selection: $draft.capturedAt,
                         displayedComponents: [.date, .hourAndMinute]
                     )
                 }
 
-                Section("Note · editable") {
-                    TextField("Evidence note or recognized text", text: $draft.note, axis: .vertical)
+                Section(L("Note · editable")) {
+                    TextField(L("Evidence note or recognized text"), text: $draft.note, axis: .vertical)
                         .lineLimit(6...16)
                     if canRecognizeImageText {
                         Button {
                             recognizeImageText()
                         } label: {
                             if isRecognizingText {
-                                Label("Recognizing text…", systemImage: "text.viewfinder")
+                                Label(L("Recognizing text…"), systemImage: "text.viewfinder")
                             } else {
-                                Label("Recognize text in image", systemImage: "text.viewfinder")
+                                Label(L("Recognize text in image"), systemImage: "text.viewfinder")
                             }
                         }
                         .disabled(isRecognizingText)
                     }
                     if let ocrMessage {
-                        Text(ocrMessage)
+                        Text(L(ocrMessage))
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                     }
@@ -253,35 +257,35 @@ struct EvidenceEntrySheet: View {
                 Section {
                     Toggle(isOn: $draft.confirmed) {
                         VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                            Text("I reviewed these details")
-                            Text("Save this evidence with the shown source, note, capture date, and file metadata.")
+                            Text(L("I reviewed these details"))
+                            Text(L("Save this evidence with the shown source, note, capture date, and file metadata."))
                                 .heldCaption()
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
                     }
-                    Text("Nothing is saved automatically. After saving, original evidence metadata is immutable; deletion requires separate confirmation.")
+                    Text(L("Nothing is saved automatically. After saving, original evidence metadata is immutable; deletion requires separate confirmation."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             }
-            .navigationTitle(draft.attachment == nil ? "Add evidence" : "Review evidence")
+            .navigationTitle(draft.attachment == nil ? L("Add evidence") : L("Review evidence"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(L("Cancel")) {
                         onCancel(draft)
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save evidence", action: save)
+                    Button(L("Save evidence"), action: save)
                         .disabled(!draft.confirmed || isRecognizingText)
                 }
             }
-            .alert("Evidence needs attention", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Evidence needs attention"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -301,7 +305,7 @@ struct EvidenceEntrySheet: View {
     private func recognizeImageText() {
         guard let attachment = draft.attachment, let attachmentStore else { return }
         guard attachment.fileSize <= 50 * 1_024 * 1_024 else {
-            errorMessage = "This image is too large for on-device text recognition. You can still save it as evidence and enter a note manually."
+            errorMessage = L("This image is too large for on-device text recognition. You can still save it as evidence and enter a note manually.")
             return
         }
 
@@ -313,7 +317,7 @@ struct EvidenceEntrySheet: View {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 let result = try await OCREngine().recognizeText(data: data)
                 if result.fullText.isEmpty {
-                    ocrMessage = "No text was recognized. Your existing note is unchanged; enter or edit it manually."
+                    ocrMessage = L("No text was recognized. Your existing note is unchanged; enter or edit it manually.")
                 } else {
                     draft.note = result.fullText
                     ocrMessage = result.limitations
@@ -329,7 +333,7 @@ struct EvidenceEntrySheet: View {
         do {
             _ = try OrderDetailValidation.require(draft.title, field: "Evidence title")
             if draft.attachment == nil {
-                _ = try OrderDetailValidation.require(draft.referenceFilename, field: "Reference filename")
+                _ = try OrderDetailValidation.require(draft.referenceFilename, field: L("Reference filename"))
             }
             try onSave(draft)
             dismiss()
@@ -342,6 +346,7 @@ struct EvidenceEntrySheet: View {
 // MARK: - Immutable evidence details and deletion
 
 struct EvidenceDetailSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let evidence: Evidence
     let attachmentStore: AttachmentStore?
     let onDelete: (Evidence) throws -> Void
@@ -356,12 +361,12 @@ struct EvidenceDetailSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: HeldSpacing.large) {
                     VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                        Label(evidence.kind.displayLabel, systemImage: evidence.kind.symbolName)
+                        Label(localizedEvidenceKindLabel(evidence.kind), systemImage: evidence.kind.symbolName)
                             .foregroundStyle(HeldColor.accent)
                         Text(evidence.title)
                             .heldDisplay(size: 30)
                             .foregroundStyle(HeldColor.ink)
-                        Label("Original metadata is locked", systemImage: "lock.fill")
+                        Label(L("Original metadata is locked"), systemImage: "lock.fill")
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                     }
@@ -375,20 +380,20 @@ struct EvidenceDetailSheet: View {
 
                     HeldCard {
                         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
-                            OrderDetailMetadataRow(title: "Filename", value: evidence.filename)
-                            OrderDetailMetadataRow(title: "Source", value: evidence.source.isEmpty ? "Not recorded" : evidence.source)
-                            OrderDetailMetadataRow(title: "Captured at", value: orderDetailDateTime(evidence.capturedAt))
-                            OrderDetailMetadataRow(title: "MIME type", value: evidence.mimeType.isEmpty ? "Not recorded" : evidence.mimeType)
-                            OrderDetailMetadataRow(title: "File size", value: orderDetailFileSize(evidence.fileSize))
-                            OrderDetailMetadataRow(title: "SHA-256", value: evidence.sha256?.isEmpty == false ? evidence.sha256! : "Not recorded", monospaced: true)
+                            OrderDetailMetadataRow(title: L("Filename"), value: evidence.filename)
+                            OrderDetailMetadataRow(title: L("Source"), value: evidence.source.isEmpty ? L("Not recorded") : evidence.source)
+                            OrderDetailMetadataRow(title: L("Captured at"), value: orderDetailDateTime(evidence.capturedAt))
+                            OrderDetailMetadataRow(title: L("MIME type"), value: evidence.mimeType.isEmpty ? L("Not recorded") : evidence.mimeType)
+                            OrderDetailMetadataRow(title: L("File size"), value: orderDetailFileSize(evidence.fileSize))
+                            OrderDetailMetadataRow(title: L("SHA-256"), value: evidence.sha256?.isEmpty == false ? evidence.sha256! : L("Not recorded"), monospaced: true)
                         }
                     }
 
                     HeldCard {
                         VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                            Text("Note")
+                            Text(L("Note"))
                                 .font(.headline)
-                            Text(evidence.note.isEmpty ? "No note recorded." : evidence.note)
+                            Text(evidence.note.isEmpty ? L("No note recorded.") : evidence.note)
                                 .heldBody()
                                 .foregroundStyle(evidence.note.isEmpty ? HeldColor.secondaryInk : HeldColor.ink)
                                 .textSelection(.enabled)
@@ -400,7 +405,7 @@ struct EvidenceDetailSheet: View {
                         Button {
                             openPreview()
                         } label: {
-                            Label("Preview original file", systemImage: "quicklook")
+                            Label(L("Preview original file"), systemImage: "quicklook")
                                 .frame(maxWidth: .infinity)
                         }
                         .heldButtonStyle(.secondary)
@@ -409,7 +414,7 @@ struct EvidenceDetailSheet: View {
                     Button(role: .destructive) {
                         deleteConfirmationPresented = true
                     } label: {
-                        Label("Delete evidence", systemImage: "trash")
+                        Label(L("Delete evidence"), systemImage: "trash")
                             .frame(maxWidth: .infinity)
                     }
                     .heldButtonStyle(.quiet)
@@ -418,26 +423,26 @@ struct EvidenceDetailSheet: View {
                 .padding(HeldSpacing.large)
             }
             .heldScreenBackground()
-            .navigationTitle("Evidence")
+            .navigationTitle(L("Evidence"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                 }
             }
             .sheet(item: $preview) { preview in
                 OrderQuickLookSheet(preview: preview)
             }
-            .alert("Delete this evidence?", isPresented: $deleteConfirmationPresented) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete evidence", role: .destructive, action: delete)
+            .alert(L("Delete this evidence?"), isPresented: $deleteConfirmationPresented) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Delete evidence"), role: .destructive, action: delete)
             } message: {
-                Text("The evidence record will be deleted. Any imported attachment will also be removed from Held storage. This cannot be undone.")
+                Text(L("The evidence record will be deleted. Any imported attachment will also be removed from Keyvow storage. This cannot be undone."))
             }
-            .alert("Evidence action failed", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Evidence action failed"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }
@@ -457,7 +462,7 @@ struct EvidenceDetailSheet: View {
         do {
             let url = try attachmentStore.url(forRelativePath: path)
             guard FileManager.default.fileExists(atPath: url.path) else {
-                errorMessage = "The original attachment is missing from Held storage."
+                errorMessage = L("The original attachment is missing from Keyvow storage.")
                 return
             }
             preview = OrderFilePreview(url: url, title: evidence.title)
@@ -516,6 +521,7 @@ struct OrderQuickLookSheet: UIViewControllerRepresentable {
 // MARK: - Live text capture
 
 struct OrderLiveTextSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let onUseText: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -537,10 +543,10 @@ struct OrderLiveTextSheet: View {
                         onError: { errorMessage = $0 }
                     )
                     .frame(minHeight: 300)
-                    .accessibilityLabel("Live text scanner")
+                    .accessibilityLabel(L("Live text scanner"))
                 } else {
                     OrderDetailCallout(
-                        title: "Live text unavailable",
+                        title: L("Live text unavailable"),
                         message: DocumentScanner.unavailableReason,
                         symbolName: "camera.metering.unknown",
                         tone: .warning
@@ -549,7 +555,7 @@ struct OrderLiveTextSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                    Text("Review recognized text")
+                    Text(L("Review recognized text"))
                         .font(.headline)
                     TextEditor(text: $recognizedText)
                         .frame(minHeight: 140)
@@ -559,31 +565,31 @@ struct OrderLiveTextSheet: View {
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
                                 .strokeBorder(HeldColor.separator)
                         }
-                        .accessibilityLabel("Editable recognized evidence text")
-                    Text("Recognition can be wrong. Edit the text before continuing; nothing is saved automatically.")
+                        .accessibilityLabel(L("Editable recognized evidence text"))
+                    Text(L("Recognition can be wrong. Edit the text before continuing; nothing is saved automatically."))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
                 .padding(HeldSpacing.large)
             }
             .heldScreenBackground()
-            .navigationTitle("Scan live text")
+            .navigationTitle(L("Scan live text"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Use in evidence") {
+                    Button(L("Use in evidence")) {
                         onUseText(recognizedText)
                     }
                     .disabled(OrderDetailValidation.trimmed(recognizedText).isEmpty)
                 }
             }
-            .alert("Scanner", isPresented: errorPresented) {
-                Button("OK") { errorMessage = nil }
+            .alert(L("Scanner"), isPresented: errorPresented) {
+                Button(L("OK")) { errorMessage = nil }
             } message: {
-                Text(errorMessage ?? "Unknown error")
+                Text(L(errorMessage ?? "Unknown error"))
             }
         }
     }

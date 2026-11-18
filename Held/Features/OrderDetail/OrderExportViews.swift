@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 
 struct OrderExportPreviewSheet: View {
+    @EnvironmentObject private var localization: LocalizationCenter
     let order: HeldOrder
     let kind: OrderExportKind
     let onExport: () -> Void
@@ -29,16 +30,16 @@ struct OrderExportPreviewSheet: View {
 
                     HeldCard {
                         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
-                            Text("Export preview")
+                            Text(L("Export preview"))
                                 .font(.headline)
-                            OrderDetailMetadataRow(title: "Order", value: order.title)
-                            OrderDetailMetadataRow(title: "Vendor", value: order.vendor.isEmpty ? "Not recorded" : order.vendor)
-                            OrderDetailMetadataRow(title: "Line items", value: String(order.items.count))
-                            OrderDetailMetadataRow(title: "Milestones", value: String(order.milestones.count))
-                            OrderDetailMetadataRow(title: "Evidence records", value: String(order.evidence.count))
+                            OrderDetailMetadataRow(title: L("Order"), value: order.title)
+                            OrderDetailMetadataRow(title: L("Vendor"), value: order.vendor.isEmpty ? L("Not recorded") : order.vendor)
+                            OrderDetailMetadataRow(title: L("Line items"), value: String(order.items.count))
+                            OrderDetailMetadataRow(title: L("Milestones"), value: String(order.milestones.count))
+                            OrderDetailMetadataRow(title: L("Evidence records"), value: String(order.evidence.count))
                             if kind == .evidenceZIP {
                                 OrderDetailMetadataRow(
-                                    title: "Attached files",
+                                    title: L("Attached files"),
                                     value: String(order.evidence.filter { $0.localRelativePath != nil }.count)
                                 )
                             }
@@ -46,24 +47,24 @@ struct OrderExportPreviewSheet: View {
                     }
 
                     OrderDetailCallout(
-                        title: "Private data included",
+                        title: L("Private data included"),
                         message: privacyMessage,
                         symbolName: "hand.raised.fill",
                         tone: .warning
                     )
 
                     Toggle(isOn: $privacyConfirmed) {
-                        Text("I understand and want to create this export")
+                        Text(L("I understand and want to create this export"))
                             .font(.headline)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .accessibilityHint("Required before creating a file that can be shared outside Held")
+                    .accessibilityHint(L("Required before creating a file that can be shared outside Keyvow"))
 
                     Button {
                         onExport()
                         dismiss()
                     } label: {
-                        Label("Create & share export", systemImage: "square.and.arrow.up")
+                        Label(L("Create & share export"), systemImage: "square.and.arrow.up")
                             .frame(maxWidth: .infinity)
                     }
                     .heldButtonStyle(.primary)
@@ -72,11 +73,11 @@ struct OrderExportPreviewSheet: View {
                 .padding(HeldSpacing.large)
             }
             .heldScreenBackground()
-            .navigationTitle("Export order")
+            .navigationTitle(L("Export order"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("Cancel")) { dismiss() }
                 }
             }
         }
@@ -85,13 +86,13 @@ struct OrderExportPreviewSheet: View {
     private var privacyMessage: String {
         switch kind {
         case .json:
-            return "This JSON contains order, payment, source URL, notes, tracking, reminder, evidence metadata, and app settings. Sharing it can expose private purchase and dispute information."
+            return L("This JSON contains order, payment, source URL, notes, tracking, reminder, evidence metadata, and app settings. Sharing it can expose private purchase and dispute information.")
         case .csv:
-            return "This CSV contains order, payment, source URL, notes, tracking, and line-item details. Sharing it can expose private purchase information."
+            return L("This CSV contains order, payment, source URL, notes, tracking, and line-item details. Sharing it can expose private purchase information.")
         case .pdf:
-            return "This PDF contains order and payment details plus evidence sources, notes, filenames, capture dates, and checksums. Review the recipient before sharing."
+            return L("This PDF contains order and payment details plus evidence sources, notes, filenames, capture dates, and checksums. Review the recipient before sharing.")
         case .evidenceZIP:
-            return "This ZIP contains order, payment, source, and evidence metadata together with original attachment files. Treat it as sensitive private data."
+            return L("This ZIP contains order, payment, source, and evidence metadata together with original attachment files. Treat it as sensitive private data.")
         }
     }
 }

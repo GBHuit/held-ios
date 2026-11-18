@@ -61,6 +61,6 @@ enum PendingShareWriterError: LocalizedError {
     case appGroupUnavailable
 
     var errorDescription: String? {
-        "Keyvow could not open its shared local inbox. Please try again."
+        L("Keyvow could not open its shared local inbox. Please try again.")
     }
 }
