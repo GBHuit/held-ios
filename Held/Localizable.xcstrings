@@ -1,0 +1,36 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Today" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Today" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "今日" } }
+      }
+    },
+    "Orders" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Orders" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "订单" } }
+      }
+    },
+    "Funds" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Funds" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "资金" } }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "设置" } }
+      }
+    },
+    "Every group buy, kept." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Every group buy, kept." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "每笔团购，都妥善在心。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

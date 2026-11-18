@@ -67,8 +67,10 @@ final class ReminderScheduler: ObservableObject {
         let now = Date()
         var desired: [String: UNNotificationRequest] = [:]
 
+        let activeOrders = orders.filter(\.isActive)
+
         if settings.remindersEnabled && Self.canSchedule(authorizationStatus) {
-            for order in orders {
+            for order in activeOrders {
                 for reminder in order.reminders where reminder.enabled {
                     // triggerAt is the check-in or deadline event. Deadline
                     // notifications fire leadDays before it, matching the
@@ -105,8 +107,8 @@ final class ReminderScheduler: ObservableObject {
         }
 
         if settings.remindersEnabled && settings.weeklyDigest && Self.canSchedule(authorizationStatus) {
-            let activeCount = orders.filter(\.isActive).count
-            let attentionCount = AttentionEngine.attention(orders: orders, settings: settings, now: now).count
+            let activeCount = activeOrders.count
+            let attentionCount = AttentionEngine.attention(orders: activeOrders, settings: settings, now: now).count
             let content = UNMutableNotificationContent()
             content.title = "Your week with Held"
             content.body = attentionCount > 0

@@ -3,14 +3,23 @@ import SwiftData
 
 enum SeedData {
     static func installIfNeeded(context: ModelContext) throws {
-        let orderCount = try context.fetchCount(FetchDescriptor<HeldOrder>())
-        if orderCount == 0 {
-            for order in makeOrders() {
-                context.insert(order)
+        let settings = try AppSettings.fetchOrCreate(context: context)
+
+        #if DEBUG
+        // Record the attempt before any later launch can see an empty store.
+        // Deleting every sample therefore never brings the samples back.
+        if !settings.didInstallDebugSeed {
+            settings.didInstallDebugSeed = true
+            let orderCount = try context.fetchCount(FetchDescriptor<HeldOrder>())
+            if orderCount == 0 {
+                for order in makeOrders() {
+                    context.insert(order)
+                }
             }
         }
+        #endif
 
-        _ = try AppSettings.fetchOrCreate(context: context)
+        // Release builds only ensure settings; they never install sample orders.
         try context.save()
     }
 

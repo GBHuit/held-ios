@@ -93,6 +93,7 @@ struct OrderFilePreview: Identifiable {
 enum OrderDetailValidationError: LocalizedError {
     case required(String)
     case invalidAmount
+    case invalidPaymentMethod
     case invalidURL
     case invalidReminderDate
     case incompleteDelivery
@@ -103,13 +104,15 @@ enum OrderDetailValidationError: LocalizedError {
         case .required(let field):
             return "\(field) is required."
         case .invalidAmount:
-            return "Enter a valid, nonnegative order amount."
+            return "Enter a nonnegative order amount with no more than two decimal places."
+        case .invalidPaymentMethod:
+            return "For your security, enter only the payment method and optional last four digits. Full card numbers are never saved."
         case .invalidURL:
             return "Enter a complete http or https URL, or leave the URL field empty."
         case .invalidReminderDate:
             return "The reminder’s calculated notification time must be in the future. Adjust the date or lead time."
         case .incompleteDelivery:
-            return "Delivered can only be selected when every noncancelled line item is fully delivered. Update delivery quantities first."
+            return "Delivered can be selected for an order without line items, or when every noncancelled line item is fully delivered. Update delivery quantities first."
         case .attachmentStoreUnavailable:
             return "Evidence storage is unavailable. Check the storage error on the order screen and try again."
         }
@@ -117,6 +120,8 @@ enum OrderDetailValidationError: LocalizedError {
 }
 
 enum OrderDetailValidation {
+    private static let amountPattern = #"^\+?(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?|\.\d{1,2})$"#
+
     static func trimmed(_ value: String) -> String {
         value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -145,11 +150,25 @@ enum OrderDetailValidation {
         return result
     }
 
+    static func paymentMethod(_ value: String) throws -> String {
+        let result = trimmed(value)
+        guard !containsFullCardNumber(result) else {
+            throw OrderDetailValidationError.invalidPaymentMethod
+        }
+        return result
+    }
+
     static func minorUnits(from text: String) throws -> Int64 {
-        let normalized = trimmed(text)
-            .replacingOccurrences(of: Locale.current.groupingSeparator ?? ",", with: "")
-        guard var amount = Decimal(string: normalized, locale: Locale.current)
-                ?? Decimal(string: normalized, locale: Locale(identifier: "en_US_POSIX")),
+        let value = trimmed(text)
+        guard value.range(of: amountPattern, options: .regularExpression) != nil else {
+            throw OrderDetailValidationError.invalidAmount
+        }
+
+        let normalized = value
+            .replacingOccurrences(of: ",", with: "")
+            .replacingOccurrences(of: "+", with: "")
+        guard let amount = Decimal(string: normalized, locale: Locale(identifier: "en_US_POSIX")),
+              !amount.isNaN,
               amount >= 0 else {
             throw OrderDetailValidationError.invalidAmount
         }
@@ -157,10 +176,11 @@ enum OrderDetailValidation {
         var rounded = Decimal()
         var minor = amount * 100
         NSDecimalRound(&rounded, &minor, 0, .plain)
-        guard rounded >= 0, rounded <= Decimal(Int64.max) else {
+        guard !rounded.isNaN, rounded >= 0, rounded <= Decimal(Int64.max),
+              let result = Int64(NSDecimalNumber(decimal: rounded).stringValue) else {
             throw OrderDetailValidationError.invalidAmount
         }
-        return NSDecimalNumber(decimal: rounded).int64Value
+        return result
     }
 
     static func majorUnits(minor: Int64) -> String {

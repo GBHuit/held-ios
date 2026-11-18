@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct OCRConfirmedSuggestions {
+    var productTitle: String?
+    var vendor: String?
+    var estimatedDeliveryText: String?
     var orderNumber: String?
     var orderDate: Date?
     var amount: Decimal?
@@ -9,21 +12,30 @@ struct OCRConfirmedSuggestions {
 
 struct OCRReviewView: View {
     let result: OCRResult
+    let canKeepReceipt: Bool
     let onApply: (OCRConfirmedSuggestions) -> Void
     let onCancel: () -> Void
 
+    @State private var selectedProductTitle: Int?
+    @State private var selectedVendor: Int?
+    @State private var selectedDeliveryText: Int?
     @State private var selectedOrderNumber: Int?
     @State private var selectedDate: Int?
     @State private var selectedTotal: Int?
 
     private var hasCandidates: Bool {
+        !result.candidates.productTitles.isEmpty ||
+        !result.candidates.vendors.isEmpty ||
+        !result.candidates.estimatedDeliveryTexts.isEmpty ||
         !result.candidates.orderNumbers.isEmpty ||
         !result.candidates.dates.isEmpty ||
         !result.candidates.totals.isEmpty
     }
 
     private var hasSelection: Bool {
-        selectedOrderNumber != nil || selectedDate != nil || selectedTotal != nil
+        selectedProductTitle != nil || selectedVendor != nil ||
+        selectedDeliveryText != nil || selectedOrderNumber != nil ||
+        selectedDate != nil || selectedTotal != nil
     }
 
     var body: some View {
@@ -44,11 +56,34 @@ struct OCRReviewView: View {
                     if !hasCandidates {
                         HomeOrdersMessage(
                             title: "No fields to apply",
-                            message: "The image did not yield an order number, date, or total. You can return to the form and enter everything manually.",
+                            message: "The image did not yield a supported order field. You can keep the reviewed image as receipt evidence, or return to the form and enter everything manually.",
                             systemImage: "text.viewfinder"
                         )
                     } else {
-                        orderNumberCandidates
+                        textCandidateSection(
+                            title: "Product title",
+                            subtitle: "Choose only a recognized product or item name; check its source line.",
+                            candidates: result.candidates.productTitles,
+                            selection: $selectedProductTitle
+                        )
+                        textCandidateSection(
+                            title: "Vendor",
+                            subtitle: "Seller extraction can confuse stores, carriers, and marketplaces.",
+                            candidates: result.candidates.vendors,
+                            selection: $selectedVendor
+                        )
+                        textCandidateSection(
+                            title: "Estimated delivery text",
+                            subtitle: "This preserves the recognized wording; it does not calculate a delivery date.",
+                            candidates: result.candidates.estimatedDeliveryTexts,
+                            selection: $selectedDeliveryText
+                        )
+                        textCandidateSection(
+                            title: "Order number",
+                            subtitle: "Choose at most one recognized value.",
+                            candidates: result.candidates.orderNumbers,
+                            selection: $selectedOrderNumber
+                        )
                         dateCandidates
                         totalCandidates
                     }
@@ -74,6 +109,7 @@ struct OCRReviewView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Not now", action: onCancel)
+                        .frame(minWidth: 44, minHeight: 44)
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -85,8 +121,14 @@ struct OCRReviewView: View {
                         .heldButtonStyle()
                         .disabled(!hasSelection)
                     }
-                    Button("Continue manually", action: onCancel)
+                    if canKeepReceipt {
+                        Button("Keep receipt without OCR changes") {
+                            onApply(OCRConfirmedSuggestions())
+                        }
                         .heldButtonStyle(.secondary)
+                    }
+                    Button("Continue manually", action: onCancel)
+                        .heldButtonStyle(.quiet)
                 }
                 .padding(.horizontal, HeldSpacing.medium)
                 .padding(.vertical, HeldSpacing.small)
@@ -97,13 +139,18 @@ struct OCRReviewView: View {
     }
 
     @ViewBuilder
-    private var orderNumberCandidates: some View {
-        if !result.candidates.orderNumbers.isEmpty {
-            candidateSection(title: "Order number", subtitle: "Choose at most one recognized value.") {
-                ForEach(Array(result.candidates.orderNumbers.enumerated()), id: \.offset) { index, candidate in
+    private func textCandidateSection(
+        title: String,
+        subtitle: String,
+        candidates: [OCRTextCandidate],
+        selection: Binding<Int?>
+    ) -> some View {
+        if !candidates.isEmpty {
+            candidateSection(title: title, subtitle: subtitle) {
+                ForEach(Array(candidates.enumerated()), id: \.offset) { index, candidate in
                     OCRSelectionCard(
-                        isSelected: selectedOrderNumber == index,
-                        action: { selectedOrderNumber = selectedOrderNumber == index ? nil : index }
+                        isSelected: selection.wrappedValue == index,
+                        action: { selection.wrappedValue = selection.wrappedValue == index ? nil : index }
                     ) {
                         OCRCandidateText(
                             value: candidate.value,
@@ -189,6 +236,18 @@ struct OCRReviewView: View {
     private func applySelections() {
         var suggestions = OCRConfirmedSuggestions()
 
+        if let selectedProductTitle,
+           result.candidates.productTitles.indices.contains(selectedProductTitle) {
+            suggestions.productTitle = result.candidates.productTitles[selectedProductTitle].value
+        }
+        if let selectedVendor,
+           result.candidates.vendors.indices.contains(selectedVendor) {
+            suggestions.vendor = result.candidates.vendors[selectedVendor].value
+        }
+        if let selectedDeliveryText,
+           result.candidates.estimatedDeliveryTexts.indices.contains(selectedDeliveryText) {
+            suggestions.estimatedDeliveryText = result.candidates.estimatedDeliveryTexts[selectedDeliveryText].value
+        }
         if let selectedOrderNumber,
            result.candidates.orderNumbers.indices.contains(selectedOrderNumber) {
             suggestions.orderNumber = result.candidates.orderNumbers[selectedOrderNumber].value
@@ -257,7 +316,7 @@ private struct OCRSelectionCard<Content: View>: View {
                 Spacer(minLength: 0)
             }
             .padding(HeldSpacing.medium)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             .background(
                 isSelected ? HeldColor.accentSoft : HeldColor.surface,
                 in: RoundedRectangle(cornerRadius: 12, style: .continuous)

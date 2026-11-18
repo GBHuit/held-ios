@@ -35,13 +35,17 @@ private struct AddOrderInputError: LocalizedError {
 }
 
 struct AddOrderView: View {
+    let pendingShare: PendingShare?
+
     @Query private var orders: [HeldOrder]
     @Query private var settings: [AppSettings]
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var reminderScheduler: ReminderScheduler
+    @EnvironmentObject private var purchaseService: PurchaseService
 
     @State private var step: AddOrderStep = .basics
+    @State private var showingProUpgrade = false
 
     @State private var title = ""
     @State private var vendor = ""
@@ -68,16 +72,25 @@ struct AddOrderView: View {
     @State private var validationMessage: String?
     @State private var isSaving = false
     @State private var didLoadReminderSettings = false
+    @State private var didApplyPendingShare = false
 
+    // MARK: Shared-share prefill and OCR intake
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showingDocumentScanner = false
     @State private var isRecognizing = false
     @State private var ocrResult: OCRResult?
+    @State private var ocrReviewImages: [OCRReviewedImage] = []
+    @State private var reviewedReceiptImages: [OCRReviewedImage] = []
     @State private var ocrStatusMessage: String?
+
+    init(pendingShare: PendingShare? = nil) {
+        self.pendingShare = pendingShare
+    }
 
     private var ocrReviewPresented: Binding<Bool> {
         Binding(
             get: { ocrResult != nil },
-            set: { if !$0 { ocrResult = nil } }
+            set: { if !$0 { cancelOCRReview() } }
         )
     }
 
@@ -90,6 +103,10 @@ struct AddOrderView: View {
                     .background(HeldColor.background)
 
                 Form {
+                    if isAtActiveOrderLimit {
+                        orderLimitSection
+                    }
+
                     switch step {
                     case .basics:
                         basicsSection
@@ -108,7 +125,7 @@ struct AddOrderView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel", action: cancelNewOrder)
                         .disabled(isSaving)
                 }
             }
@@ -121,17 +138,159 @@ struct AddOrderView: View {
                 if let ocrResult {
                     OCRReviewView(
                         result: ocrResult,
+                        canKeepReceipt: !ocrReviewImages.isEmpty,
                         onApply: applyOCRSuggestions,
-                        onCancel: { self.ocrResult = nil }
+                        onCancel: cancelOCRReview
                     )
                 }
+            }
+            .sheet(isPresented: $showingDocumentScanner) {
+                DocumentCameraScanner(
+                    onComplete: { images in
+                        showingDocumentScanner = false
+                        Task { await recognizeScannedImages(images) }
+                    },
+                    onCancel: { showingDocumentScanner = false },
+                    onError: { message in
+                        showingDocumentScanner = false
+                        ocrStatusMessage = message
+                    }
+                )
+                .ignoresSafeArea()
+            }
+            .sheet(isPresented: $showingProUpgrade) {
+                proUpgradeSheet
             }
             .onChange(of: selectedPhoto) { _, newValue in
                 guard let newValue else { return }
                 Task { await recognizePhoto(newValue) }
             }
             .task {
+                applyPendingShareIfNeeded()
                 ensureSettingsExist()
+            }
+        }
+    }
+
+    private var isProUnlocked: Bool {
+        purchaseService.isPro || settings.contains(where: \.proUnlocked)
+    }
+
+    private var isAtActiveOrderLimit: Bool {
+        !isProUnlocked && orders.filter(\.isActive).count >= 3
+    }
+
+    private var orderLimitSection: some View {
+        Section {
+            Label("Free includes up to 3 active orders", systemImage: "shippingbox")
+                .font(.headline)
+                .foregroundStyle(HeldColor.accent)
+            Text("This new order would be a fourth active order. Upgrade to Held Pro for unlimited active orders, or resolve an existing order before saving. Delivered, cancelled, and fully refunded orders do not count toward the limit.")
+                .heldBody()
+                .foregroundStyle(HeldColor.secondaryInk)
+                .fixedSize(horizontal: false, vertical: true)
+            Button("View Held Pro upgrade") {
+                showingProUpgrade = true
+            }
+            .heldButtonStyle(.primary)
+        }
+    }
+
+    private var proUpgradeSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: HeldSpacing.large) {
+                    VStack(alignment: .leading, spacing: HeldSpacing.small) {
+                        Text("Keep every order in view.")
+                            .heldDisplay(size: 30)
+                            .foregroundStyle(HeldColor.ink)
+                        Text("Held Pro is a one-time lifetime upgrade with unlimited active orders. The free version keeps up to 3 active orders; your existing orders, evidence, exports, and backups remain available.")
+                            .heldBody()
+                            .foregroundStyle(HeldColor.secondaryInk)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    if purchaseService.isLoading {
+                        HStack(spacing: HeldSpacing.small) {
+                            ProgressView()
+                            Text("Contacting the App Store…")
+                                .foregroundStyle(HeldColor.secondaryInk)
+                        }
+                    }
+
+                    if let price = purchaseService.displayPrice {
+                        Button("Get Held Pro — \(price)", action: purchasePro)
+                            .heldButtonStyle(.primary)
+                            .disabled(purchaseService.isLoading)
+                    } else {
+                        Button("Load Held Pro") {
+                            Task { @MainActor in
+                                await purchaseService.loadProduct()
+                            }
+                        }
+                        .heldButtonStyle(.secondary)
+                        .disabled(purchaseService.isLoading)
+                    }
+
+                    Button("Restore Purchases", action: restorePro)
+                        .heldButtonStyle(.quiet)
+                        .disabled(purchaseService.isLoading)
+
+                    if let status = purchaseService.statusMessage {
+                        Label(status, systemImage: "info.circle")
+                            .heldCaption()
+                            .foregroundStyle(HeldColor.accent)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    if let error = purchaseService.errorMessage {
+                        Label(error, systemImage: "exclamationmark.triangle")
+                            .heldCaption()
+                            .foregroundStyle(HeldColor.danger)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(HeldSpacing.large)
+            }
+            .heldScreenBackground()
+            .navigationTitle("Held Pro")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Not now") { showingProUpgrade = false }
+                        .disabled(purchaseService.isLoading)
+                }
+            }
+        }
+    }
+
+    private func purchasePro() {
+        Task { @MainActor in
+            do {
+                let appSettings = try AppSettings.fetchOrCreate(context: modelContext)
+                let unlocked = await purchaseService.purchase(settings: appSettings)
+                try modelContext.save()
+                if unlocked {
+                    validationMessage = nil
+                    showingProUpgrade = false
+                }
+            } catch {
+                validationMessage = "The upgrade could not be saved. Please try again."
+            }
+        }
+    }
+
+    private func restorePro() {
+        Task { @MainActor in
+            do {
+                let appSettings = try AppSettings.fetchOrCreate(context: modelContext)
+                let unlocked = await purchaseService.restorePurchases(settings: appSettings)
+                try modelContext.save()
+                if unlocked {
+                    validationMessage = nil
+                    showingProUpgrade = false
+                }
+            } catch {
+                validationMessage = "The restored purchase could not be saved. Please try again."
             }
         }
     }
@@ -160,11 +319,22 @@ struct AddOrderView: View {
     private var basicsSection: some View {
         Section {
             PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                Label("Read a receipt or confirmation", systemImage: "doc.text.viewfinder")
+                Label("Choose a receipt or confirmation", systemImage: "photo.on.rectangle")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(minHeight: 44)
             }
             .disabled(isRecognizing)
+
+            if DocumentCameraScanner.isSupported {
+                Button {
+                    showingDocumentScanner = true
+                } label: {
+                    Label("Scan with camera", systemImage: "doc.text.viewfinder")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(minHeight: 44)
+                }
+                .disabled(isRecognizing)
+            }
 
             if isRecognizing {
                 HStack(spacing: HeldSpacing.small) {
@@ -172,6 +342,7 @@ struct AddOrderView: View {
                     Text("Looking for order details…")
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
+                .frame(minHeight: 44)
                 .accessibilityElement(children: .combine)
             }
 
@@ -179,15 +350,22 @@ struct AddOrderView: View {
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
 
+            if !reviewedReceiptImages.isEmpty {
+                Label("Reviewed receipt image ready to save as evidence", systemImage: "checkmark.circle")
+                    .heldCaption()
+                    .foregroundStyle(HeldColor.accent)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             if let ocrStatusMessage {
                 Text(ocrStatusMessage)
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
         } header: {
-            Text("Start with a photo — optional")
+            Text("Start with a photo or scan — optional")
         } footer: {
-            Text("No image? Continue with the manual fields below. Camera evidence scanning remains available in order details.")
+            Text("No image? Continue with the manual fields below. Camera scans and selected photos both open OCR review before changing any field.")
         }
 
         Section {
@@ -221,7 +399,7 @@ struct AddOrderView: View {
         } header: {
             Text("Payment")
         } footer: {
-            Text("Leave the amount blank if it is not known yet. Amounts are stored as exact minor units.")
+            Text("Leave the amount blank if it is not known yet. Use at most two decimal places. For payment, enter only the method and optional last four digits; never enter a full card number.")
         }
     }
 
@@ -399,6 +577,9 @@ struct AddOrderView: View {
             }
         }
         _ = try AddOrderMoney.minorUnits(from: amountText, fieldName: "Order amount")
+        guard !containsFullCardNumber(paymentMethod) else {
+            throw AddOrderInputError("For your security, enter only the payment method and optional last four digits. Full card numbers are never saved.")
+        }
     }
 
     private func validateItems() throws {
@@ -430,6 +611,12 @@ struct AddOrderView: View {
 
     @MainActor
     private func saveOrder() async {
+        guard !isAtActiveOrderLimit else {
+            validationMessage = "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving."
+            showingProUpgrade = true
+            return
+        }
+
         do {
             try validateBasics()
             try validateItems()
@@ -520,11 +707,22 @@ struct AddOrderView: View {
             order.reminders = reminders
 
             let appSettings = try AppSettings.fetchOrCreate(context: modelContext)
+            let persistedOrders = try modelContext.fetch(FetchDescriptor<HeldOrder>())
+            let activeCount = persistedOrders.filter(\.isActive).count
+            guard purchaseService.isPro || appSettings.proUnlocked || activeCount < 3 else {
+                validationMessage = "Free includes up to 3 active orders. Upgrade for unlimited active orders, or resolve an existing order before saving."
+                showingProUpgrade = true
+                return
+            }
+
             modelContext.insert(order)
             try modelContext.save()
 
-            let ordersForSync = orders.contains { $0.id == order.id } ? orders : orders + [order]
-            await reminderScheduler.sync(orders: ordersForSync, settings: appSettings)
+            if appSettings.remindersEnabled && !reminders.isEmpty,
+               reminderScheduler.authorizationStatus == .notDetermined {
+                _ = await reminderScheduler.requestAuthorization()
+            }
+            await reminderScheduler.sync(orders: persistedOrders + [order], settings: appSettings)
             dismiss()
         } catch {
             modelContext.rollback()
@@ -573,7 +771,7 @@ struct AddOrderView: View {
 
 private enum AddOrderMoney {
     private static let posixLocale = Locale(identifier: "en_US_POSIX")
-    private static let amountPattern = #"^\+?(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{0,2})?|\.\d{1,2})$"#
+    private static let amountPattern = #"^\+?(?:(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?|\.\d{1,2})$"#
 
     static func minorUnits(from text: String, fieldName: String) throws -> Int64? {
         let trimmed = HomeOrdersText.trimmed(text)

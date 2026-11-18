@@ -21,7 +21,7 @@ enum AttentionEngine {
 
             if let estimateEnd = order.estimateEnd,
                order.fulfillmentStatus != .delivered,
-               estimateEnd < now {
+               Calendar.current.compare(now, to: estimateEnd, toGranularity: .day) == .orderedDescending {
                 addReason(AttentionReason(
                     kind: .estimate,
                     title: "Original estimate has passed",
@@ -64,15 +64,31 @@ enum AttentionEngine {
                 ))
             }
 
-            if order.fulfillmentStatus == .partiallyShipped {
-                let outstanding = order.items.filter {
-                    $0.deliveredQuantity < $0.quantity && $0.status != .delivered
-                }.count
-                let lineItemText = outstanding == 1 ? "line item is" : "line items are"
+            let trackableItems = order.items.filter {
+                $0.quantity > 0 && $0.status != .cancelled && $0.status != .refunded
+            }
+            let totalUnits = trackableItems.reduce(0) { $0 + $1.quantity }
+            let deliveredUnits = trackableItems.reduce(0) { result, item in
+                let delivered = item.status == .delivered
+                    ? item.quantity
+                    : min(item.quantity, max(0, item.deliveredQuantity))
+                return result + delivered
+            }
+            let outstandingItems = trackableItems.filter {
+                let delivered = $0.status == .delivered
+                    ? $0.quantity
+                    : min($0.quantity, max(0, $0.deliveredQuantity))
+                return delivered < $0.quantity
+            }
+            let hasShippedUnits = trackableItems.contains { $0.status == .shipped }
+            if totalUnits > 0, deliveredUnits < totalUnits,
+               deliveredUnits > 0 || hasShippedUnits {
+                let outstandingUnits = totalUnits - deliveredUnits
+                let lineItemText = outstandingItems.count == 1 ? "line item" : "line items"
                 addReason(AttentionReason(
                     kind: .partial,
                     title: "Partial delivery needs review",
-                    description: "\(outstanding) \(lineItemText) still outstanding; the order is not complete."
+                    description: "\(outstandingUnits) units across \(outstandingItems.count) \(lineItemText) still outstanding; the order is not complete."
                 ))
             }
 
@@ -99,26 +115,92 @@ enum AttentionEngine {
                 funds.append(CurrencyFunds(currency: currency))
             }
 
-            let deliveredMinor: Int64
-            switch order.fulfillmentStatus {
-            case .delivered:
-                deliveredMinor = order.amountMinor
-            case .partiallyShipped:
-                // If allocation is incomplete, keep the full value pending.
-                deliveredMinor = exactPartialDeliveredMinor(order: order) ?? 0
-            case .ordered, .inProduction, .shipped:
-                deliveredMinor = 0
-            }
-
-            funds[index].totalMinor += order.amountMinor
-            funds[index].deliveredMinor += deliveredMinor
-            funds[index].pendingMinor += order.amountMinor - deliveredMinor
+            let value = fundsBreakdown(for: order)
+            funds[index].totalMinor += value.totalMinor
+            funds[index].deliveredMinor += value.deliveredMinor
+            funds[index].pendingMinor += value.pendingMinor
+            funds[index].refundedMinor += value.refundedMinor
+            funds[index].refundPendingMinor += value.refundPendingMinor
+            funds[index].cancelledMinor += value.cancelledMinor
         }
 
         return funds
     }
 
-    private static func exactPartialDeliveredMinor(order: HeldOrder) -> Int64? {
+    /// Confirmed refunds and cancellations are deducted from net delivered value.
+    /// An unresolved refund is shown separately because no requested amount field
+    /// exists and a delivered order can still be awaiting its refund outcome.
+    static func fundsBreakdown(for order: HeldOrder) -> OrderFundsBreakdown {
+        let total = max(0, order.amountMinor)
+
+        if order.resolutionStatus == .cancelled {
+            return OrderFundsBreakdown(
+                totalMinor: total, pendingMinor: 0, deliveredMinor: 0,
+                refundedMinor: 0, refundPendingMinor: 0, cancelledMinor: total,
+                usesDeliveryFallback: false
+            )
+        }
+        if order.resolutionStatus == .refunded {
+            return OrderFundsBreakdown(
+                totalMinor: total, pendingMinor: 0, deliveredMinor: 0,
+                refundedMinor: total, refundPendingMinor: 0, cancelledMinor: 0,
+                usesDeliveryFallback: false
+            )
+        }
+
+        let refunded = min(total, explicitItemMinor(order: order, status: .refunded))
+        let cancelled = min(total - refunded, explicitItemMinor(order: order, status: .cancelled))
+        let hasRecordedDelivery = order.fulfillmentStatus == .delivered
+            || order.fulfillmentStatus == .partiallyShipped
+            || order.items.contains {
+                $0.status == .delivered || $0.status == .shipped || $0.deliveredQuantity > 0
+            }
+
+        var delivered: Int64 = 0
+        var usesDeliveryFallback = false
+        if order.fulfillmentStatus == .delivered && order.items.isEmpty {
+            delivered = max(0, total - refunded - cancelled)
+        } else if hasRecordedDelivery {
+            if let exact = exactDeliveredMinor(order: order) {
+                delivered = min(exact, max(0, total - refunded - cancelled))
+            } else {
+                // Unknown allocations stay pending instead of inventing a refund
+                // amount or treating the whole order as delivered.
+                usesDeliveryFallback = true
+            }
+        }
+
+        let accounted = min(total, delivered + refunded + cancelled)
+        let pending = total - accounted
+        let refundPending: Int64
+        switch order.resolutionStatus {
+        case .refundRequested, .disputed:
+            refundPending = max(0, total - refunded - cancelled)
+        case .none, .cancelled, .refunded:
+            refundPending = 0
+        }
+
+        return OrderFundsBreakdown(
+            totalMinor: total,
+            pendingMinor: pending,
+            deliveredMinor: delivered,
+            refundedMinor: refunded,
+            refundPendingMinor: refundPending,
+            cancelledMinor: cancelled,
+            usesDeliveryFallback: usesDeliveryFallback
+        )
+    }
+
+    private static func explicitItemMinor(order: HeldOrder, status: ItemStatus) -> Int64 {
+        order.items.reduce(0) { result, item in
+            guard item.status == status, let amount = item.amountMinor, amount > 0 else {
+                return result
+            }
+            return result + amount
+        }
+    }
+
+    private static func exactDeliveredMinor(order: HeldOrder) -> Int64? {
         guard !order.items.isEmpty else { return nil }
 
         var allocatedTotal: Int64 = 0
@@ -136,6 +218,7 @@ enum AttentionEngine {
         var deliveredMinor: Int64 = 0
         for item in order.items {
             guard let amountMinor = item.amountMinor else { return nil }
+            guard item.status != .cancelled && item.status != .refunded else { continue }
             let quantity = item.quantity
             let deliveredQuantity = item.status == .delivered
                 ? quantity

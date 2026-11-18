@@ -32,6 +32,9 @@ struct OCRAmountCandidate: Equatable {
 }
 
 struct OCRExtractedCandidates: Equatable {
+    let productTitles: [OCRTextCandidate]
+    let vendors: [OCRTextCandidate]
+    let estimatedDeliveryTexts: [OCRTextCandidate]
     let orderNumbers: [OCRTextCandidate]
     let dates: [OCRDateCandidate]
     let totals: [OCRAmountCandidate]
@@ -78,6 +81,30 @@ struct OCREngine {
         return try await recognizeText(in: image)
     }
 
+    /// Recognizes multiple document-camera pages without applying any result.
+    func recognizeText(dataItems: [Data]) async throws -> OCRResult {
+        var pages: [OCRResult] = []
+        for data in dataItems {
+            pages.append(try await recognizeText(data: data))
+        }
+        guard let first = pages.first else { throw OCREngineError.invalidImage }
+        guard pages.count > 1 else { return first }
+        return OCRResult(
+            fullText: pages.map(\.fullText).joined(separator: "\n\n"),
+            lines: pages.flatMap(\.lines),
+            candidates: OCRExtractedCandidates(
+                productTitles: pages.flatMap { $0.candidates.productTitles },
+                vendors: pages.flatMap { $0.candidates.vendors },
+                estimatedDeliveryTexts: pages.flatMap { $0.candidates.estimatedDeliveryTexts },
+                orderNumbers: pages.flatMap { $0.candidates.orderNumbers },
+                dates: pages.flatMap { $0.candidates.dates },
+                totals: pages.flatMap { $0.candidates.totals }
+            ),
+            requiresUserConfirmation: true,
+            limitations: first.limitations
+        )
+    }
+
     func recognizeText(in image: CGImage) async throws -> OCRResult {
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
@@ -85,6 +112,15 @@ struct OCREngine {
                 request.recognitionLevel = .accurate
                 request.usesLanguageCorrection = true
                 request.minimumTextHeight = 0.015
+                if let supported = try? VNRecognizeTextRequest.supportedRecognitionLanguages(
+                    for: .accurate,
+                    revision: VNRecognizeTextRequestRevision3
+                ) {
+                    let languages = ["en-US", "zh-Hans"].filter { supported.contains($0) }
+                    if !languages.isEmpty {
+                        request.recognitionLanguages = languages
+                    }
+                }
 
                 do {
                     let handler = VNImageRequestHandler(cgImage: image, options: [:])
@@ -111,13 +147,86 @@ struct OCREngine {
             fullText: fullText,
             lines: lines,
             candidates: OCRExtractedCandidates(
+                productTitles: extractLabeledText(
+                    from: lines,
+                    labels: #"\b(?:product(?:\s+name)?|item(?:\s+name|\s+description)?|description)\b|商品名称|商品|产品名称|产品|品名"#,
+                    confidenceMultiplier: 0.72
+                ),
+                vendors: extractLabeledText(
+                    from: lines,
+                    labels: #"\b(?:vendor|seller|merchant|store|sold\s+by)\b|商家|卖家|商户|店铺|供应商"#,
+                    confidenceMultiplier: 0.76
+                ),
+                estimatedDeliveryTexts: extractDeliveryEstimates(from: lines),
                 orderNumbers: extractOrderNumbers(from: lines),
                 dates: extractDates(from: lines),
                 totals: extractTotals(from: lines)
             ),
             requiresUserConfirmation: true,
-            limitations: "Text recognition and field extraction can be wrong, especially for receipts, currencies, dates, and similar-looking characters. Review every suggestion before using it."
+            limitations: "Text recognition and field extraction can be wrong, especially for product names, sellers, delivery wording, currencies, dates, and similar-looking characters. Confidence is a heuristic hint, not certainty. Review every suggestion and its source line before using it."
         )
+    }
+
+    private static func extractLabeledText(
+        from lines: [OCRRecognizedLine],
+        labels: String,
+        confidenceMultiplier: Double
+    ) -> [OCRTextCandidate] {
+        let pattern = "(?i)(?:\(labels))\\s*[:：\\-–—]?\\s*(.*)"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
+        var results: [OCRTextCandidate] = []
+        var seen = Set<String>()
+        for (index, line) in lines.enumerated() {
+            let range = NSRange(line.text.startIndex..., in: line.text)
+            guard let match = regex.firstMatch(in: line.text, range: range),
+                  match.numberOfRanges > 1 else { continue }
+            var value = ""
+            if let valueRange = Range(match.range(at: 1), in: line.text) {
+                value = cleanedCandidate(String(line.text[valueRange]))
+            }
+            if value.isEmpty, lines.indices.contains(index + 1) {
+                value = cleanedCandidate(lines[index + 1].text)
+            }
+            guard value.count >= 2 else { continue }
+            value = String(value.prefix(240))
+            let key = value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            guard seen.insert(key).inserted else { continue }
+            results.append(OCRTextCandidate(
+                value: value,
+                sourceText: line.text,
+                confidence: min(0.88, line.confidence * confidenceMultiplier)
+            ))
+            if results.count == 5 { break }
+        }
+        return results
+    }
+
+    private static func extractDeliveryEstimates(from lines: [OCRRecognizedLine]) -> [OCRTextCandidate] {
+        let pattern = #"(?i)\b(?:estimated\s+(?:delivery|arrival)|delivery\s+estimate|expected\s+delivery|estimated\s+ship(?:ping|ment)?|ships?\s+in|arrives?|delivers?)\b|预计(?:送达|交付|发货|到货)|送达时间|交付时间|发货时间|到货时间"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [] }
+        var results: [OCRTextCandidate] = []
+        var seen = Set<String>()
+        for line in lines {
+            let range = NSRange(line.text.startIndex..., in: line.text)
+            guard regex.firstMatch(in: line.text, range: range) != nil else { continue }
+            let value = cleanedCandidate(line.text)
+            guard value.count >= 2 else { continue }
+            let key = value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            guard seen.insert(key).inserted else { continue }
+            results.append(OCRTextCandidate(
+                value: String(value.prefix(300)),
+                sourceText: line.text,
+                confidence: min(0.85, line.confidence * 0.7)
+            ))
+            if results.count == 5 { break }
+        }
+        return results
+    }
+
+    private static func cleanedCandidate(_ text: String) -> String {
+        text.trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: CharacterSet(charactersIn: ":：-–—"))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private static func extractOrderNumbers(from lines: [OCRRecognizedLine]) -> [OCRTextCandidate] {

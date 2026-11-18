@@ -211,7 +211,7 @@ struct UpdateDeliverySheet: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Delivered is derived only when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped.")
+                    Text("An order without line items can be marked Delivered directly. With items, Delivered is derived when every noncancelled item has its full quantity delivered. Any shipped or partially delivered item otherwise keeps the order partially shipped.")
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }

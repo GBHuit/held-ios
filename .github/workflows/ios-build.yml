@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 30
     env:
       SCHEME: Held
@@ -36,11 +36,11 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Select Xcode 16
+      - name: Select latest stable Xcode 26
         run: |
           : > build.log
-          XCODE_APP=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1)
-          if [ -z "$XCODE_APP" ]; then echo "No Xcode 16 found on runner" >&2; ls /Applications | grep -i xcode; exit 1; fi
+          XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -Ev 'beta|RC' | sort -V | tail -1)
+          if [ -z "$XCODE_APP" ]; then echo "No stable Xcode 26 found on runner" >&2; ls /Applications | grep -i xcode; exit 1; fi
           sudo xcode-select -s "$XCODE_APP/Contents/Developer"
           xcodebuild -version
 
@@ -51,7 +51,7 @@ jobs:
           cat "$PART_DIR"/part-* > "${ICON_BASE}.base64"
           base64 --decode < "${ICON_BASE}.base64" > "${ICON_BASE}.png"
           test -s "${ICON_BASE}.png"
-          echo "0133304076798e14d22f4a2ea8b869f891288b5cf1b7b794504778291765c1bb  ${ICON_BASE}.png" | shasum -a 256 -c -
+          echo "225f4f83470d92bb64de57fe6e8411794a9d0674524407cbb1ce67b3e1f66d56  ${ICON_BASE}.png" | shasum -a 256 -c -
 
       - name: Verify project and sources
         run: |

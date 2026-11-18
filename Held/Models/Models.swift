@@ -513,17 +513,19 @@ final class AppSettings {
     var leadDays: Int
     var preferredColorSchemeRaw: String
     var lastSelectedTab: Int
+    var didInstallDebugSeed: Bool = false
 
     init(
         id: String = "main",
-        weeklyDigest: Bool = true,
-        remindersEnabled: Bool = true,
+        weeklyDigest: Bool = false,
+        remindersEnabled: Bool = false,
         darkMode: Bool = false,
         proUnlocked: Bool = false,
         staleDays: Int = 21,
         leadDays: Int = 7,
         preferredColorSchemeRaw: String = "system",
-        lastSelectedTab: Int = 0
+        lastSelectedTab: Int = 0,
+        didInstallDebugSeed: Bool = false
     ) {
         self.id = id
         self.weeklyDigest = weeklyDigest
@@ -534,6 +536,7 @@ final class AppSettings {
         self.leadDays = leadDays
         self.preferredColorSchemeRaw = preferredColorSchemeRaw
         self.lastSelectedTab = lastSelectedTab
+        self.didInstallDebugSeed = didInstallDebugSeed
     }
 
     /// Fetches or inserts the singleton. The caller remains responsible for saving.
@@ -558,22 +561,41 @@ final class AppSettings {
 
 // MARK: - Attention value types
 
+struct OrderFundsBreakdown {
+    var totalMinor: Int64
+    var pendingMinor: Int64
+    var deliveredMinor: Int64
+    var refundedMinor: Int64
+    var refundPendingMinor: Int64
+    var cancelledMinor: Int64
+    var usesDeliveryFallback: Bool
+}
+
 struct CurrencyFunds {
     var currency: String
     var totalMinor: Int64
     var pendingMinor: Int64
     var deliveredMinor: Int64
+    var refundedMinor: Int64
+    var refundPendingMinor: Int64
+    var cancelledMinor: Int64
 
     init(
         currency: String,
         totalMinor: Int64 = 0,
         pendingMinor: Int64 = 0,
-        deliveredMinor: Int64 = 0
+        deliveredMinor: Int64 = 0,
+        refundedMinor: Int64 = 0,
+        refundPendingMinor: Int64 = 0,
+        cancelledMinor: Int64 = 0
     ) {
         self.currency = currency
         self.totalMinor = totalMinor
         self.pendingMinor = pendingMinor
         self.deliveredMinor = deliveredMinor
+        self.refundedMinor = refundedMinor
+        self.refundPendingMinor = refundPendingMinor
+        self.cancelledMinor = cancelledMinor
     }
 }
 

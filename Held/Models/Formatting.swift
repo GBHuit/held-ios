@@ -62,13 +62,23 @@ func formatMoney(minor: Int64, currency: CurrencyCode) -> String {
     formatMoney(minor: minor, currency: currency.rawValue)
 }
 
-/// Web-equivalent short date in UTC, for example "Nov 12, 2026".
+/// User-facing dates always follow the device's calendar and time zone.
+/// Export and backup dates continue to use the ISO8601 helpers below.
 func formatDate(_ date: Date) -> String {
     let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "en_US_POSIX")
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    formatter.dateFormat = "MMM d, yyyy"
+    formatter.locale = .current
+    formatter.calendar = .current
+    formatter.timeZone = .current
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .none
     return formatter.string(from: date)
+}
+
+/// Rejects 12–19 digit card numbers, including common space/hyphen grouping.
+/// Payment method text should contain only a method name and optional last four.
+func containsFullCardNumber(_ text: String) -> Bool {
+    let pattern = #"(?<![0-9])(?:[0-9][ -]?){11,18}[0-9](?![0-9])"#
+    return text.range(of: pattern, options: .regularExpression) != nil
 }
 
 func iso8601Date(from string: String) -> Date? {

@@ -114,3 +114,75 @@ struct DocumentScanner: UIViewControllerRepresentable {
         }
     }
 }
+
+
+/// VisionKit document-camera capture for new-order OCR. The scanned images are
+/// returned to the caller for review; this type never writes an order or evidence.
+@available(iOS 13.0, *)
+struct DocumentCameraScanner: UIViewControllerRepresentable {
+    typealias UIViewControllerType = VNDocumentCameraViewController
+
+    static var isSupported: Bool {
+        VNDocumentCameraViewController.isSupported
+    }
+
+    let onComplete: ([UIImage]) -> Void
+    let onCancel: () -> Void
+    let onError: (String) -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onComplete: onComplete, onCancel: onCancel, onError: onError)
+    }
+
+    func makeUIViewController(context: Context) -> VNDocumentCameraViewController {
+        let scanner = VNDocumentCameraViewController()
+        scanner.delegate = context.coordinator
+        return scanner
+    }
+
+    func updateUIViewController(_ scanner: VNDocumentCameraViewController, context: Context) {
+        context.coordinator.onComplete = onComplete
+        context.coordinator.onCancel = onCancel
+        context.coordinator.onError = onError
+    }
+
+    static func dismantleUIViewController(
+        _ scanner: VNDocumentCameraViewController,
+        coordinator: Coordinator
+    ) {
+        scanner.delegate = nil
+    }
+
+    @MainActor
+    final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
+        var onComplete: ([UIImage]) -> Void
+        var onCancel: () -> Void
+        var onError: (String) -> Void
+
+        init(
+            onComplete: @escaping ([UIImage]) -> Void,
+            onCancel: @escaping () -> Void,
+            onError: @escaping (String) -> Void
+        ) {
+            self.onComplete = onComplete
+            self.onCancel = onCancel
+            self.onError = onError
+        }
+
+        func documentCameraViewController(
+            _ controller: VNDocumentCameraViewController,
+            didFinishWith scan: VNDocumentCameraScan
+        ) {
+            let images = (0..<scan.pageCount).map { scan.imageOfPage(at: $0) }
+            guard !images.isEmpty else {
+                onError("The scan did not contain a readable page. Choose a photo or continue manually.")
+                return
+            }
+            onComplete(images)
+        }
+
+        func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
+            onCancel()
+        }
+    }
+}

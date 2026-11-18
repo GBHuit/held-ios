@@ -59,6 +59,7 @@ extension OrderDetailView {
         order.lastUserUpdateAt = Date()
         do {
             try saveContext(action: "Fulfillment status")
+            synchronizeReminders()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -69,6 +70,7 @@ extension OrderDetailView {
         order.lastUserUpdateAt = Date()
         do {
             try saveContext(action: "Resolution status")
+            synchronizeReminders()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -77,6 +79,7 @@ extension OrderDetailView {
     func applyOrderEdit(_ draft: OrderEditDraft) throws {
         let title = try OrderDetailValidation.require(draft.title, field: "Order title")
         let amountMinor = try OrderDetailValidation.minorUnits(from: draft.amountText)
+        let paymentMethod = try OrderDetailValidation.paymentMethod(draft.paymentMethod)
         let sourceURL = try OrderDetailValidation.optionalURL(draft.sourceURL)
         let previousEstimate = order.estimateEnd
 
@@ -86,7 +89,7 @@ extension OrderDetailView {
         order.orderedAt = draft.orderedAt
         order.amountMinor = amountMinor
         order.currencyCode = draft.currencyCode
-        order.paymentMethod = OrderDetailValidation.trimmed(draft.paymentMethod)
+        order.paymentMethod = paymentMethod
         order.sourceURL = sourceURL
         order.estimateEnd = draft.estimateEnd
         order.nextCheckAt = draft.nextCheckAt
@@ -121,6 +124,7 @@ extension OrderDetailView {
         }
 
         try saveContext(action: "Order changes")
+        synchronizeReminders()
     }
 
     func applyNotesUpdate(_ draft: OrderNotesDraft) throws {
@@ -136,6 +140,7 @@ extension OrderDetailView {
 
 extension OrderDetailView {
     var allNoncancelledItemsAreDelivered: Bool {
+        guard !order.items.isEmpty else { return true }
         let items = order.items.filter { $0.status != .cancelled && $0.quantity > 0 }
         return !items.isEmpty && items.allSatisfy {
             $0.status == .delivered && $0.deliveredQuantity >= $0.quantity
@@ -155,11 +160,11 @@ extension OrderDetailView {
         }
 
         let noncancelled = order.items.filter { $0.status != .cancelled && $0.quantity > 0 }
-        let allDelivered = !noncancelled.isEmpty && noncancelled.allSatisfy {
+        let allDelivered = order.items.isEmpty || (!noncancelled.isEmpty && noncancelled.allSatisfy {
             $0.status == .delivered && $0.deliveredQuantity >= $0.quantity
-        }
+        })
         let hasPartialProgress = order.items.contains {
-            guard $0.status != .cancelled else { return false }
+            guard $0.status != .cancelled && $0.status != .refunded else { return false }
             return $0.deliveredQuantity > 0 || $0.status == .shipped || $0.status == .delivered
         }
 
@@ -174,6 +179,7 @@ extension OrderDetailView {
 
         order.lastUserUpdateAt = Date()
         try saveContext(action: "Delivery update")
+        synchronizeReminders()
     }
 }
 
@@ -230,17 +236,23 @@ extension OrderDetailView {
     }
 
     func requestNotificationAuthorization() {
-        synchronizeReminders(requestAuthorization: true)
+        Task {
+            if reminderScheduler.authorizationStatus == .notDetermined {
+                _ = await reminderScheduler.requestAuthorization()
+            }
+            synchronizeReminders()
+        }
     }
 
     func synchronizeReminders(requestAuthorization: Bool = false) {
         Task {
             do {
-                if requestAuthorization && reminderScheduler.authorizationStatus == .notDetermined {
-                    _ = await reminderScheduler.requestAuthorization()
-                }
                 let orders = try modelContext.fetch(FetchDescriptor<HeldOrder>())
                 let currentSettings = try currentSettings()
+                if requestAuthorization && currentSettings.remindersEnabled,
+                   reminderScheduler.authorizationStatus == .notDetermined {
+                    _ = await reminderScheduler.requestAuthorization()
+                }
                 await reminderScheduler.sync(orders: orders, settings: currentSettings)
                 if let schedulerError = reminderScheduler.lastErrorMessage {
                     errorMessage = schedulerError
