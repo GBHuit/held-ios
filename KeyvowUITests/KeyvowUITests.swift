@@ -22,6 +22,15 @@ final class KeyvowUITests: XCTestCase {
     }
 
     func testEnglishScreenshotsAndLanguageSwitch() {
+        let startupAlert = app.alerts.firstMatch
+        if startupAlert.waitForExistence(timeout: 2) {
+            attachScreenshot(named: "00-startup-alert")
+            let messages = startupAlert.staticTexts.allElementsBoundByIndex
+                .map(\.label)
+                .joined(separator: " | ")
+            XCTFail("A startup alert blocked the main interface: \(messages)")
+        }
+
         showEnglishHome()
         requireExists(app.staticTexts["Keyvow"], "The Keyvow home title did not appear")
 

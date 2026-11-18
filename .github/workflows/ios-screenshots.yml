@@ -69,7 +69,6 @@ jobs:
             -configuration Debug \
             -destination "platform=iOS Simulator,name=$DEVICE_NAME,OS=latest" \
             -resultBundlePath "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" \
-            CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee "Keyvow-$ARTIFACT_NAME-UI.log"
 
       - name: Export real simulator screenshot attachments
@@ -86,8 +85,23 @@ jobs:
             --path "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" \
             --output-path "Artifacts/$ARTIFACT_NAME"
           python3 - "Artifacts/$ARTIFACT_NAME" <<'PY'
-          import os, pathlib, sys
+          import json, os, pathlib, sys
           root = pathlib.Path(sys.argv[1])
+          manifest_path = root / "manifest.json"
+          if manifest_path.exists():
+              for test in json.loads(manifest_path.read_text()):
+                  for attachment in test.get("attachments", []):
+                      source = root / attachment["exportedFileName"]
+                      if not source.exists() or source.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
+                          continue
+                      readable = pathlib.Path(attachment["suggestedHumanReadableName"]).name
+                      if not readable.lower().endswith(".png"):
+                          readable += ".png"
+                      destination = root / readable
+                      if destination.exists() and destination != source:
+                          destination = root / f"{source.stem}-{readable}"
+                      if destination != source:
+                          source.rename(destination)
           images = sorted(root.rglob("*.png"))
           required_count = 7 if os.environ["REQUIRE_COMPLETE"] == "true" else 0
           if len(images) < required_count:
