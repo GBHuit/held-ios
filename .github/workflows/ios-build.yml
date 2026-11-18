@@ -78,6 +78,19 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             clean build 2>&1 | tee build.log
 
+      - name: Run unit tests on iOS Simulator
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && !inputs.signed_device_ipa) }}
+        run: |
+          set -o pipefail
+          : > test.log
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            CODE_SIGNING_ALLOWED=NO \
+            test 2>&1 | tee test.log
+
       - name: Validate signing inputs
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.signed_device_ipa }}
         env:
@@ -182,7 +195,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: held-simulator-build-log
-          path: build.log
+          path: |
+            build.log
+            test.log
           if-no-files-found: warn
           retention-days: 14
 
