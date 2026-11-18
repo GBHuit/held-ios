@@ -109,6 +109,26 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             test 2>&1 | tee test.log
 
+      - name: Archive Release without signing
+        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && !inputs.signed_device_ipa && !inputs.app_store_release) }}
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Keyvow-unsigned.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO \
+            clean archive 2>&1 | tee release-archive.log
+          APP_PATH="$RUNNER_TEMP/Keyvow-unsigned.xcarchive/Products/Applications/Held.app"
+          SHARE_PATH="$APP_PATH/PlugIns/KeyvowShareExtension.appex"
+          test -d "$APP_PATH"
+          test -d "$SHARE_PATH"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Info.plist")" = "$BUNDLE_ID"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$APP_PATH/Info.plist")" = "Keyvow"
+          echo "Unsigned Release archive structure and Share Extension verified"
+
       - name: Validate signing inputs
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.signed_device_ipa }}
         env:
@@ -216,6 +236,7 @@ jobs:
           path: |
             build.log
             test.log
+            release-archive.log
           if-no-files-found: warn
           retention-days: 14
 
