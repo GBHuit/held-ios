@@ -5,6 +5,7 @@ struct HomeView: View {
     @Query private var orders: [HeldOrder]
     @Query private var settings: [AppSettings]
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var localization: LocalizationCenter
 
     @State private var showingAddOrder = false
 
@@ -31,9 +32,9 @@ struct HomeView: View {
 
     private var greeting: String {
         switch Calendar.current.component(.hour, from: Date()) {
-        case 5..<12: return "Good morning."
-        case 12..<18: return "Good afternoon."
-        default: return "Good evening."
+        case 5..<12: return L("Good morning.")
+        case 12..<18: return L("Good afternoon.")
+        default: return L("Good evening.")
         }
     }
 
@@ -45,9 +46,9 @@ struct HomeView: View {
                         header
                         HeldEmptyView(
                             icon: "shippingbox",
-                            title: "Give every promise a place",
-                            message: "Add an order to keep its original estimate, progress, evidence, and next check-in together.",
-                            buttonTitle: "Add your first order",
+                            title: L("Give every promise a place"),
+                            message: L("Add an order to keep its original estimate, progress, evidence, and next check-in together."),
+                            buttonTitle: L("Add your first order"),
                             action: { showingAddOrder = true }
                         )
                         .frame(minHeight: 360)
@@ -74,7 +75,7 @@ struct HomeView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
-                    .accessibilityLabel("Add a new order")
+                    .accessibilityLabel(L("Add a new order"))
                 }
             }
             .sheet(isPresented: $showingAddOrder) {
@@ -88,7 +89,7 @@ struct HomeView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.small) {
-            Text("Held")
+            Text(L("Keyvow"))
                 .heldDisplay(size: 36)
                 .foregroundStyle(HeldColor.accent)
                 .accessibilityAddTraits(.isHeader)
@@ -97,7 +98,7 @@ struct HomeView: View {
                 .heldDisplay(size: 30)
                 .foregroundStyle(HeldColor.ink)
 
-            Text("Keep the original promise in view, and the next step close.")
+            Text(L("Keep the original promise in view, and the next step close."))
                 .heldBody()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
@@ -109,7 +110,7 @@ struct HomeView: View {
         Button {
             showingAddOrder = true
         } label: {
-            Label("Add a new order", systemImage: "plus")
+            Label(L("Add a new order"), systemImage: "plus")
                 .frame(maxWidth: .infinity)
         }
         .heldButtonStyle()
@@ -122,7 +123,7 @@ struct HomeView: View {
         return HeldCard {
             VStack(alignment: .leading, spacing: HeldSpacing.medium) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(activeOrders.isEmpty ? "Nothing open" : "\(activeOrders.count) \(activeOrders.count == 1 ? "open order" : "open orders")")
+                    Text(activeOrders.isEmpty ? L("Nothing open") : L(activeOrders.count == 1 ? "%1$lld open order" : "%1$lld open orders", Int64(activeOrders.count)))
                         .heldTitle()
                         .foregroundStyle(HeldColor.ink)
                     Spacer()
@@ -133,18 +134,18 @@ struct HomeView: View {
 
                 if pendingFunds.isEmpty {
                     Text(activeOrders.isEmpty
-                         ? "Your delivered and resolved orders remain here whenever you need them."
-                         : "Your open orders have no pending amount recorded.")
+                         ? L("Your delivered and resolved orders remain here whenever you need them.")
+                         : L("Your open orders have no pending amount recorded."))
                         .heldBody()
                         .foregroundStyle(HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
                     VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                        Text("Still in motion")
+                        Text(L("Still in motion"))
                             .heldCaption()
                             .foregroundStyle(HeldColor.secondaryInk)
                         ForEach(pendingFunds, id: \.currency) { funds in
-                            Text(formatMoney(minor: funds.pendingMinor, currency: funds.currency))
+                            Text(localization.money(minor: funds.pendingMinor, currency: funds.currency))
                                 .font(.title3.weight(.semibold))
                                 .foregroundStyle(HeldColor.accent)
                         }
@@ -152,7 +153,7 @@ struct HomeView: View {
                 }
 
                 if !attentionItems.isEmpty {
-                    Text("\(attentionItems.count) \(attentionItems.count == 1 ? "order needs" : "orders need") a little attention.")
+                    Text(L(attentionItems.count == 1 ? "%1$lld order needs a little attention." : "%1$lld orders need a little attention.", Int64(attentionItems.count)))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
@@ -165,14 +166,14 @@ struct HomeView: View {
     private var attentionSection: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Needs attention",
-                subtitle: attentionItems.isEmpty ? nil : "Ordered by the promise that calls for action first."
+                title: L("Needs attention"),
+                subtitle: attentionItems.isEmpty ? nil : L("Ordered by the promise that calls for action first.")
             )
 
             if attentionItems.isEmpty {
                 HomeOrdersMessage(
-                    title: "All quiet for now",
-                    message: "No estimate, check-in, deadline, or partial delivery needs your attention."
+                    title: L("All quiet for now"),
+                    message: L("No estimate, check-in, deadline, or partial delivery needs your attention.")
                 )
             } else {
                 ForEach(attentionItems, id: \.order.id) { attention in
@@ -190,8 +191,8 @@ struct HomeView: View {
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.medium) {
             HeldSectionHeader(
-                title: "Recent orders",
-                subtitle: "A little progress, without losing the story."
+                title: L("Recent orders"),
+                subtitle: L("A little progress, without losing the story.")
             )
 
             ForEach(Array(recentOrders.prefix(3)), id: \.id) { order in
@@ -228,6 +229,8 @@ struct HomeView: View {
 
 private struct HomeAttentionCard: View {
     let attention: OrderAttention
+
+    @EnvironmentObject private var localization: LocalizationCenter
 
     var body: some View {
         HeldCard(padding: HeldSpacing.medium) {
@@ -270,7 +273,7 @@ private struct HomeAttentionCard: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityHint("Opens order details")
+            .accessibilityHint(L("Opens order details"))
         }
         .contentShape(Rectangle())
     }

@@ -12,11 +12,11 @@ enum FulfillmentStatus: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .ordered: return "Ordered"
-        case .inProduction: return "In production"
-        case .partiallyShipped: return "Partially shipped"
-        case .shipped: return "Shipped"
-        case .delivered: return "Delivered"
+        case .ordered: return L("Ordered")
+        case .inProduction: return L("In production")
+        case .partiallyShipped: return L("Partially shipped")
+        case .shipped: return L("Shipped")
+        case .delivered: return L("Delivered")
         }
     }
 
@@ -40,11 +40,11 @@ enum ItemStatus: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .pending: return "Pending"
-        case .shipped: return "Shipped"
-        case .delivered: return "Delivered"
-        case .cancelled: return "Cancelled"
-        case .refunded: return "Refunded"
+        case .pending: return L("Pending")
+        case .shipped: return L("Shipped")
+        case .delivered: return L("Delivered")
+        case .cancelled: return L("Cancelled")
+        case .refunded: return L("Refunded")
         }
     }
 
@@ -68,11 +68,11 @@ enum ResolutionStatus: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .none: return "No resolution"
-        case .cancelled: return "Cancelled"
-        case .refundRequested: return "Refund requested"
-        case .refunded: return "Refunded"
-        case .disputed: return "Disputed"
+        case .none: return L("No resolution")
+        case .cancelled: return L("Cancelled")
+        case .refundRequested: return L("Refund requested")
+        case .refunded: return L("Refunded")
+        case .disputed: return L("Disputed")
         }
     }
 
@@ -98,13 +98,13 @@ enum MilestoneKind: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .purchase: return "Purchase"
-        case .update: return "Update"
-        case .delay: return "Delay"
-        case .shipment: return "Shipment"
-        case .delivery: return "Delivery"
-        case .refund: return "Refund"
-        case .dispute: return "Dispute"
+        case .purchase: return L("Purchase")
+        case .update: return L("Update")
+        case .delay: return L("Delay")
+        case .shipment: return L("Shipment")
+        case .delivery: return L("Delivery")
+        case .refund: return L("Refund")
+        case .dispute: return L("Dispute")
         }
     }
 
@@ -130,11 +130,11 @@ enum EvidenceKind: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .receipt: return "Receipt"
-        case .originalListing: return "Original listing"
-        case .terms: return "Terms"
-        case .communication: return "Communication"
-        case .shipping: return "Shipping"
+        case .receipt: return L("Receipt")
+        case .originalListing: return L("Original listing")
+        case .terms: return L("Terms")
+        case .communication: return L("Communication")
+        case .shipping: return L("Shipping")
         }
     }
 
@@ -155,8 +155,8 @@ enum ReminderKind: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .checkIn: return "Check-in"
-        case .deadline: return "Deadline"
+        case .checkIn: return L("Check-in")
+        case .deadline: return L("Deadline")
         }
     }
 
@@ -177,11 +177,11 @@ enum AttentionReasonKind: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .estimate: return "Estimate"
-        case .check: return "Check-in"
-        case .deadline: return "Deadline"
-        case .stale: return "Stale"
-        case .partial: return "Partial delivery"
+        case .estimate: return L("Estimate")
+        case .check: return L("Check-in")
+        case .deadline: return L("Deadline")
+        case .stale: return L("Stale")
+        case .partial: return L("Partial delivery")
         }
     }
 
@@ -520,6 +520,7 @@ final class AppSettings {
     var staleDays: Int
     var leadDays: Int
     var preferredColorSchemeRaw: String
+    var preferredLanguageRaw: String = AppLanguage.system.rawValue
     var lastSelectedTab: Int
     var didInstallDebugSeed: Bool = false
 
@@ -532,6 +533,7 @@ final class AppSettings {
         staleDays: Int = 21,
         leadDays: Int = 7,
         preferredColorSchemeRaw: String = "system",
+        preferredLanguageRaw: String = AppLanguage.system.rawValue,
         lastSelectedTab: Int = 0,
         didInstallDebugSeed: Bool = false
     ) {
@@ -543,6 +545,7 @@ final class AppSettings {
         self.staleDays = staleDays
         self.leadDays = leadDays
         self.preferredColorSchemeRaw = preferredColorSchemeRaw
+        self.preferredLanguageRaw = preferredLanguageRaw
         self.lastSelectedTab = lastSelectedTab
         self.didInstallDebugSeed = didInstallDebugSeed
     }

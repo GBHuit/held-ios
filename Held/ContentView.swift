@@ -4,6 +4,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject private var localization: LocalizationCenter
     @Query private var orders: [HeldOrder]
     @Query private var settings: [AppSettings]
     @StateObject private var reminders = ReminderScheduler()
@@ -40,19 +41,19 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
-                .tabItem { Label("Today", systemImage: "sun.horizon") }
+                .tabItem { Label(L("Today"), systemImage: "sun.horizon") }
                 .tag(0)
 
             OrdersView()
-                .tabItem { Label("Orders", systemImage: "shippingbox") }
+                .tabItem { Label(L("Orders"), systemImage: "shippingbox") }
                 .tag(1)
 
             FundsView()
-                .tabItem { Label("Funds", systemImage: "chart.bar") }
+                .tabItem { Label(L("Funds"), systemImage: "chart.bar") }
                 .tag(2)
 
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tabItem { Label(L("Settings"), systemImage: "gearshape") }
                 .tag(3)
         }
         .tint(HeldColor.accent)
@@ -69,6 +70,7 @@ struct ContentView: View {
                 try SeedData.installIfNeeded(context: modelContext)
                 let currentSettings = try AppSettings.fetchOrCreate(context: modelContext)
                 selectedTab = min(3, max(0, currentSettings.lastSelectedTab))
+                LocalizationCenter.shared.setLanguage(AppLanguage(rawValueOrSystem: currentSettings.preferredLanguageRaw))
                 try modelContext.save()
                 let persistedOrders = try modelContext.fetch(FetchDescriptor<HeldOrder>())
                 await reminders.sync(orders: persistedOrders, settings: currentSettings)
@@ -76,7 +78,7 @@ struct ContentView: View {
                 try? modelContext.save()
                 loadPendingShare()
             } catch {
-                bootstrapError = "Held could not prepare local storage. Please restart the app. \(error.localizedDescription)"
+                bootstrapError = L("Keyvow could not prepare local storage. Please restart the app. %@", error.localizedDescription)
             }
         }
         .onChange(of: selectedTab) { _, newValue in
@@ -96,21 +98,21 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .heldOpenOrders)) { _ in
             selectedTab = 1
         }
-        .alert("Local storage needs attention", isPresented: Binding(
+        .alert(L("Local storage needs attention"), isPresented: Binding(
             get: { bootstrapError != nil },
             set: { if !$0 { bootstrapError = nil } }
         )) {
-            Button("OK", role: .cancel) { bootstrapError = nil }
+            Button(L("OK"), role: .cancel) { bootstrapError = nil }
         } message: {
             Text(bootstrapError ?? "")
         }
-        .alert("Shared item needs attention", isPresented: Binding(
+        .alert(L("Shared item needs attention"), isPresented: Binding(
             get: { pendingShareError != nil },
             set: { if !$0 { pendingShareError = nil } }
         )) {
-            Button("OK", role: .cancel) { pendingShareError = nil }
+            Button(L("OK"), role: .cancel) { pendingShareError = nil }
         } message: {
-            Text(pendingShareError ?? "Please try sharing the item again.")
+            Text(pendingShareError ?? L("Please try sharing the item again."))
         }
     }
 

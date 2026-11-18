@@ -1,6 +1,6 @@
 import Foundation
 
-private let heldStatusLabels: [String: String] = [
+private let heldStatusLabelKeys: [String: String] = [
     "ordered": "Ordered",
     "inProduction": "In production",
     "partiallyShipped": "Partially shipped",
@@ -15,9 +15,11 @@ private let heldStatusLabels: [String: String] = [
 ]
 
 /// Matches the Web status-label behavior, including readable unknown raw values.
+/// Known machine values are localized; unknown imported values remain untouched
+/// apart from the same readable spacing used by the original app.
 func statusLabel(_ status: String) -> String {
-    if let known = heldStatusLabels[status] {
-        return known
+    if let key = heldStatusLabelKeys[status] {
+        return L(key)
     }
 
     let spacedCamelCase = status
@@ -45,33 +47,17 @@ func statusLabel(_ status: String) -> String {
 
 /// Converts minor units with Decimal only; no Double conversion is used.
 func formatMoney(minor: Int64, currency: String) -> String {
-    let value = Decimal(minor) / Decimal(100)
-    let formatter = NumberFormatter()
-    formatter.locale = Locale(identifier: "en_US")
-    formatter.numberStyle = .currency
-    formatter.currencyCode = currency
-
-    if let formatted = formatter.string(from: NSDecimalNumber(decimal: value)) {
-        return formatted
-    }
-
-    return "\(NSDecimalNumber(decimal: value).stringValue) \(currency)"
+    LocalizationCenter.shared.money(minor: minor, currency: currency)
 }
 
 func formatMoney(minor: Int64, currency: CurrencyCode) -> String {
     formatMoney(minor: minor, currency: currency.rawValue)
 }
 
-/// User-facing dates always follow the device's calendar and time zone.
+/// User-facing dates follow the in-app language and the device's time zone.
 /// Export and backup dates continue to use the ISO8601 helpers below.
 func formatDate(_ date: Date) -> String {
-    let formatter = DateFormatter()
-    formatter.locale = .current
-    formatter.calendar = .current
-    formatter.timeZone = .current
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .none
-    return formatter.string(from: date)
+    LocalizationCenter.shared.date(date)
 }
 
 /// Rejects 12–19 digit card numbers, including common space/hyphen grouping.

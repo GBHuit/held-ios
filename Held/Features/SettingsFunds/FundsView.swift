@@ -5,6 +5,7 @@ import SwiftData
 /// totals are introduced here; the figures mirror AttentionEngine.funds.
 public struct FundsView: View {
     @Query(sort: \HeldOrder.orderedAt, order: .reverse) private var orders: [HeldOrder]
+    @EnvironmentObject private var localization: LocalizationCenter
     @State private var expandedCurrencies: Set<String> = []
 
     public init() {}
@@ -18,8 +19,8 @@ public struct FundsView: View {
                     if funds.isEmpty {
                         HeldEmptyView(
                             icon: "shippingbox",
-                            title: "Nothing to account for yet",
-                            message: "When you add an order, Held will show its pending and delivered value in the order’s own currency."
+                            title: L("Nothing to account for yet"),
+                            message: L("When you add an order, Keyvow will show its pending and delivered value in the order’s own currency.")
                         )
                         .frame(minHeight: 360)
                     } else {
@@ -34,7 +35,7 @@ public struct FundsView: View {
                 .padding(.vertical, HeldSpacing.large)
             }
             .heldScreenBackground()
-            .heldNavigationTitle("Funds")
+            .heldNavigationTitle(L("Funds"))
         }
     }
 
@@ -44,23 +45,31 @@ public struct FundsView: View {
 
     private var editorialHeader: some View {
         VStack(alignment: .leading, spacing: HeldSpacing.small) {
-            Text(funds.count > 1 ? "Every currency, kept distinct." : "What’s still on its way.")
+            Text(funds.count > 1 ? L("Every currency, kept distinct.") : L("What’s still on its way."))
                 .heldDisplay(size: 30)
                 .foregroundStyle(HeldColor.ink)
                 .fixedSize(horizontal: false, vertical: true)
 
             if funds.isEmpty {
-                Text("A quiet ledger for money committed to orders and value already received.")
+                Text(L("A quiet ledger for money committed to orders and value already received."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
             } else {
-                Text("\(orders.count) \(orders.count == 1 ? "order" : "orders") across \(funds.count) \(funds.count == 1 ? "currency" : "currencies"). Amounts are never converted or added across currencies.")
+                Text(L("%1$@ across %2$@. Amounts are never converted or added across currencies.", orderCountText, currencyCountText))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private var orderCountText: String {
+        L(orders.count == 1 ? "%1$lld order" : "%1$lld orders", Int64(orders.count))
+    }
+
+    private var currencyCountText: String {
+        L(funds.count == 1 ? "%1$lld currency" : "%1$lld currencies", Int64(funds.count))
     }
 
     private func currencyCard(_ fund: CurrencyFunds) -> some View {
@@ -84,14 +93,14 @@ public struct FundsView: View {
                         Text(fund.currency)
                             .font(.headline)
                             .foregroundStyle(HeldColor.accent)
-                        Text(formatMoney(minor: fund.totalMinor, currency: fund.currency))
+                        Text(localization.money(minor: fund.totalMinor, currency: fund.currency))
                             .heldDisplay(size: 28)
                             .foregroundStyle(HeldColor.ink)
-                            .accessibilityLabel("Total \(formatMoney(minor: fund.totalMinor, currency: fund.currency))")
+                            .accessibilityLabel(L("Total %@", localization.money(minor: fund.totalMinor, currency: fund.currency)))
                     }
                     Spacer(minLength: HeldSpacing.small)
                     HeldBadge(
-                        text: "\(rows.count) \(rows.count == 1 ? "order" : "orders")",
+                        text: L(rows.count == 1 ? "%1$lld order" : "%1$lld orders", Int64(rows.count)),
                         tone: .neutral
                     )
                 }
@@ -130,7 +139,7 @@ public struct FundsView: View {
 
                 if fund.refundPendingMinor > 0 {
                     Label(
-                        "Refund or dispute pending: \(formatMoney(minor: fund.refundPendingMinor, currency: fund.currency)). This is unresolved order value, not a confirmed refund.",
+                        L("Refund or dispute pending: %1$@. This is unresolved order value, not a confirmed refund.", localization.money(minor: fund.refundPendingMinor, currency: fund.currency)),
                         systemImage: "arrow.uturn.backward.circle"
                     )
                     .font(.caption)
@@ -140,16 +149,16 @@ public struct FundsView: View {
 
                 VStack(alignment: .leading, spacing: HeldSpacing.small) {
                     HStack {
-                        Text("Delivered value")
+                        Text(L("Delivered value"))
                             .font(.subheadline)
                             .foregroundStyle(HeldColor.secondaryInk)
                         Spacer()
-                        Text(fund.totalMinor == 0 ? "No value recorded" : percentage(ratio))
+                        Text(fund.totalMinor == 0 ? L("No value recorded") : percentage(ratio))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(HeldColor.ink)
                     }
                     HeldProgressView(value: ratio)
-                        .accessibilityLabel("Delivered value in \(fund.currency)")
+                        .accessibilityLabel(L("Delivered value in %@", fund.currency))
                         .accessibilityValue(percentage(ratio))
                 }
 
@@ -167,7 +176,7 @@ public struct FundsView: View {
                     }
                     .padding(.top, HeldSpacing.small)
                 } label: {
-                    Text("Order breakdown")
+                    Text(L("Order breakdown"))
                         .font(.headline)
                         .foregroundStyle(HeldColor.accent)
                 }
@@ -186,10 +195,10 @@ public struct FundsView: View {
         }
 
         return VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-            Label(title, systemImage: icon)
+            Label(L(title), systemImage: icon)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(color)
-            Text(formatMoney(minor: minor, currency: currency))
+            Text(localization.money(minor: minor, currency: currency))
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(HeldColor.ink)
                 .minimumScaleFactor(0.75)
@@ -221,21 +230,21 @@ public struct FundsView: View {
                 }
             }
 
-            Text("Charged \(formatMoney(minor: row.value.totalMinor, currency: row.order.currencyCode))")
+            Text(L("Charged %@", localization.money(minor: row.value.totalMinor, currency: row.order.currencyCode)))
                 .font(.body.weight(.semibold))
                 .foregroundStyle(HeldColor.ink)
 
             VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                Text("Pending \(formatMoney(minor: row.value.pendingMinor, currency: row.order.currencyCode))")
-                Text("Net delivered \(formatMoney(minor: row.value.deliveredMinor, currency: row.order.currencyCode))")
+                Text(L("Pending %@", localization.money(minor: row.value.pendingMinor, currency: row.order.currencyCode)))
+                Text(L("Net delivered %@", localization.money(minor: row.value.deliveredMinor, currency: row.order.currencyCode)))
                 if row.value.refundedMinor > 0 {
-                    Text("Refunded \(formatMoney(minor: row.value.refundedMinor, currency: row.order.currencyCode))")
+                    Text(L("Refunded %@", localization.money(minor: row.value.refundedMinor, currency: row.order.currencyCode)))
                 }
                 if row.value.cancelledMinor > 0 {
-                    Text("Cancelled \(formatMoney(minor: row.value.cancelledMinor, currency: row.order.currencyCode))")
+                    Text(L("Cancelled %@", localization.money(minor: row.value.cancelledMinor, currency: row.order.currencyCode)))
                 }
                 if row.value.refundPendingMinor > 0 {
-                    Text("Refund or dispute pending \(formatMoney(minor: row.value.refundPendingMinor, currency: row.order.currencyCode))")
+                    Text(L("Refund or dispute pending %@", localization.money(minor: row.value.refundPendingMinor, currency: row.order.currencyCode)))
                         .foregroundStyle(HeldColor.amber)
                 }
             }
@@ -245,16 +254,16 @@ public struct FundsView: View {
 
             VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
                 HeldProgressView(value: row.order.progress)
-                    .accessibilityLabel("Fulfillment progress for \(row.order.title)")
+                    .accessibilityLabel(L("Fulfillment progress for %@", row.order.title))
                     .accessibilityValue(percentage(row.order.progress))
-                Text("Fulfillment \(percentage(row.order.progress))")
+                Text(L("Fulfillment %@", percentage(row.order.progress)))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
 
             if row.value.usesDeliveryFallback {
                 Label(
-                    "Item allocations are missing or incomplete. Unknown delivery value remains pending; only explicit item refunds or cancellations are counted.",
+                    L("Item allocations are missing or incomplete. Unknown delivery value remains pending; only explicit item refunds or cancellations are counted."),
                     systemImage: "info.circle"
                 )
                 .font(.caption)
@@ -262,7 +271,7 @@ public struct FundsView: View {
                 .fixedSize(horizontal: false, vertical: true)
             } else if !row.order.items.isEmpty && row.value.deliveredMinor > 0 {
                 Label(
-                    "Net delivered value is prorated from exact item amounts and quantities, excluding refunded and cancelled lines.",
+                    L("Net delivered value is prorated from exact item amounts and quantities, excluding refunded and cancelled lines."),
                     systemImage: "checklist"
                 )
                 .font(.caption)
@@ -277,24 +286,24 @@ public struct FundsView: View {
     private var allocationExplanation: some View {
         HeldCard(padding: HeldSpacing.medium) {
             VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                Label("How Held counts value", systemImage: "text.book.closed")
+                Label(L("How Keyvow counts value"), systemImage: "text.book.closed")
                     .font(.headline)
                     .foregroundStyle(HeldColor.accent)
                     .accessibilityAddTraits(.isHeader)
 
-                Text("Charged is the gross order amount. A cancelled or fully refunded order moves its full amount to that category. For partial outcomes, only line items explicitly marked refunded or cancelled contribute their recorded line amounts.")
+                Text(L("Charged is the gross order amount. A cancelled or fully refunded order moves its full amount to that category. For partial outcomes, only line items explicitly marked refunded or cancelled contribute their recorded line amounts."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
 
-                Text("Net delivered value excludes confirmed refunds and cancellations. Delivered orders without line items use the remaining order amount. With items, Held prorates delivered quantities only when every line has a nonnegative amount and all line amounts add up exactly to the order total; otherwise unknown value stays pending.")
+                Text(L("Net delivered value excludes confirmed refunds and cancellations. Delivered orders without line items use the remaining order amount. With items, Keyvow prorates delivered quantities only when every line has a nonnegative amount and all line amounts add up exactly to the order total; otherwise unknown value stays pending."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
 
-                Text("Refund requested or disputed shows the remaining unresolved order value separately. It is not a confirmed refund and can coexist with delivered value because no requested refund amount is stored.")
+                Text(L("Refund requested or disputed shows the remaining unresolved order value separately. It is not a confirmed refund and can coexist with delivered value because no requested refund amount is stored."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
 
-                Text("Each currency has its own ledger. Held never invents an exchange rate, refund amount, or combined total.")
+                Text(L("Each currency has its own ledger. Keyvow never invents an exchange rate, refund amount, or combined total."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
             }
@@ -318,7 +327,7 @@ public struct FundsView: View {
 
     private func percentage(_ value: Double) -> String {
         let clamped = min(1, max(0, value.isFinite ? value : 0))
-        return "\(Int((clamped * 100).rounded()))%"
+        return localization.percentage(clamped)
     }
 
     private func badgeTone(for order: HeldOrder) -> BadgeTone {

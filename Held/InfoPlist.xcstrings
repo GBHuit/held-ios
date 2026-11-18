@@ -1,18 +1,38 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "CFBundleDisplayName" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keyvow" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Keyvow" } }
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleDisplayName": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺"
+          }
+        }
       }
     },
-    "NSCameraUsageDescription" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keyvow uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Keyvow 仅在你扫描订单信息或保存证据时使用相机。除非你主动导出，否则图片仅保存在此设备上。" } }
+    "NSCameraUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyvow uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "键诺仅在你扫描订单信息或保存证据时使用相机。除非你主动导出，否则图片仅保存在此设备上。"
+          }
+        }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

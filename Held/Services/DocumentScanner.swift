@@ -15,10 +15,10 @@ struct DocumentScanner: UIViewControllerRepresentable {
 
     static var unavailableReason: String {
         if !DataScannerViewController.isSupported {
-            return "Live text scanning is not supported on this device. Choose an image for OCR instead."
+            return L("Live text scanning is not supported on this device. Choose an image for OCR instead.")
         }
         if !DataScannerViewController.isAvailable {
-            return "The camera is currently unavailable. Choose an image for OCR instead."
+            return L("The camera is currently unavailable. Choose an image for OCR instead.")
         }
         return ""
     }
@@ -67,7 +67,7 @@ struct DocumentScanner: UIViewControllerRepresentable {
             do {
                 try scanner.startScanning()
             } catch {
-                context.coordinator.onError("Live text scanning could not start. Check camera permission or choose an image for OCR instead.")
+                context.coordinator.onError(L("Live text scanning could not start. Check camera permission or choose an image for OCR instead."))
             }
         } else if !isScanning && scanner.isScanning {
             scanner.stopScanning()
@@ -176,7 +176,7 @@ struct DocumentCameraScanner: UIViewControllerRepresentable {
         ) {
             let images = (0..<scan.pageCount).map { scan.imageOfPage(at: $0) }
             guard !images.isEmpty else {
-                onError("The scan did not contain a readable page. Choose a photo or continue manually.")
+                onError(L("The scan did not contain a readable page. Choose a photo or continue manually."))
                 return
             }
             onComplete(images)

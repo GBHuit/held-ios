@@ -1,0 +1,224 @@
+name: Keyvow App Store release
+
+on:
+  workflow_dispatch:
+    inputs:
+      team_id:
+        description: "Apple Developer Team ID"
+        required: true
+        type: string
+        default: FLVKJ8ZLZV
+      upload_testflight:
+        description: "Upload the verified IPA to TestFlight after export"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      SCHEME: Held
+      PROJECT: Held.xcodeproj
+      BUNDLE_ID: com.held.groupbuy
+      SHARE_BUNDLE_ID: com.held.groupbuy.ShareExtension
+      APP_PROFILE_NAME: Keyvow App Store
+      SHARE_PROFILE_NAME: Keyvow Share App Store
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode 26
+        run: |
+          XCODE_APP=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | grep -Ev 'beta|RC' | sort -V | tail -1)
+          if [ -z "$XCODE_APP" ]; then echo "No stable Xcode 26 found on runner" >&2; exit 1; fi
+          sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+          xcodebuild -version
+
+      - name: Restore and verify application icon
+        run: |
+          ICON_BASE="Held/Assets.xcassets/AppIcon.appiconset/Held-1024"
+          cat "${ICON_BASE}.base64.parts"/part-* > "${ICON_BASE}.base64"
+          base64 --decode < "${ICON_BASE}.base64" > "${ICON_BASE}.png"
+          test -s "${ICON_BASE}.png"
+          echo "225f4f83470d92bb64de57fe6e8411794a9d0674524407cbb1ce67b3e1f66d56  ${ICON_BASE}.png" | shasum -a 256 -c -
+
+      - name: Run release-candidate unit tests
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+            CODE_SIGNING_ALLOWED=NO \
+            test 2>&1 | tee release-test.log
+
+      - name: Validate App Store signing inputs
+        env:
+          TEAM_ID: ${{ inputs.team_id }}
+          CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          APP_PROFILE_BASE64: ${{ secrets.IOS_APP_STORE_PROVISIONING_PROFILE_BASE64 }}
+          SHARE_PROFILE_BASE64: ${{ secrets.IOS_SHARE_APP_STORE_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          for value in TEAM_ID CERTIFICATE_BASE64 CERTIFICATE_PASSWORD APP_PROFILE_BASE64 SHARE_PROFILE_BASE64; do
+            if [ -z "${!value}" ]; then
+              echo "Missing required App Store signing input or secret: $value" >&2
+              exit 1
+            fi
+          done
+          if [[ "$TEAM_ID" != "FLVKJ8ZLZV" ]]; then
+            echo "Confirm that these App Store profiles and bundle IDs belong to the entered team." >&2
+          fi
+
+      - name: Validate TestFlight upload inputs
+        if: ${{ inputs.upload_testflight }}
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          for value in API_KEY_ID API_ISSUER_ID API_KEY_P8; do
+            if [ -z "${!value}" ]; then
+              echo "Missing TestFlight upload secret: $value" >&2
+              exit 1
+            fi
+          done
+
+      - name: Install distribution identity and both App Store profiles
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          APP_PROFILE_BASE64: ${{ secrets.IOS_APP_STORE_PROVISIONING_PROFILE_BASE64 }}
+          SHARE_PROFILE_BASE64: ${{ secrets.IOS_SHARE_APP_STORE_PROVISIONING_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ runner.temp }}-keyvow-release-keychain
+        run: |
+          security create-keychain -p "$KEYCHAIN_PASSWORD" keyvow-release.keychain-db
+          security set-keychain-settings -lut 3600 keyvow-release.keychain-db
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" keyvow-release.keychain-db
+          security list-keychains -d user -s keyvow-release.keychain-db login.keychain-db
+          security default-keychain -d user -s keyvow-release.keychain-db
+          echo "$CERTIFICATE_BASE64" | base64 --decode > "$RUNNER_TEMP/Keyvow-Distribution.p12"
+          security import "$RUNNER_TEMP/Keyvow-Distribution.p12" \
+            -k keyvow-release.keychain-db \
+            -P "$CERTIFICATE_PASSWORD" \
+            -T /usr/bin/security \
+            -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASSWORD" keyvow-release.keychain-db
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          echo "$APP_PROFILE_BASE64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/Keyvow-App-Store.mobileprovision"
+          echo "$SHARE_PROFILE_BASE64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/Keyvow-Share-App-Store.mobileprovision"
+          rm -f "$RUNNER_TEMP/Keyvow-Distribution.p12"
+
+      - name: Archive Keyvow for App Store distribution
+        env:
+          TEAM_ID: ${{ inputs.team_id }}
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Keyvow.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            CODE_SIGN_STYLE=Manual \
+            clean archive 2>&1 | tee release-archive.log
+
+      - name: Export signed App Store IPA
+        env:
+          TEAM_ID: ${{ inputs.team_id }}
+        run: |
+          cat > "$RUNNER_TEMP/AppStoreExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>destination</key><string>export</string>
+            <key>stripSwiftSymbols</key><true/>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>$BUNDLE_ID</key><string>$APP_PROFILE_NAME</string>
+              <key>$SHARE_BUNDLE_ID</key><string>$SHARE_PROFILE_NAME</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+          plutil -lint "$RUNNER_TEMP/AppStoreExportOptions.plist"
+          mkdir -p "$RUNNER_TEMP/Keyvow-AppStore-IPA"
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Keyvow.xcarchive" \
+            -exportPath "$RUNNER_TEMP/Keyvow-AppStore-IPA" \
+            -exportOptionsPlist "$RUNNER_TEMP/AppStoreExportOptions.plist"
+          IPA_PATH=$(find "$RUNNER_TEMP/Keyvow-AppStore-IPA" -maxdepth 1 -name '*.ipa' -print -quit)
+          test -n "$IPA_PATH"
+          cp "$IPA_PATH" Keyvow.ipa
+
+      - name: Inspect app and Share Extension signatures
+        run: |
+          ditto -x -k Keyvow.ipa "$RUNNER_TEMP/Keyvow-IPA-Inspect"
+          APP_PATH="$RUNNER_TEMP/Keyvow-IPA-Inspect/Payload/Held.app"
+          SHARE_PATH="$APP_PATH/PlugIns/KeyvowShareExtension.appex"
+          test -d "$APP_PATH"
+          test -d "$SHARE_PATH"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Info.plist")" = "$BUNDLE_ID"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$SHARE_PATH/Info.plist")" = "$SHARE_BUNDLE_ID"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$APP_PATH/Info.plist")" = "Keyvow"
+          codesign --verify --deep --strict --verbose=4 "$APP_PATH"
+          codesign -dv --verbose=4 "$APP_PATH"
+          codesign -dv --verbose=4 "$SHARE_PATH"
+          security cms -D -i "$APP_PATH/embedded.mobileprovision" -o "$RUNNER_TEMP/app-profile.plist"
+          security cms -D -i "$SHARE_PATH/embedded.mobileprovision" -o "$RUNNER_TEMP/share-profile.plist"
+          test "$(plutil -extract Name raw "$RUNNER_TEMP/app-profile.plist")" = "$APP_PROFILE_NAME"
+          test "$(plutil -extract Name raw "$RUNNER_TEMP/share-profile.plist")" = "$SHARE_PROFILE_NAME"
+          plutil -lint "$RUNNER_TEMP/app-profile.plist" "$RUNNER_TEMP/share-profile.plist"
+          shasum -a 256 Keyvow.ipa
+
+      - name: Upload App Store release candidate
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: keyvow-app-store-release-candidate
+          path: |
+            Keyvow.ipa
+            release-test.log
+            release-archive.log
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload verified IPA to TestFlight
+        if: ${{ success() && inputs.upload_testflight }}
+        env:
+          API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          API_KEY_P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+        run: |
+          if ! command -v fastlane >/dev/null 2>&1; then
+            gem install --user-install fastlane --no-document
+            echo "$(ruby -rubygems -e 'puts Gem.user_dir')/bin" >> "$GITHUB_PATH"
+            export PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+          fi
+          python3 -c 'import json,os,pathlib; pathlib.Path(os.environ["RUNNER_TEMP"] + "/app-store-connect-api-key.json").write_text(json.dumps({"key_id": os.environ["API_KEY_ID"], "issuer_id": os.environ["API_ISSUER_ID"], "key": os.environ["API_KEY_P8"]}), encoding="utf-8")'
+          fastlane pilot upload \
+            --ipa Keyvow.ipa \
+            --app_identifier "$BUNDLE_ID" \
+            --api_key_path "$RUNNER_TEMP/app-store-connect-api-key.json" \
+            --skip_waiting_for_build_processing true
+
+      - name: Clean release credentials
+        if: ${{ always() }}
+        run: |
+          security delete-keychain keyvow-release.keychain-db || true
+          rm -f "$RUNNER_TEMP/Keyvow-Distribution.p12"
+          rm -f "$RUNNER_TEMP/app-store-connect-api-key.json"
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/Keyvow-App-Store.mobileprovision"
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/Keyvow-Share-App-Store.mobileprovision"

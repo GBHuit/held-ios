@@ -2,6 +2,8 @@ import SwiftUI
 
 struct HomeOrderCard: View {
     let order: HeldOrder
+
+    @EnvironmentObject private var localization: LocalizationCenter
     var showsProgress = true
 
     private var statusTone: BadgeTone {
@@ -51,7 +53,7 @@ struct HomeOrderCard: View {
                             HeldBadge(text: order.resolutionStatus.displayLabel, tone: .warning)
                         }
                     }
-                    Text(formatMoney(minor: order.amountMinor, currency: order.currencyCode))
+                    Text(localization.money(minor: order.amountMinor, currency: order.currencyCode))
                         .heldCaption()
                         .foregroundStyle(HeldColor.ink)
                 }
@@ -61,9 +63,9 @@ struct HomeOrderCard: View {
                         .padding(.top, HeldSpacing.extraSmall)
 
                     HStack {
-                        Text("Ordered \(formatDate(order.orderedAt))")
+                        Text(L("Ordered %@", localization.date(order.orderedAt)))
                         Spacer()
-                        Text("\(Int((order.progress * 100).rounded()))% complete")
+                        Text(L("%1$lld%% complete", Int64((order.progress * 100).rounded())))
                     }
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
@@ -73,7 +75,7 @@ struct HomeOrderCard: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityDescription)
-        .accessibilityHint("Opens order details")
+        .accessibilityHint(L("Opens order details"))
     }
 
     private var accessibilityDescription: String {
@@ -81,14 +83,14 @@ struct HomeOrderCard: View {
             order.title,
             secondaryLine,
             order.fulfillmentStatus.displayLabel,
-            formatMoney(minor: order.amountMinor, currency: order.currencyCode),
-            "Ordered \(formatDate(order.orderedAt))"
+            localization.money(minor: order.amountMinor, currency: order.currencyCode),
+            L("Ordered %@", localization.date(order.orderedAt))
         ]
         if order.resolutionStatus != .none {
             parts.append(order.resolutionStatus.displayLabel)
         }
         if showsProgress {
-            parts.append("\(Int((order.progress * 100).rounded())) percent complete")
+            parts.append(L("%1$lld percent complete", Int64((order.progress * 100).rounded())))
         }
         return parts.joined(separator: ", ")
     }

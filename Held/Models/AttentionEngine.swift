@@ -23,16 +23,16 @@ enum AttentionEngine {
                DeliveryEstimate.hasPassed(end: order.estimateEnd, now: now) {
                 addReason(AttentionReason(
                     kind: .estimate,
-                    title: "Current estimate has passed",
-                    description: "\(order.estimateDisplayText). The end of that estimated range has passed."
+                    title: L("Current estimate has passed"),
+                    description: L("%@. The end of that estimated range has passed.", order.estimateDisplayText)
                 ))
             }
 
             if let nextCheckAt = order.nextCheckAt, nextCheckAt <= now {
                 addReason(AttentionReason(
                     kind: .check,
-                    title: "Check-in is due",
-                    description: "A follow-up was scheduled for \(formatDate(nextCheckAt))."
+                    title: L("Check-in is due"),
+                    description: L("A follow-up was scheduled for %@.", formatDate(nextCheckAt))
                 ))
             }
 
@@ -49,8 +49,8 @@ enum AttentionEngine {
             if let dueDeadline {
                 addReason(AttentionReason(
                     kind: .deadline,
-                    title: "Deadline is approaching",
-                    description: "\(dueDeadline.label) — \(formatDate(dueDeadline.triggerAt))."
+                    title: L("Deadline is approaching"),
+                    description: L("%1$@ — %2$@.", dueDeadline.label, formatDate(dueDeadline.triggerAt))
                 ))
             }
 
@@ -58,8 +58,8 @@ enum AttentionEngine {
             if staleAge >= TimeInterval(max(0, settings.staleDays)) * day {
                 addReason(AttentionReason(
                     kind: .stale,
-                    title: "No recent update",
-                    description: "No user update has been recorded since \(formatDate(order.lastUserUpdateAt))."
+                    title: L("No recent update"),
+                    description: L("No user update has been recorded since %@.", formatDate(order.lastUserUpdateAt))
                 ))
             }
 
@@ -83,11 +83,13 @@ enum AttentionEngine {
             if totalUnits > 0, deliveredUnits < totalUnits,
                deliveredUnits > 0 || hasShippedUnits {
                 let outstandingUnits = totalUnits - deliveredUnits
-                let lineItemText = outstandingItems.count == 1 ? "line item" : "line items"
+                let key = outstandingItems.count == 1
+                    ? "%1$lld units across %2$lld line item still outstanding; the order is not complete."
+                    : "%1$lld units across %2$lld line items still outstanding; the order is not complete."
                 addReason(AttentionReason(
                     kind: .partial,
-                    title: "Partial delivery needs review",
-                    description: "\(outstandingUnits) units across \(outstandingItems.count) \(lineItemText) still outstanding; the order is not complete."
+                    title: L("Partial delivery needs review"),
+                    description: L(key, outstandingUnits, outstandingItems.count)
                 ))
             }
 

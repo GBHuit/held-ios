@@ -98,6 +98,8 @@ struct PortableSettings: Codable {
     var staleDays: Int
     var leadDays: Int
     var preferredColorSchemeRaw: String
+    // Optional so backups created before in-app language selection still decode.
+    var preferredLanguageRaw: String?
     var lastSelectedTab: Int
 }
 
@@ -221,15 +223,15 @@ enum ExportServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidBackup(let reason):
-            return "This backup is invalid: \(reason)"
+            return L("This backup is invalid: %@", L(reason))
         case .invalidArchive(let reason):
-            return "This Held archive is invalid: \(reason)"
+            return L("This Keyvow archive is invalid: %@", L(reason))
         case .missingAttachment(let filename):
-            return "The attachment “\(filename)” is missing."
+            return L("The attachment “%@” is missing.", filename)
         case .attachmentMismatch(let filename):
-            return "The attachment “\(filename)” does not match its recorded size or checksum."
+            return L("The attachment “%@” does not match its recorded size or checksum.", filename)
         case .archiveRequiresAttachmentStore:
-            return "An attachment store is required to restore evidence files."
+            return L("An attachment store is required to restore evidence files.")
         }
     }
 }
@@ -260,6 +262,7 @@ final class ExportService {
                 staleDays: settings.staleDays,
                 leadDays: settings.leadDays,
                 preferredColorSchemeRaw: settings.preferredColorSchemeRaw,
+                preferredLanguageRaw: settings.preferredLanguageRaw,
                 lastSelectedTab: settings.lastSelectedTab
             )
         )
@@ -318,6 +321,7 @@ final class ExportService {
                 staleDays: web.settings.staleDays,
                 leadDays: web.settings.leadDays,
                 preferredColorSchemeRaw: "system",
+                preferredLanguageRaw: nil,
                 lastSelectedTab: 0
             )
         )
@@ -610,21 +614,21 @@ final class ExportService {
             "Currency", "Payment method", "Source URL", "Estimate", "Estimate start",
             "Estimate end", "Estimate precision", "Next check", "Last user update",
             "Fulfillment", "Resolution", "Notes", "Created at", "Tracking number", "Carrier", "Items"
-        ]
+        ].map(L)
         var rows = [headers]
         for order in orders {
             let items = order.items.map { item in
-                "\(item.name) (\(item.deliveredQuantity)/\(item.quantity), \(item.statusRaw))"
+                "\(item.name) (\(item.deliveredQuantity)/\(item.quantity), \(statusLabel(item.statusRaw)))"
             }.joined(separator: "; ")
             rows.append([
                 order.id, order.title, order.vendor, order.orderNumber,
                 Self.isoDate(order.orderedAt), String(order.amountMinor), order.currencyCodeRaw,
                 order.paymentMethod, order.sourceURL, order.estimateText,
                 order.estimateStart.map(Self.isoDate) ?? "",
-                order.estimateEnd.map(Self.isoDate) ?? "", order.estimatePrecisionRaw,
+                order.estimateEnd.map(Self.isoDate) ?? "", order.estimatePrecision.displayLabel,
                 order.nextCheckAt.map(Self.isoDate) ?? "",
-                Self.isoDate(order.lastUserUpdateAt), order.fulfillmentStatusRaw,
-                order.resolutionStatusRaw, order.notes, Self.isoDate(order.createdAt),
+                Self.isoDate(order.lastUserUpdateAt), order.fulfillmentStatus.displayLabel,
+                order.resolutionStatus.displayLabel, order.notes, Self.isoDate(order.createdAt),
                 order.trackingNumber, order.carrier, items
             ])
         }
@@ -633,7 +637,7 @@ final class ExportService {
         let csv = "\u{FEFF}" + rows.map { row in
             row.map(Self.csvField).joined(separator: ",")
         }.joined(separator: "\r\n")
-        let url = temporaryURL(named: "Held-Orders", pathExtension: "csv")
+        let url = temporaryURL(named: "Keyvow-Orders", pathExtension: "csv")
         try Data(csv.utf8).write(to: url, options: .atomic)
         return url
     }
@@ -890,6 +894,7 @@ final class ExportService {
         settings.staleDays = portable.staleDays
         settings.leadDays = portable.leadDays
         settings.preferredColorSchemeRaw = portable.preferredColorSchemeRaw
+        settings.preferredLanguageRaw = portable.preferredLanguageRaw ?? AppLanguage.system.rawValue
         settings.lastSelectedTab = portable.lastSelectedTab
     }
 
@@ -1000,6 +1005,9 @@ final class ExportService {
         try require(settings.staleDays >= 0 && settings.staleDays <= 3_650, "The stale-day setting is invalid.")
         try require(settings.leadDays >= 0 && settings.leadDays <= 365, "The default lead time is invalid.")
         try require(["system", "light", "dark"].contains(settings.preferredColorSchemeRaw), "The appearance setting is invalid.")
+        if let language = settings.preferredLanguageRaw {
+            try require(AppLanguage(rawValue: language) != nil, "The language setting is invalid.")
+        }
         try require(settings.lastSelectedTab >= 0 && settings.lastSelectedTab <= 20, "The selected-tab setting is invalid.")
     }
 
@@ -1355,48 +1363,66 @@ private enum HeldEvidencePDFWriter {
         let headingFont = UIFont.boldSystemFont(ofSize: 15)
         let bodyFont = UIFont.systemFont(ofSize: 10)
         let smallFont = UIFont.monospacedSystemFont(ofSize: 8, weight: .regular)
+        let locale = LocalizationCenter.shared.locale
 
-        var lines = [Line(text: "Held Evidence Report", font: titleFont, color: .label, indent: 0, spaceAfter: 8)]
+        func timestamp(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.locale = locale
+            formatter.calendar = .current
+            formatter.timeZone = .current
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter.string(from: date)
+        }
+
+        var lines = [Line(text: L("Keyvow Evidence Report"), font: titleFont, color: .label, indent: 0, spaceAfter: 8)]
         lines.append(Line(
-            text: "Generated \(Date().formatted(date: .abbreviated, time: .shortened)) • \(orders.count) orders",
+            text: L("Generated %1$@ • %2$lld orders", timestamp(Date()), orders.count),
             font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 18
         ))
 
         for order in orders {
             lines.append(Line(text: order.title, font: headingFont, color: .label, indent: 0, spaceAfter: 3))
             lines.append(Line(
-                text: "\(order.vendor) • \(order.orderNumber) • \(order.currencyCodeRaw) \(order.amountMinor) minor units",
+                text: L(
+                    "%1$@ • %2$@ • %3$@ %4$lld minor units",
+                    order.vendor, order.orderNumber, order.currencyCodeRaw, order.amountMinor
+                ),
                 font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 3
             ))
             lines.append(Line(
-                text: "Ordered \(order.orderedAt.formatted(date: .abbreviated, time: .shortened)) • \(order.fulfillmentStatusRaw) • \(order.resolutionStatusRaw)",
+                text: L(
+                    "Ordered %1$@ • %2$@ • %3$@",
+                    timestamp(order.orderedAt), order.fulfillmentStatus.displayLabel,
+                    order.resolutionStatus.displayLabel
+                ),
                 font: bodyFont, color: .secondaryLabel, indent: 0, spaceAfter: 8
             ))
             if order.evidence.isEmpty {
-                lines.append(Line(text: "No evidence recorded.", font: bodyFont, color: .secondaryLabel, indent: 12, spaceAfter: 14))
+                lines.append(Line(text: L("No evidence recorded."), font: bodyFont, color: .secondaryLabel, indent: 12, spaceAfter: 14))
             } else {
                 for evidence in order.evidence {
                     lines.append(Line(text: evidence.title, font: headingFont, color: .label, indent: 12, spaceAfter: 2))
                     lines.append(Line(
-                        text: "\(evidence.kindRaw) • \(evidence.filename) • \(evidence.mimeType)",
+                        text: "\(evidence.kind.displayLabel) • \(evidence.filename) • \(evidence.mimeType)",
                         font: bodyFont, color: .label, indent: 18, spaceAfter: 2
                     ))
                     lines.append(Line(
-                        text: "Captured \(evidence.capturedAt.formatted(date: .abbreviated, time: .shortened)) • \(evidence.fileSize) bytes",
+                        text: L("Captured %1$@ • %2$lld bytes", timestamp(evidence.capturedAt), evidence.fileSize),
                         font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 2
                     ))
                     if !evidence.note.isEmpty {
                         lines.append(Line(text: evidence.note, font: bodyFont, color: .label, indent: 18, spaceAfter: 2))
                     }
                     if let path = evidence.localRelativePath {
-                        lines.append(Line(text: "File: \(path)", font: smallFont, color: .secondaryLabel, indent: 18, spaceAfter: 2))
+                        lines.append(Line(text: L("File: %@", path), font: smallFont, color: .secondaryLabel, indent: 18, spaceAfter: 2))
                     } else {
-                        lines.append(Line(text: "No local file is attached.", font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 2))
+                        lines.append(Line(text: L("No local file is attached."), font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 2))
                     }
                     if let sha256 = evidence.sha256, !sha256.isEmpty {
                         lines.append(Line(text: "SHA-256: \(sha256)", font: smallFont, color: .secondaryLabel, indent: 18, spaceAfter: 8))
                     } else {
-                        lines.append(Line(text: "SHA-256: Not recorded", font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 8))
+                        lines.append(Line(text: L("SHA-256: Not recorded"), font: bodyFont, color: .secondaryLabel, indent: 18, spaceAfter: 8))
                     }
                 }
             }
@@ -1411,7 +1437,7 @@ private enum HeldEvidencePDFWriter {
                 context.beginPage()
                 pageNumber += 1
                 cursorY = margin
-                let footer = "Held • Page \(pageNumber)"
+                let footer = L("Keyvow • Page %lld", pageNumber)
                 footer.draw(
                     at: CGPoint(x: margin, y: pageRect.height - margin + 18),
                     withAttributes: [.font: bodyFont, .foregroundColor: UIColor.secondaryLabel]

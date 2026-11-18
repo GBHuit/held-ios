@@ -8,6 +8,15 @@ private enum OrdersFilter: String, CaseIterable, Identifiable {
     case attention = "Attention"
 
     var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .all: return L("All")
+        case .open: return L("Open")
+        case .delivered: return L("Delivered")
+        case .attention: return L("Attention")
+        }
+    }
 }
 
 struct OrdersView: View {
@@ -15,6 +24,7 @@ struct OrdersView: View {
     @Query private var settings: [AppSettings]
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var reminderScheduler: ReminderScheduler
+    @EnvironmentObject private var localization: LocalizationCenter
 
     @State private var searchText = ""
     @State private var filter: OrdersFilter = .all
@@ -77,12 +87,12 @@ struct OrdersView: View {
         NavigationStack {
             content
                 .heldScreenBackground()
-                .navigationTitle("Orders")
+                .navigationTitle(L("Orders"))
                 .navigationBarTitleDisplayMode(.large)
                 .searchable(
                     text: $searchText,
                     placement: .navigationBarDrawer(displayMode: .automatic),
-                    prompt: "Title, vendor, or order number"
+                    prompt: L("Title, vendor, or order number")
                 )
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -91,17 +101,17 @@ struct OrdersView: View {
                         } label: {
                             Image(systemName: "plus")
                         }
-                        .accessibilityLabel("Add a new order")
+                        .accessibilityLabel(L("Add a new order"))
                     }
                 }
                 .sheet(isPresented: $showingAddOrder) {
                     AddOrderView()
                 }
-                .alert("Delete this order?", isPresented: deletionAlertPresented) {
-                    Button("Cancel", role: .cancel) {
+                .alert(L("Delete this order?"), isPresented: deletionAlertPresented) {
+                    Button(L("Cancel"), role: .cancel) {
                         orderPendingDeletion = nil
                     }
-                    Button("Delete order", role: .destructive) {
+                    Button(L("Delete order"), role: .destructive) {
                         guard let order = orderPendingDeletion else { return }
                         orderPendingDeletion = nil
                         Task { await delete(order) }
@@ -109,13 +119,13 @@ struct OrdersView: View {
                     .disabled(isDeleting)
                 } message: {
                     if let order = orderPendingDeletion {
-                        Text("“\(order.title)” and its milestones, reminders, items, and saved attachments will be removed. This cannot be undone.")
+                        Text(L("“%1$@” and its milestones, reminders, items, and saved attachments will be removed. This cannot be undone.", order.title))
                     }
                 }
-                .alert("Held couldn’t finish that", isPresented: errorAlertPresented) {
-                    Button("OK") { actionErrorMessage = nil }
+                .alert(L("Keyvow couldn’t finish that"), isPresented: errorAlertPresented) {
+                    Button(L("OK")) { actionErrorMessage = nil }
                 } message: {
-                    Text(actionErrorMessage ?? "Please try again.")
+                    Text(actionErrorMessage ?? L("Please try again."))
                 }
                 .task {
                     ensureSettingsExist()
@@ -128,9 +138,9 @@ struct OrdersView: View {
         if orders.isEmpty {
             HeldEmptyView(
                 icon: "shippingbox",
-                title: "No orders yet",
-                message: "When you add an order, Held will keep its promise, progress, and follow-ups together.",
-                buttonTitle: "Add your first order",
+                title: L("No orders yet"),
+                message: L("When you add an order, Keyvow will keep its promise, progress, and follow-ups together."),
+                buttonTitle: L("Add your first order"),
                 action: { showingAddOrder = true }
             )
         } else {
@@ -142,9 +152,9 @@ struct OrdersView: View {
                 if filteredOrders.isEmpty {
                     HeldEmptyView(
                         icon: "line.3.horizontal.decrease.circle",
-                        title: "No matching orders",
-                        message: "Try another search, or clear the filters to bring every order back.",
-                        buttonTitle: "Clear search and filters",
+                        title: L("No matching orders"),
+                        message: L("Try another search, or clear the filters to bring every order back."),
+                        buttonTitle: L("Clear search and filters"),
                         action: clearSearchAndFilters
                     )
                 } else {
@@ -168,9 +178,9 @@ struct OrdersView: View {
                                 Button(role: .destructive) {
                                     orderPendingDeletion = order
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label(L("Delete"), systemImage: "trash")
                                 }
-                                .accessibilityLabel("Delete \(order.title)")
+                                .accessibilityLabel(L("Delete %@", order.title))
                             }
                         }
                     }
@@ -189,26 +199,26 @@ struct OrdersView: View {
                         filter = option
                     } label: {
                         if filter == option {
-                            Label(option.rawValue, systemImage: "checkmark")
+                            Label(option.displayName, systemImage: "checkmark")
                         } else {
-                            Text(option.rawValue)
+                            Text(option.displayName)
                         }
                     }
                 }
             } label: {
-                filterLabel(title: filter.rawValue, systemImage: "line.3.horizontal.decrease")
+                filterLabel(title: filter.displayName, systemImage: "line.3.horizontal.decrease")
             }
-            .accessibilityLabel("Order status filter")
-            .accessibilityValue(filter.rawValue)
+            .accessibilityLabel(L("Order status filter"))
+            .accessibilityValue(filter.displayName)
 
             Menu {
                 Button {
                     currencyFilter = nil
                 } label: {
                     if currencyFilter == nil {
-                        Label("All currencies", systemImage: "checkmark")
+                        Label(L("All currencies"), systemImage: "checkmark")
                     } else {
-                        Text("All currencies")
+                        Text(L("All currencies"))
                     }
                 }
                 ForEach(CurrencyCode.allCases, id: \.self) { currency in
@@ -223,17 +233,17 @@ struct OrdersView: View {
                     }
                 }
             } label: {
-                filterLabel(title: currencyFilter?.rawValue ?? "Currency", systemImage: "coloncurrencysign.circle")
+                filterLabel(title: currencyFilter?.rawValue ?? L("Currency"), systemImage: "coloncurrencysign.circle")
             }
-            .accessibilityLabel("Currency filter")
-            .accessibilityValue(currencyFilter?.rawValue ?? "All currencies")
+            .accessibilityLabel(L("Currency filter"))
+            .accessibilityValue(currencyFilter?.rawValue ?? L("All currencies"))
 
             Spacer(minLength: 0)
 
-            Text("\(filteredOrders.count) \(filteredOrders.count == 1 ? "order" : "orders")")
+            Text(L(filteredOrders.count == 1 ? "%1$lld order" : "%1$lld orders", Int64(filteredOrders.count)))
                 .heldCaption()
                 .foregroundStyle(HeldColor.secondaryInk)
-                .accessibilityLabel("\(filteredOrders.count) matching orders")
+                .accessibilityLabel(L("%1$lld matching orders", Int64(filteredOrders.count)))
         }
     }
 
@@ -282,7 +292,7 @@ struct OrdersView: View {
             try modelContext.save()
         } catch {
             modelContext.rollback()
-            actionErrorMessage = "The order could not be deleted. Please try again."
+            actionErrorMessage = L("The order could not be deleted. Please try again.")
             return
         }
 
@@ -296,7 +306,7 @@ struct OrdersView: View {
                 try store.remove(relativePath: path)
             }
         } catch {
-            actionErrorMessage = "The order was deleted, but an orphaned attachment could not be removed. Your remaining orders are unaffected."
+            actionErrorMessage = L("The order was deleted, but an orphaned attachment could not be removed. Your remaining orders are unaffected.")
         }
     }
 }

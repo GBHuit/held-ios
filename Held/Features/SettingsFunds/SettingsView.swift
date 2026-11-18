@@ -10,12 +10,13 @@ public struct SettingsView: View {
     @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject private var reminderScheduler: ReminderScheduler
     @EnvironmentObject private var purchaseService: PurchaseService
+    @EnvironmentObject private var localization: LocalizationCenter
 
     @Query(sort: \HeldOrder.orderedAt, order: .reverse) private var orders: [HeldOrder]
     @Query private var storedSettings: [AppSettings]
 
     @State private var attachmentStore: AttachmentStore?
-    @State private var storageDescription = "Calculating…"
+    @State private var storageDescription = L("Calculating…")
     @State private var storageErrorMessage: String?
     @State private var settingsErrorMessage: String?
     @State private var notificationMessage: String?
@@ -40,6 +41,7 @@ public struct SettingsView: View {
 
                 if let settings = currentSettings {
                     appearanceSection(settings)
+                    languageSection(settings)
                     notificationsSection(settings)
                     preferencesSection(settings)
                     proSection(settings)
@@ -50,7 +52,7 @@ public struct SettingsView: View {
                     Section {
                         HStack(spacing: HeldSpacing.small) {
                             ProgressView()
-                            Text("Preparing local settings…")
+                            Text(L("Preparing local settings…"))
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
                     }
@@ -66,9 +68,12 @@ public struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .heldScreenBackground()
-            .heldNavigationTitle("Settings")
+            .heldNavigationTitle(L("Settings"))
             .task {
                 await initialLoad()
+            }
+            .onChange(of: localization.language) { _, _ in
+                refreshStorage()
             }
             .onChange(of: scenePhase) { phase in
                 guard phase == .active else { return }
@@ -110,7 +115,7 @@ public struct SettingsView: View {
                     }
                 )
             }
-            .heldLoadingOverlay(isPresented: isPreviewingImport, title: "Reading backup…")
+            .heldLoadingOverlay(isPresented: isPreviewingImport, title: L("Reading backup…"))
         }
     }
 
@@ -121,10 +126,10 @@ public struct SettingsView: View {
     private var introduction: some View {
         Section {
             VStack(alignment: .leading, spacing: HeldSpacing.small) {
-                Text("Held, on your terms.")
+                Text(L("Keyvow, on your terms."))
                     .heldDisplay(size: 28)
                     .foregroundStyle(HeldColor.ink)
-                Text("Your records remain yours: quiet preferences, portable backups, and full access to every order you have saved.")
+                Text(L("Your records remain yours: quiet preferences, portable backups, and full access to every order you have saved."))
                     .heldBody()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
@@ -137,27 +142,53 @@ public struct SettingsView: View {
 
     private func appearanceSection(_ settings: AppSettings) -> some View {
         Section {
-            Picker("Appearance", selection: Binding(
+            Picker(L("Appearance"), selection: Binding(
                 get: { settings.preferredColorSchemeRaw },
                 set: { value in
                     settings.preferredColorSchemeRaw = value
                     saveSettings()
                 }
             )) {
-                Text("System").tag("system")
-                Text("Light").tag("light")
-                Text("Dark").tag("dark")
+                Text(L("System")).tag("system")
+                Text(L("Light")).tag("light")
+                Text(L("Dark")).tag("dark")
             }
         } header: {
-            Label("Appearance", systemImage: "circle.lefthalf.filled")
+            Label(L("Appearance"), systemImage: "circle.lefthalf.filled")
         } footer: {
-            Text("System follows your iPhone appearance. Light and dark apply Held’s ivory, forest, and amber palette accordingly.")
+            Text(L("System follows your iPhone appearance. Light and dark apply Keyvow’s ivory, forest, and amber palette accordingly."))
+        }
+    }
+
+    private func languageSection(_ settings: AppSettings) -> some View {
+        Section {
+            Picker(L("Language"), selection: Binding(
+                get: { localization.language },
+                set: { updateLanguage($0, settings: settings) }
+            )) {
+                ForEach(AppLanguage.allCases, id: \.self) { language in
+                    Text(language.nativeDisplayName).tag(language)
+                }
+            }
+        } header: {
+            Label(L("Language"), systemImage: "globe")
+        } footer: {
+            Text(L("Language changes apply immediately. Your order content stays unchanged, and pending reminders keep their dates and lead times."))
+        }
+    }
+
+    private func updateLanguage(_ language: AppLanguage, settings: AppSettings) {
+        LocalizationCenter.shared.setLanguage(language)
+        settings.preferredLanguageRaw = language.rawValue
+        saveSettings()
+        Task { @MainActor in
+            await reminderScheduler.sync(orders: orders, settings: settings)
         }
     }
 
     private func notificationsSection(_ settings: AppSettings) -> some View {
         Section {
-            Toggle("Order reminders", isOn: Binding(
+            Toggle(L("Order reminders"), isOn: Binding(
                 get: { settings.remindersEnabled },
                 set: { enabled in
                     updateReminders(enabled, settings: settings)
@@ -165,7 +196,7 @@ public struct SettingsView: View {
             ))
 
             Label(
-                reminderScheduler.authorizationStatusDescription,
+                L(reminderScheduler.authorizationStatusDescription),
                 systemImage: notificationStatusSymbol
             )
             .heldCaption()
@@ -173,7 +204,7 @@ public struct SettingsView: View {
             .fixedSize(horizontal: false, vertical: true)
 
             if reminderScheduler.authorizationStatus == .denied {
-                Button("Open Notification Settings") {
+                Button(L("Open Notification Settings")) {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         openURL(url)
                     }
@@ -182,7 +213,7 @@ public struct SettingsView: View {
             }
 
             if let notificationMessage {
-                Text(notificationMessage)
+                Text(L(notificationMessage))
                     .heldCaption()
                     .foregroundStyle(HeldColor.secondaryInk)
                     .fixedSize(horizontal: false, vertical: true)
@@ -190,15 +221,15 @@ public struct SettingsView: View {
 
             if let schedulerError = reminderScheduler.lastErrorMessage,
                schedulerError != notificationMessage {
-                Label(schedulerError, systemImage: "exclamationmark.triangle")
+                Label(L(schedulerError), systemImage: "exclamationmark.triangle")
                     .heldCaption()
                     .foregroundStyle(HeldColor.danger)
                     .fixedSize(horizontal: false, vertical: true)
             }
         } header: {
-            Label("Notifications", systemImage: "bell")
+            Label(L("Notifications"), systemImage: "bell")
         } footer: {
-            Text("The authorization prompt appears only when you turn reminders on. Turning reminders off removes Held’s pending order notifications; it does not change iOS permission.")
+            Text(L("The authorization prompt appears only when you turn reminders on. Turning reminders off removes Keyvow’s pending order notifications; it does not change iOS permission."))
         }
     }
 
@@ -225,8 +256,8 @@ public struct SettingsView: View {
                 }
             ), in: 0...3_650) {
                 VStack(alignment: .leading) {
-                    Text("Stale order threshold")
-                    Text("\(settings.staleDays) days without an update")
+                    Text(L("Stale order threshold"))
+                    Text(L("%1$lld days without an update", Int64(settings.staleDays)))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
@@ -240,14 +271,14 @@ public struct SettingsView: View {
                 }
             ), in: 0...365) {
                 VStack(alignment: .leading) {
-                    Text("Default reminder lead time")
-                    Text("\(settings.leadDays) days")
+                    Text(L("Default reminder lead time"))
+                    Text(L("%1$lld days", Int64(settings.leadDays)))
                         .heldCaption()
                         .foregroundStyle(HeldColor.secondaryInk)
                 }
             }
 
-            Toggle("Monday morning digest", isOn: Binding(
+            Toggle(L("Monday morning digest"), isOn: Binding(
                 get: { settings.weeklyDigest },
                 set: { value in
                     settings.weeklyDigest = value
@@ -258,9 +289,9 @@ public struct SettingsView: View {
                 }
             ))
         } header: {
-            Label("Order preferences", systemImage: "slider.horizontal.3")
+            Label(L("Order preferences"), systemImage: "slider.horizontal.3")
         } footer: {
-            Text("The stale threshold affects attention cues. Default lead time is for newly created reminders; existing reminders keep their own dates. With order reminders enabled, the digest arrives each Monday at 9:00 AM with active-order and attention counts. It uses local notifications, not a server.")
+            Text(L("The stale threshold affects attention cues. Default lead time is for newly created reminders; existing reminders keep their own dates. With order reminders enabled, the digest arrives each Monday at 9:00 AM with active-order and attention counts. It uses local notifications, not a server."))
         }
     }
 
@@ -270,20 +301,20 @@ public struct SettingsView: View {
                 VStack(alignment: .leading, spacing: HeldSpacing.medium) {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: HeldSpacing.extraSmall) {
-                            Text("Held Pro")
+                            Text(L("Keyvow Pro"))
                                 .heldTitle()
                                 .foregroundStyle(HeldColor.ink)
-                            Text("One lifetime upgrade. Unlimited active orders.")
+                            Text(L("One lifetime upgrade. Unlimited active orders."))
                                 .font(.subheadline)
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
                         Spacer()
                         if purchaseService.isPro || settings.proUnlocked {
-                            HeldBadge(text: "Unlocked", tone: .success)
+                            HeldBadge(text: L("Unlocked"), tone: .success)
                         }
                     }
 
-                    Text("The free version includes up to 3 active orders. Held Pro is an optional, one-time lifetime upgrade with unlimited active orders. Your existing orders, evidence, backups, CSV exports, PDF reports, and restore remain available in both versions.")
+                    Text(L("The free version includes up to 3 active orders. Keyvow Pro is an optional, one-time lifetime upgrade with unlimited active orders. Your existing orders, evidence, backups, CSV exports, PDF reports, and restore remain available in both versions."))
                         .heldBody()
                         .foregroundStyle(HeldColor.secondaryInk)
                         .fixedSize(horizontal: false, vertical: true)
@@ -291,7 +322,7 @@ public struct SettingsView: View {
                     if purchaseService.isLoading {
                         HStack(spacing: HeldSpacing.small) {
                             ProgressView()
-                            Text("Contacting the App Store…")
+                            Text(L("Contacting the App Store…"))
                                 .heldCaption()
                                 .foregroundStyle(HeldColor.secondaryInk)
                         }
@@ -299,13 +330,13 @@ public struct SettingsView: View {
 
                     if !(purchaseService.isPro || settings.proUnlocked) {
                         if let price = purchaseService.displayPrice {
-                            Button("Get Held Pro — \(price)") {
+                            Button(L("Get Keyvow Pro — %@", price)) {
                                 purchase(settings)
                             }
                             .heldButtonStyle(.primary)
                             .disabled(purchaseService.isLoading)
                         } else {
-                            Button("Load Held Pro") {
+                            Button(L("Load Keyvow Pro")) {
                                 Task { @MainActor in
                                     await purchaseService.loadProduct()
                                 }
@@ -315,21 +346,21 @@ public struct SettingsView: View {
                         }
                     }
 
-                    Button("Restore Purchases") {
+                    Button(L("Restore Purchases")) {
                         restorePurchases(settings)
                     }
                     .heldButtonStyle(.quiet)
                     .disabled(purchaseService.isLoading)
 
                     if let status = purchaseService.statusMessage {
-                        Label(status, systemImage: "info.circle")
+                        Label(L(status), systemImage: "info.circle")
                             .heldCaption()
                             .foregroundStyle(HeldColor.accent)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                     if let error = purchaseService.errorMessage {
-                        Label(error, systemImage: "exclamationmark.triangle")
+                        Label(L(error), systemImage: "exclamationmark.triangle")
                             .heldCaption()
                             .foregroundStyle(HeldColor.danger)
                             .fixedSize(horizontal: false, vertical: true)
@@ -339,15 +370,15 @@ public struct SettingsView: View {
             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
             .listRowBackground(Color.clear)
         } header: {
-            Text("Optional upgrade")
+            Text(L("Optional upgrade"))
         } footer: {
-            Text("Purchases and restores are verified by StoreKit. Restoring a backup never unlocks Pro.")
+            Text(L("Purchases and restores are verified by StoreKit. Restoring a backup never unlocks Pro."))
         }
     }
 
     private var storageSection: some View {
         Section {
-            LabeledContent("Evidence files", value: storageDescription)
+            LabeledContent(L("Evidence files"), value: storageDescription)
 
             if let storageErrorMessage {
                 Label(storageErrorMessage, systemImage: "exclamationmark.triangle")
@@ -356,9 +387,9 @@ public struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         } header: {
-            Label("Local storage", systemImage: "internaldrive")
+            Label(L("Local storage"), systemImage: "internaldrive")
         } footer: {
-            Text("This is the size of original files in Held’s local evidence folder. SwiftData records and temporary exports are not included.")
+            Text(L("This is the size of original files in Keyvow’s local evidence folder. SwiftData records and temporary exports are not included."))
         }
     }
 
@@ -367,7 +398,7 @@ public struct SettingsView: View {
             Button {
                 showingExportPreview = true
             } label: {
-                Label("Export or Share Data", systemImage: "square.and.arrow.up")
+                Label(L("Export or Share Data"), systemImage: "square.and.arrow.up")
                     .foregroundStyle(HeldColor.accent)
             }
 
@@ -376,7 +407,7 @@ public struct SettingsView: View {
                 restoreSuccessMessage = nil
                 showingImporter = true
             } label: {
-                Label("Restore from JSON or ZIP", systemImage: "square.and.arrow.down")
+                Label(L("Restore from JSON or ZIP"), systemImage: "square.and.arrow.down")
                     .foregroundStyle(HeldColor.accent)
             }
 
@@ -394,27 +425,27 @@ public struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         } header: {
-            Label("Backup and restore", systemImage: "archivebox")
+            Label(L("Backup and restore"), systemImage: "archivebox")
         } footer: {
-            Text("Export a restorable JSON manifest, a ZIP with original evidence, a CSV spreadsheet, or a PDF evidence report. Every restore shows a preview first. Merge updates matching orders; Replace requires a separate destructive confirmation.")
+            Text(L("Export a restorable JSON manifest, a ZIP with original evidence, a CSV spreadsheet, or a PDF evidence report. Every restore shows a preview first. Merge updates matching orders; Replace requires a separate destructive confirmation."))
         }
     }
 
     private var privacySection: some View {
         Section {
-            Text("Orders, evidence, and preferences are stored locally on this iPhone. Held has no account system, analytics, advertising trackers, or developer backend. Nothing is shared unless you choose an export; App Store purchases are handled by Apple.")
+            Text(L("Orders, evidence, and preferences are stored locally on this iPhone. Keyvow has no account system, analytics, advertising trackers, or developer backend. Nothing is shared unless you choose an export; App Store purchases are handled by Apple."))
                 .heldBody()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("Evidence files live in Held’s Application Support evidence folder with iOS file protection. Exports are created in temporary storage and leave the app only through your share-sheet action.")
+            Text(L("Evidence files live in Keyvow’s Application Support evidence folder with iOS file protection. Exports are created in temporary storage and leave the app only through your share-sheet action."))
                 .heldBody()
                 .foregroundStyle(HeldColor.secondaryInk)
                 .fixedSize(horizontal: false, vertical: true)
 
-            LabeledContent("Version", value: "1.0")
+            LabeledContent(L("Version"), value: "1.0")
         } header: {
-            Label("Privacy and about", systemImage: "hand.raised")
+            Label(L("Privacy and about"), systemImage: "hand.raised")
         }
     }
 
@@ -441,7 +472,7 @@ public struct SettingsView: View {
             try modelContext.save()
             settingsErrorMessage = nil
         } catch {
-            settingsErrorMessage = "Settings could not be saved: \(error.localizedDescription)"
+            settingsErrorMessage = L("Settings could not be saved: %@", error.localizedDescription)
         }
     }
 
@@ -452,14 +483,14 @@ public struct SettingsView: View {
                 settings.remindersEnabled = false
                 saveSettings()
                 await reminderScheduler.sync(orders: orders, settings: settings)
-                notificationMessage = "Order reminders are off. Held’s pending order notifications have been removed."
+                notificationMessage = L("Order reminders are off. Keyvow’s pending order notifications have been removed.")
                 return
             }
 
             if reminderScheduler.authorizationStatus == .denied {
                 settings.remindersEnabled = false
                 saveSettings()
-                notificationMessage = "Notifications are denied in iOS. Open Notification Settings to allow them, then return and turn reminders on."
+                notificationMessage = L("Notifications are denied in iOS. Open Notification Settings to allow them, then return and turn reminders on.")
                 return
             }
 
@@ -481,7 +512,7 @@ public struct SettingsView: View {
                 guard granted else {
                     settings.remindersEnabled = false
                     saveSettings()
-                    notificationMessage = reminderScheduler.lastErrorMessage ?? "Notifications are unavailable."
+                    notificationMessage = reminderScheduler.lastErrorMessage ?? L("Notifications are unavailable.")
                     return
                 }
             }
@@ -490,8 +521,8 @@ public struct SettingsView: View {
             saveSettings()
             await reminderScheduler.sync(orders: orders, settings: settings)
             notificationMessage = reminderScheduler.lastErrorMessage == nil
-                ? "Order reminders are on and synchronized with your saved reminder dates."
-                : "Order reminders are on, but some notifications could not be scheduled."
+                ? L("Order reminders are on and synchronized with your saved reminder dates.")
+                : L("Order reminders are on, but some notifications could not be scheduled.")
         }
     }
 
@@ -516,8 +547,8 @@ public struct SettingsView: View {
             storageDescription = ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
             storageErrorMessage = nil
         } catch {
-            storageDescription = "Unavailable"
-            storageErrorMessage = "Evidence storage could not be measured: \(error.localizedDescription)"
+            storageDescription = L("Unavailable")
+            storageErrorMessage = L("Evidence storage could not be measured: %@", error.localizedDescription)
         }
     }
 
@@ -543,7 +574,7 @@ public struct SettingsView: View {
                 cleanupImportFile()
                 let pathExtension = sourceURL.pathExtension.lowercased()
                 guard pathExtension == "json" || pathExtension == "zip" else {
-                    throw ExportServiceError.invalidBackup("Choose a Held JSON or ZIP backup.")
+                    throw ExportServiceError.invalidBackup(L("Choose a Keyvow JSON or ZIP backup."))
                 }
 
                 let didStartAccess = sourceURL.startAccessingSecurityScopedResource()
@@ -602,11 +633,16 @@ public struct SettingsView: View {
                 // Sync never requests notification authorization by itself.
                 let restoredOrders = try modelContext.fetch(FetchDescriptor<HeldOrder>())
                 let restoredSettings = try AppSettings.fetchOrCreate(context: modelContext)
+                LocalizationCenter.shared.setLanguage(AppLanguage(rawValueOrSystem: restoredSettings.preferredLanguageRaw))
                 await reminderScheduler.sync(orders: restoredOrders, settings: restoredSettings)
 
-                restoreSuccessMessage = "Restore complete: \(result.insertedOrderCount) inserted, \(result.updatedOrderCount) updated, and \(result.restoredEvidenceCount) evidence \(result.restoredEvidenceCount == 1 ? "file" : "files") restored. Reminders were synchronized."
+                let summary = result.restoredEvidenceCount == 1
+                    ? L("Restore complete: %1$lld inserted, %2$lld updated, and %3$lld evidence file restored. Reminders were synchronized.", Int64(result.insertedOrderCount), Int64(result.updatedOrderCount), Int64(result.restoredEvidenceCount))
+                    : L("Restore complete: %1$lld inserted, %2$lld updated, and %3$lld evidence files restored. Reminders were synchronized.", Int64(result.insertedOrderCount), Int64(result.updatedOrderCount), Int64(result.restoredEvidenceCount))
                 if let schedulerError = reminderScheduler.lastErrorMessage {
-                    restoreSuccessMessage = "Restore complete: \(result.insertedOrderCount) inserted, \(result.updatedOrderCount) updated, and \(result.restoredEvidenceCount) evidence \(result.restoredEvidenceCount == 1 ? "file" : "files") restored. \(schedulerError)"
+                    restoreSuccessMessage = L("%1$@ %2$@", summary, L(schedulerError))
+                } else {
+                    restoreSuccessMessage = summary
                 }
                 refreshStorage()
                 pendingRestore = nil

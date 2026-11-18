@@ -10,11 +10,11 @@ enum EstimatePrecision: String, CaseIterable, Codable {
 
     var displayLabel: String {
         switch self {
-        case .day: return "Exact day or date range"
-        case .month: return "Month"
-        case .quarter: return "Quarter"
-        case .season: return "Season"
-        case .unknown: return "Unknown"
+        case .day: return L("Exact day or date range")
+        case .month: return L("Month")
+        case .quarter: return L("Quarter")
+        case .season: return L("Season")
+        case .unknown: return L("Unknown")
         }
     }
 }
@@ -109,52 +109,52 @@ enum DeliveryEstimate {
     ) -> String {
         switch precision {
         case .unknown:
-            return "Unknown"
+            return L("Unknown")
         case .day:
             if let start, let end {
                 if calendar.isDate(start, inSameDayAs: end) {
                     return formatDate(start)
                 }
-                return "\(formatDate(start)) – \(formatDate(end))"
+                return L("%1$@ – %2$@", formatDate(start), formatDate(end))
             }
-            if let start { return "From \(formatDate(start))" }
-            if let end { return "By \(formatDate(end))" }
-            return "Not set"
+            if let start { return L("From %@", formatDate(start)) }
+            if let end { return L("By %@", formatDate(end)) }
+            return L("Not set")
         case .month:
-            guard let start else { return "Month not set" }
+            guard let start else { return L("Month not set") }
             let formatter = DateFormatter()
-            formatter.locale = .current
+            formatter.locale = LocalizationCenter.shared.locale
             formatter.calendar = calendar
             formatter.timeZone = calendar.timeZone
             formatter.dateFormat = DateFormatter.dateFormat(
                 fromTemplate: "MMMM yyyy",
                 options: 0,
-                locale: .current
+                locale: LocalizationCenter.shared.locale
             )
             return formatter.string(from: start)
         case .quarter:
-            guard let start else { return "Quarter not set" }
+            guard let start else { return L("Quarter not set") }
             let month = calendar.component(.month, from: start)
             let quarter = ((max(1, month) - 1) / 3) + 1
-            return "Q\(quarter) \(calendar.component(.year, from: start))"
+            return L("Q%1$lld %2$lld", quarter, calendar.component(.year, from: start))
         case .season:
-            guard let start else { return "Season not set" }
+            guard let start else { return L("Season not set") }
             let year = calendar.component(.year, from: start)
             switch calendar.component(.month, from: start) {
-            case 12: return "Winter \(year)–\(year + 1)"
-            case 3: return "Spring \(year)"
-            case 6: return "Summer \(year)"
-            case 9: return "Autumn \(year)"
-            default: return "Season not set"
+            case 12: return L("Winter %1$lld–%2$lld", year, year + 1)
+            case 3: return L("Spring %lld", year)
+            case 6: return L("Summer %lld", year)
+            case 9: return L("Autumn %lld", year)
+            default: return L("Season not set")
             }
         }
     }
 
     static func rangeText(start: Date?, end: Date?) -> String? {
         guard start != nil || end != nil else { return nil }
-        let startText = start.map(formatDate) ?? "Unknown"
-        let endText = end.map(formatDate) ?? "Unknown"
-        return "\(startText) – \(endText)"
+        let startText = start.map(formatDate) ?? L("Unknown")
+        let endText = end.map(formatDate) ?? L("Unknown")
+        return L("%1$@ – %2$@", startText, endText)
     }
 
     static func hasPassed(

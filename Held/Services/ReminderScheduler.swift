@@ -19,17 +19,17 @@ final class ReminderScheduler: ObservableObject {
     var authorizationStatusDescription: String {
         switch authorizationStatus {
         case .notDetermined:
-            return "Notifications have not been requested."
+            return L("Notifications have not been requested.")
         case .denied:
-            return "Notifications are disabled. You can enable them in Settings."
+            return L("Notifications are disabled. You can enable them in Settings.")
         case .authorized:
-            return "Notifications are enabled."
+            return L("Notifications are enabled.")
         case .provisional:
-            return "Provisional notifications are enabled."
+            return L("Provisional notifications are enabled.")
         case .ephemeral:
-            return "Notifications are enabled for this app clip."
+            return L("Notifications are enabled for this app clip.")
         @unknown default:
-            return "Notification availability is unknown."
+            return L("Notification availability is unknown.")
         }
     }
 
@@ -82,10 +82,10 @@ final class ReminderScheduler: ObservableObject {
                     let identifier = Self.identifier(orderID: order.id, reminderID: reminder.id)
                     let content = UNMutableNotificationContent()
                     content.title = reminder.label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? "Order reminder"
+                        ? L("Order reminder")
                         : reminder.label
                     content.body = order.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? "You asked Held to remind you about this order."
+                        ? L("You asked Keyvow to remind you about this order.")
                         : order.title
                     content.sound = .default
                     content.threadIdentifier = "held.order.\(order.id)"
@@ -110,10 +110,10 @@ final class ReminderScheduler: ObservableObject {
             let activeCount = activeOrders.count
             let attentionCount = AttentionEngine.attention(orders: activeOrders, settings: settings, now: now).count
             let content = UNMutableNotificationContent()
-            content.title = "Your week with Held"
+            content.title = L("Your week with Keyvow")
             content.body = attentionCount > 0
-                ? "\(activeCount) active \(activeCount == 1 ? "order" : "orders"); \(attentionCount) \(attentionCount == 1 ? "order needs" : "orders need") your attention."
-                : "\(activeCount) active \(activeCount == 1 ? "order" : "orders"). Nothing needs your attention right now."
+                ? L("Notification active orders with attention", Int64(activeCount), Int64(attentionCount))
+                : L("Notification active orders without attention", Int64(activeCount))
             content.sound = .default
             content.threadIdentifier = "held.digest"
             content.userInfo = ["destination": "orders"]

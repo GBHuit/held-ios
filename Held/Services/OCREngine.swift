@@ -65,9 +65,9 @@ enum OCREngineError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidImage:
-            return "The image could not be read for text recognition."
+            return L("The image could not be read for text recognition.")
         case .recognitionUnavailable:
-            return "Text recognition is not available for this image."
+            return L("Text recognition is not available for this image.")
         }
     }
 }

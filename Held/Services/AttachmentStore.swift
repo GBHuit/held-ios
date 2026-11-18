@@ -24,15 +24,15 @@ enum AttachmentStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidRelativePath:
-            return "The attachment path is invalid."
+            return L("The attachment path is invalid.")
         case .sourceIsNotAFile:
-            return "Please choose a file, not a folder."
+            return L("Please choose a file, not a folder.")
         case .sourceIsNotReadable:
-            return "The selected file could not be read."
+            return L("The selected file could not be read.")
         case .unsupportedImage:
-            return "A thumbnail could not be created for this image."
+            return L("A thumbnail could not be created for this image.")
         case .fileTooLarge:
-            return "The attachment is too large to import."
+            return L("The attachment is too large to import.")
         }
     }
 }

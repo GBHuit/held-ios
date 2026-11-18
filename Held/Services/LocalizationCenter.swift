@@ -71,6 +71,42 @@ final class LocalizationCenter: ObservableObject {
         return String(format: format, locale: locale, arguments: arguments)
     }
 
+    func money(minor: Int64, currency: String) -> String {
+        let value = Decimal(minor) / Decimal(100)
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency
+        if let formatted = formatter.string(from: NSDecimalNumber(decimal: value)) {
+            return formatted
+        }
+        return "\(NSDecimalNumber(decimal: value).stringValue) \(currency)"
+    }
+
+    func money(minor: Int64, currency: CurrencyCode) -> String {
+        money(minor: minor, currency: currency.rawValue)
+    }
+
+    func date(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = .current
+        formatter.timeZone = .current
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
+    }
+
+    func percentage(_ value: Double) -> String {
+        let clamped = min(1, max(0, value.isFinite ? value : 0))
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: clamped))
+            ?? "\(Int((clamped * 100).rounded()))%"
+    }
+
     private var bundle: Bundle {
         guard let resourceName = language.resourceName,
               let path = Bundle.main.path(forResource: resourceName, ofType: "lproj"),
