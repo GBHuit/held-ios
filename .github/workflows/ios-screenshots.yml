@@ -60,6 +60,7 @@ jobs:
           echo "Using $DEVICE_NAME"
 
       - name: Run native UI tests and capture screenshots
+        id: ui_test
         run: |
           set -o pipefail
           xcodebuild \
@@ -72,17 +73,27 @@ jobs:
             test 2>&1 | tee "Keyvow-$ARTIFACT_NAME-UI.log"
 
       - name: Export real simulator screenshot attachments
+        if: ${{ always() }}
+        env:
+          REQUIRE_COMPLETE: ${{ steps.ui_test.outcome == 'success' }}
         run: |
           mkdir -p "Artifacts/$ARTIFACT_NAME"
+          if [ ! -d "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" ]; then
+            echo "No result bundle exists because the test run did not reach execution"
+            exit 0
+          fi
           xcrun xcresulttool export attachments \
             --path "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" \
             --output-path "Artifacts/$ARTIFACT_NAME"
           python3 - "Artifacts/$ARTIFACT_NAME" <<'PY'
-          import pathlib, sys
+          import os, pathlib, sys
           root = pathlib.Path(sys.argv[1])
           images = sorted(root.rglob("*.png"))
-          if len(images) < 6:
-              raise SystemExit(f"Expected at least six native screenshots, found {len(images)}")
+          required_count = 7 if os.environ["REQUIRE_COMPLETE"] == "true" else 0
+          if len(images) < required_count:
+              raise SystemExit(f"Expected seven native screenshots, found {len(images)}")
+          if not images:
+              print("The result bundle contains no PNG screenshot attachments")
           for image in images:
               data = image.read_bytes()
               if data[:8] != b"\x89PNG\r\n\x1a\n" or len(data) < 30:

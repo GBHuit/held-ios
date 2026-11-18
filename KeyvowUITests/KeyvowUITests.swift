@@ -85,20 +85,20 @@ final class KeyvowUITests: XCTestCase {
         chooseLanguageOption("简体中文")
         requireExists(app.staticTexts["语言"], "Switching to Simplified Chinese did not localize Settings")
         requireHittable(languageRow(named: "语言"), "The Chinese language picker did not become ready")
-        XCTAssertTrue(app.tabBars.buttons["设置"].isSelected, "The selected tab did not switch to Chinese")
+        XCTAssertTrue(app.buttons["设置"].isSelected, "The selected tab did not switch to Chinese")
         attachScreenshot(named: "06-settings-zh-Hans")
 
         openLanguagePicker(named: "语言")
         chooseLanguageOption("English")
         requireExists(app.staticTexts["Language"], "Switching back to English did not localize Settings")
         requireHittable(languageRow(named: "Language"), "The English language picker did not become ready")
-        XCTAssertTrue(app.tabBars.buttons["Settings"].isSelected, "The selected tab did not switch back to English")
+        XCTAssertTrue(app.buttons["Settings"].isSelected, "The selected tab did not switch back to English")
     }
 
     private func showEnglishHome() {
         // A previous interrupted run may have persisted Chinese. Restore English
         // through the real UI without clearing orders or other application data.
-        if !app.tabBars.buttons["Today"].waitForExistence(timeout: 5) {
+        if !app.buttons["Today"].waitForExistence(timeout: 5) {
             selectTab("设置")
             requireExists(app.navigationBars["设置"], "Chinese Settings did not open")
             openLanguagePicker(named: "语言")
@@ -110,7 +110,8 @@ final class KeyvowUITests: XCTestCase {
     }
 
     private func selectTab(_ label: String) {
-        let tab = app.tabBars.buttons[label]
+        // Both the iPhone tab bar and the iPadOS sidebar expose tab items as buttons.
+        let tab = app.buttons[label]
         requireHittable(tab, "The \(label) tab was not available")
         tab.tap()
     }
