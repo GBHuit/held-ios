@@ -163,7 +163,7 @@ struct OrdersView: View {
                             NavigationLink {
                                 OrderDetailView(order: order)
                             } label: {
-                                HomeOrderCard(order: order)
+                                HomeOrderCard(order: order, showsChevron: false)
                             }
                             .buttonStyle(.plain)
                             .listRowInsets(EdgeInsets(

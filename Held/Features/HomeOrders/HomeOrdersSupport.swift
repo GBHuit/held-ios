@@ -5,6 +5,7 @@ struct HomeOrderCard: View {
 
     @EnvironmentObject private var localization: LocalizationCenter
     var showsProgress = true
+    var showsChevron = true
 
     private var statusTone: BadgeTone {
         if order.resolutionStatus == .disputed || order.resolutionStatus == .refundRequested {
@@ -34,11 +35,13 @@ struct HomeOrderCard: View {
                         .foregroundStyle(HeldColor.ink)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: HeldSpacing.small)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(HeldColor.secondaryInk)
-                        .padding(.top, 3)
-                        .accessibilityHidden(true)
+                    if showsChevron {
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(HeldColor.secondaryInk)
+                            .padding(.top, 3)
+                            .accessibilityHidden(true)
+                    }
                 }
 
                 Text(secondaryLine)
