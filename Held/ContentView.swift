@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var hasBootstrapped = false
     @State private var pendingShare: PendingShare?
     @State private var pendingShareError: String?
+    @State private var showOnboarding = false
+    @AppStorage("hasSeenOnboarding_v1") private var hasSeenOnboarding = false
 
     private var preferredScheme: ColorScheme? {
         switch settings.first?.preferredColorSchemeRaw {
@@ -60,6 +62,12 @@ struct ContentView: View {
         .environmentObject(reminders)
         .environmentObject(purchases)
         .preferredColorScheme(preferredScheme)
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView {
+                hasSeenOnboarding = true
+                showOnboarding = false
+            }
+        }
         .sheet(item: pendingShareBinding) { share in
             AddOrderView(pendingShare: share)
         }
@@ -77,6 +85,9 @@ struct ContentView: View {
                 await purchases.synchronize(settings: currentSettings)
                 try? modelContext.save()
                 loadPendingShare()
+                if !hasSeenOnboarding && pendingShare == nil {
+                    showOnboarding = true
+                }
             } catch {
                 bootstrapError = L("Keyvow could not prepare local storage. Please restart the app. %@", error.localizedDescription)
             }

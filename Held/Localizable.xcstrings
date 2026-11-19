@@ -10480,6 +10480,230 @@
           }
         }
       }
+    },
+    "Skip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跳过"
+          }
+        }
+      }
+    },
+    "Get started": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始使用"
+          }
+        }
+      }
+    },
+    "Keep the original estimate, the progress, the evidence, and the next check-in in one place.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep the original estimate, the progress, the evidence, and the next check-in in one place."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始预估、进度、凭证和下一次回访，全在一处。"
+          }
+        }
+      }
+    },
+    "Track every order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Track every order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟踪每笔订单"
+          }
+        }
+      }
+    },
+    "Estimates, progress, and milestones stay together.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimates, progress, and milestones stay together."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预估、进度、节点，始终在一起。"
+          }
+        }
+      }
+    },
+    "Keep the evidence": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep the evidence"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "留住凭证"
+          }
+        }
+      }
+    },
+    "Receipts, screenshots, and scanned text attach to the order.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Receipts, screenshots, and scanned text attach to the order."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收据、截图、识别出的文字，都挂在订单上。"
+          }
+        }
+      }
+    },
+    "Never miss a check-in": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never miss a check-in"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不错过回访"
+          }
+        }
+      }
+    },
+    "Reminders follow each order's own schedule.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders follow each order's own schedule."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒按每笔订单自己的节奏走。"
+          }
+        }
+      }
+    },
+    "Add orders without typing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add orders without typing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不打字也能建单"
+          }
+        }
+      }
+    },
+    "Share a receipt or order screenshot from any app. Keyvow reads it and starts a new order.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share a receipt or order screenshot from any app. Keyvow reads it and starts a new order."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在任意 App 里分享收据或订单截图，Keyvow 读取后自动起一张新单。"
+          }
+        }
+      }
+    },
+    "Take or find a screenshot": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take or find a screenshot"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "截图或找到图片"
+          }
+        }
+      }
+    },
+    "Tap Share and choose Keyvow": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap Share and choose Keyvow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点「分享」，选 Keyvow"
+          }
+        }
+      }
+    },
+    "Review the pre-filled order": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review the pre-filled order"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "核对自动填好的订单"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
