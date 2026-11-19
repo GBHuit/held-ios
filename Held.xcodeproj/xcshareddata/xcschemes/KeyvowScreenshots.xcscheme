@@ -42,7 +42,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <StoreKitConfigurationFileReference
-         identifier = "../../../Keyvow.storekit">
+         identifier = "../../../KeyvowUITests/KeyvowPro.storekit">
       </StoreKitConfigurationFileReference>
       <Testables>
          <TestableReference skipped = "NO">

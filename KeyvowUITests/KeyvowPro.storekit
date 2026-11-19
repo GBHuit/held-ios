@@ -1,9 +1,13 @@
 {
+  "identifier" : "6F2A1D84-7D51-4C0A-9F9E-3F60D6A20D51",
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
       "displayPrice" : "19.99",
       "familyShareable" : false,
-      "internalID" : "6F2A1D84-7D51-4C0A-9F9E-3F60D6A20D51",
+      "internalID" : "6740000001",
       "localizations" : [
         {
           "description" : "Unlimited active orders, one-time purchase.",
@@ -17,11 +21,18 @@
     }
   ],
   "settings" : {
+    "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
-    "_storefront" : "USA"
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
   },
+  "subscriptionGroups" : [
+
+  ],
   "version" : {
-    "major" : 4,
+    "major" : 3,
     "minor" : 0
   }
 }
