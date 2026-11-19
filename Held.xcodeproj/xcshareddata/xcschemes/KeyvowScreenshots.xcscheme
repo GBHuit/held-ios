@@ -42,8 +42,15 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <StoreKitConfigurationFileReference
-         identifier = "../../../KeyvowUITests/KeyvowPro.storekit">
+         identifier = "../../../Keyvow.storekit">
       </StoreKitConfigurationFileReference>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "KEYVOW_STOREKIT"
+            value = "Keyvow.storekit"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <Testables>
          <TestableReference skipped = "NO">
             <BuildableReference
@@ -75,6 +82,9 @@
             ReferencedContainer = "container:Held.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "../../../Keyvow.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

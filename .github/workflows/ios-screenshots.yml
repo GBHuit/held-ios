@@ -76,9 +76,11 @@ jobs:
           # xcodebuild cannot mis-resolve the relative reference.
           STOREKIT_ABS="$PWD/Keyvow.storekit"
           test -f "$STOREKIT_ABS"
-          /usr/bin/sed -i '' -E 's#identifier = "[^"]*\.storekit"#identifier = "'"$STOREKIT_ABS"'"#' \
+          /usr/bin/sed -i '' -E \
+            -e 's#identifier = "[^"]*\.storekit"#identifier = "'"$STOREKIT_ABS"'"#' \
+            -e 's#value = "[^"]*\.storekit"#value = "'"$STOREKIT_ABS"'"#' \
             Held.xcodeproj/xcshareddata/xcschemes/KeyvowScreenshots.xcscheme
-          grep -A2 StoreKitConfigurationFileReference Held.xcodeproj/xcshareddata/xcschemes/KeyvowScreenshots.xcscheme
+          grep -n "storekit\|StoreKit" Held.xcodeproj/xcshareddata/xcschemes/KeyvowScreenshots.xcscheme
           xcodebuild \
             -project Held.xcodeproj \
             -scheme KeyvowScreenshots \
