@@ -13,6 +13,14 @@ final class KeyvowUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         app.launch()
+
+        let skipOnboardingButton = app.buttons["Skip"]
+        if skipOnboardingButton.waitForExistence(timeout: 2) {
+            attachScreenshot(named: "00-onboarding-en")
+            requireHittable(skipOnboardingButton, "The onboarding Skip button was not available")
+            skipOnboardingButton.tap()
+            requireExists(app.buttons["Today"], "The Today tab did not appear after skipping onboarding")
+        }
     }
 
     override func tearDownWithError() throws {
