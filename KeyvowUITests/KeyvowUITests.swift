@@ -38,11 +38,17 @@ final class KeyvowUITests: XCTestCase {
     /// so later launches in the same simulator boot are unaffected.
     private func dismissOnboardingIfPresent() {
         let skip = app.buttons["Skip"]
-        if skip.waitForExistence(timeout: 6) {
-            skip.tap()
+        let today = app.buttons["Today"]
+        let deadline = Date().addingTimeInterval(40)
+        while Date() < deadline {
+            if today.exists && today.isHittable {
+                return
+            }
+            if skip.exists && skip.isHittable {
+                skip.tap()
+            }
+            Thread.sleep(forTimeInterval: 0.5)
         }
-        // Wait until the tab bar is interactive again.
-        _ = app.buttons["Today"].waitForExistence(timeout: 10)
     }
 
     override func tearDownWithError() throws {
@@ -52,15 +58,27 @@ final class KeyvowUITests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    /// Locate the StoreKit configuration in whichever bundle carries it and
-    /// open a test session for it.
+    /// Locate the StoreKit configuration and open a test session for it.
+    /// The workflow passes an absolute path through TEST_RUNNER_KEYVOW_STOREKIT;
+    /// bundle lookups stay as a fallback for local runs from Xcode.
     private static func makeStoreKitSession() -> SKTestSession? {
+        var candidates: [URL] = []
+        if let path = ProcessInfo.processInfo.environment["KEYVOW_STOREKIT"], !path.isEmpty {
+            candidates.append(URL(fileURLWithPath: path))
+        }
         for bundle in [Bundle(for: KeyvowUITests.self), Bundle.main] {
             if let url = bundle.url(forResource: "KeyvowPro", withExtension: "storekit") {
-                print("StoreKit config resolved at: \(url.path)")
-                return try? SKTestSession(contentsOf: url)
+                candidates.append(url)
             }
         }
+        for url in candidates where FileManager.default.fileExists(atPath: url.path) {
+            print("StoreKit config resolved at: \(url.path)")
+            if let session = try? SKTestSession(contentsOf: url) {
+                return session
+            }
+            print("WARN: SKTestSession could not be created from \(url.path)")
+        }
+        print("WARN: candidates checked: \(candidates.map(\.path))")
         return nil
     }
 

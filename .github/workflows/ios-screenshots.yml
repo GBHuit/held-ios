@@ -85,6 +85,7 @@ jobs:
             -configuration Debug \
             -destination "platform=iOS Simulator,id=$DEVICE_UDID" \
             -resultBundlePath "$RUNNER_TEMP/Keyvow-$ARTIFACT_NAME.xcresult" \
+            TEST_RUNNER_KEYVOW_STOREKIT="$STOREKIT_ABS" \
             test 2>&1 | tee "Keyvow-$ARTIFACT_NAME-UI.log"
 
       - name: Export real simulator screenshot attachments
