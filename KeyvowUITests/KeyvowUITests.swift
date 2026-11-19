@@ -9,19 +9,19 @@ final class KeyvowUITests: XCTestCase {
         try super.setUpWithError()
         continueAfterFailure = false
 
-        // Start a local StoreKit test session BEFORE the app launches so
-        // product lookups resolve against KeyvowPro.storekit instead of the
-        // live App Store, which has no published product in a fresh sandbox.
-        // The scheme-level StoreKit reference is not applied by xcodebuild
-        // test, so the session has to be created here.
-        if let session = Self.makeStoreKitSession() {
+        // Start a local StoreKit test session BEFORE the app launches.
+        // NOTE: this only configures the TEST process. Verified in CI that a
+        // session created here does not reach the app under test, so the Pro
+        // screenshot test stays opt-in via KEYVOW_PRO_SCREENSHOT=1 and is meant
+        // to run from Xcode on a Mac, where the scheme's StoreKit
+        // configuration applies to the app itself.
+        if ProcessInfo.processInfo.environment["KEYVOW_PRO_SCREENSHOT"] == "1",
+           let session = Self.makeStoreKitSession() {
             session.resetToDefaultState()
             session.disableDialogs = true
             session.clearTransactions()
             storeKitSession = session
             print("StoreKit test session ready")
-        } else {
-            print("WARN: KeyvowPro.storekit was not found in any test bundle")
         }
 
         app = XCUIApplication()
@@ -298,16 +298,18 @@ final class KeyvowUITests: XCTestCase {
         )
     }
 
-    /// Captures the real in-app purchase page. A local SKTestSession drives
-    /// StoreKit so the product (held.pro, $19.99) resolves and the UI renders
-    /// its localized price; without a session the test skips.
+    /// Captures the real in-app purchase page with its localized price.
+    /// Opt-in: run from Xcode on a Mac with KEYVOW_PRO_SCREENSHOT=1 and the
+    /// scheme's StoreKit configuration selected. CI skips it because local
+    /// StoreKit cannot be activated for the app under test from a UI test.
     func testProUpgradeScreenshot() throws {
-        // Without a local StoreKit session the upgrade card can only render the
-        // "not available" error, so skip instead of failing the whole job. The
-        // screenshot is captured from Xcode on a Mac when CI cannot provide one.
-        try XCTSkipIf(
-            storeKitSession == nil,
-            "No local StoreKit session in this environment; capture the Pro screenshot from Xcode on a Mac"
+        // Opt-in only: local StoreKit testing cannot be wired into the app under
+        // test from CI (a UI-test SKTestSession configures only the test
+        // process). Capture this screenshot from Xcode on a Mac with the scheme's
+        // StoreKit configuration selected, then attach it in App Store Connect.
+        try XCTSkipUnless(
+            ProcessInfo.processInfo.environment["KEYVOW_PRO_SCREENSHOT"] == "1",
+            "Pro screenshot is captured on a Mac; CI cannot activate local StoreKit for the app"
         )
 
         selectTab("Settings")
