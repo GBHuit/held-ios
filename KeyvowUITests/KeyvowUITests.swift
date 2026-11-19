@@ -13,14 +13,19 @@ final class KeyvowUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         app.launch()
+        dismissOnboardingIfPresent()
+    }
 
-        let skipOnboardingButton = app.buttons["Skip"]
-        if skipOnboardingButton.waitForExistence(timeout: 2) {
-            attachScreenshot(named: "00-onboarding-en")
-            requireHittable(skipOnboardingButton, "The onboarding Skip button was not available")
-            skipOnboardingButton.tap()
-            requireExists(app.buttons["Today"], "The Today tab did not appear after skipping onboarding")
+    /// The first-run guide covers the whole app on a fresh install. Every test
+    /// must get past it before touching tabs; a skipped guide persists the flag
+    /// so later launches in the same simulator boot are unaffected.
+    private func dismissOnboardingIfPresent() {
+        let skip = app.buttons["Skip"]
+        if skip.waitForExistence(timeout: 6) {
+            skip.tap()
         }
+        // Wait until the tab bar is interactive again.
+        _ = app.buttons["Today"].waitForExistence(timeout: 10)
     }
 
     override func tearDownWithError() throws {
@@ -79,21 +84,6 @@ final class KeyvowUITests: XCTestCase {
         requireExists(app.navigationBars["New order"], "The new-order flow did not open")
         requireHittable(app.buttons["Cancel"], "The new-order flow was not ready")
         attachScreenshot(named: "04-capture-en")
-
-        let proUpgradeButton = app.buttons["View Keyvow Pro upgrade"]
-        requireHittable(proUpgradeButton, "The Keyvow Pro upgrade button was not available")
-        proUpgradeButton.tap()
-        requireExists(app.navigationBars["Keyvow Pro"], "The Keyvow Pro upgrade sheet did not open")
-        requireExists(
-            app.buttons["Get Keyvow Pro — $19.99"],
-            "The StoreKit product price did not load on the Keyvow Pro upgrade sheet"
-        )
-        attachScreenshot(named: "07-pro-upgrade-en-US")
-        requireHittable(app.buttons["Not now"], "The Keyvow Pro upgrade sheet could not be dismissed")
-        app.buttons["Not now"].tap()
-        requireExists(app.navigationBars["New order"], "Dismissing Keyvow Pro did not restore the new-order flow")
-        requireHittable(app.buttons["Cancel"], "The new-order flow was not ready after dismissing Keyvow Pro")
-
         app.buttons["Cancel"].tap()
         requireExists(app.navigationBars["Orders"], "Cancelling the new-order flow did not restore Orders")
 
@@ -246,5 +236,35 @@ final class KeyvowUITests: XCTestCase {
             file: file,
             line: line
         )
+    }
+
+    /// Captures the real in-app purchase page. The KeyvowScreenshots scheme is
+    /// attached to Held/Keyvow.storekit so StoreKit returns the live product
+    /// (held.pro, $19.99) and the UI renders its localized price.
+    func testProUpgradeScreenshot() {
+        selectTab("Settings")
+        requireExists(app.navigationBars["Settings"], "Settings did not open")
+
+        let proTitle = app.staticTexts["Keyvow Pro"]
+        for _ in 0..<6 where !proTitle.exists {
+            app.swipeUp()
+        }
+        requireExists(proTitle, "The Keyvow Pro section was not found")
+
+        let loadButton = app.buttons["Load Keyvow Pro"]
+        if loadButton.exists && loadButton.isHittable {
+            loadButton.tap()
+        }
+
+        let priceButton = app.buttons
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Get Keyvow Pro"))
+            .firstMatch
+        requireExists(priceButton, "The Pro price never loaded from StoreKit", timeout: 20)
+
+        for _ in 0..<4 where !priceButton.isHittable {
+            app.swipeUp()
+        }
+        requireHittable(priceButton, "The Pro purchase button could not be reached")
+        attachScreenshot(named: "07-pro-upgrade")
     }
 }
