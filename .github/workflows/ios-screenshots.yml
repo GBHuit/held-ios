@@ -72,6 +72,13 @@ jobs:
         id: ui_test
         run: |
           set -o pipefail
+          # Point the scheme's StoreKit configuration at an absolute path so
+          # xcodebuild cannot mis-resolve the relative reference.
+          STOREKIT_ABS="$PWD/Keyvow.storekit"
+          test -f "$STOREKIT_ABS"
+          /usr/bin/sed -i '' -E 's#identifier = "[^"]*Keyvow\.storekit"#identifier = "'"$STOREKIT_ABS"'"#' \
+            Held.xcodeproj/xcshareddata/xcschemes/KeyvowScreenshots.xcscheme
+          grep -A2 StoreKitConfigurationFileReference Held.xcodeproj/xcshareddata/xcschemes/KeyvowScreenshots.xcscheme
           xcodebuild \
             -project Held.xcodeproj \
             -scheme KeyvowScreenshots \
