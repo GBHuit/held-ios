@@ -71,6 +71,21 @@ final class KeyvowUITests: XCTestCase {
         requireExists(app.navigationBars["New order"], "The new-order flow did not open")
         requireHittable(app.buttons["Cancel"], "The new-order flow was not ready")
         attachScreenshot(named: "04-capture-en")
+
+        let proUpgradeButton = app.buttons["View Keyvow Pro upgrade"]
+        requireHittable(proUpgradeButton, "The Keyvow Pro upgrade button was not available")
+        proUpgradeButton.tap()
+        requireExists(app.navigationBars["Keyvow Pro"], "The Keyvow Pro upgrade sheet did not open")
+        requireExists(
+            app.buttons["Get Keyvow Pro — $19.99"],
+            "The StoreKit product price did not load on the Keyvow Pro upgrade sheet"
+        )
+        attachScreenshot(named: "07-pro-upgrade-en-US")
+        requireHittable(app.buttons["Not now"], "The Keyvow Pro upgrade sheet could not be dismissed")
+        app.buttons["Not now"].tap()
+        requireExists(app.navigationBars["New order"], "Dismissing Keyvow Pro did not restore the new-order flow")
+        requireHittable(app.buttons["Cancel"], "The new-order flow was not ready after dismissing Keyvow Pro")
+
         app.buttons["Cancel"].tap()
         requireExists(app.navigationBars["Orders"], "Cancelling the new-order flow did not restore Orders")
 
