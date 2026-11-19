@@ -259,12 +259,15 @@ final class KeyvowUITests: XCTestCase {
         let priceButton = app.buttons
             .matching(NSPredicate(format: "label BEGINSWITH %@", "Get Keyvow Pro"))
             .firstMatch
-        requireExists(priceButton, "The Pro price never loaded from StoreKit", timeout: 20)
+        let priceAppeared = priceButton.waitForExistence(timeout: 20)
+        // Capture the state either way so a failing run still shows what the
+        // upgrade page rendered.
+        attachScreenshot(named: "07-pro-upgrade")
+        XCTAssertTrue(priceAppeared, "The Pro price never loaded from StoreKit")
 
         for _ in 0..<4 where !priceButton.isHittable {
             app.swipeUp()
         }
         requireHittable(priceButton, "The Pro purchase button could not be reached")
-        attachScreenshot(named: "07-pro-upgrade")
     }
 }
