@@ -1,11 +1,28 @@
 import XCTest
+import StoreKitTest
 
 final class KeyvowUITests: XCTestCase {
     private var app: XCUIApplication!
+    private var storeKitSession: SKTestSession?
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         continueAfterFailure = false
+
+        // Start a local StoreKit test session BEFORE the app launches so
+        // product lookups resolve against KeyvowPro.storekit instead of the
+        // live App Store, which has no published product in a fresh sandbox.
+        // The scheme-level StoreKit reference is not applied by xcodebuild
+        // test, so the session has to be created here.
+        if let session = Self.makeStoreKitSession() {
+            session.resetToDefaultState()
+            session.disableDialogs = true
+            session.clearTransactions()
+            storeKitSession = session
+            print("StoreKit test session ready")
+        } else {
+            print("WARN: KeyvowPro.storekit was not found in any test bundle")
+        }
 
         app = XCUIApplication()
         app.launchArguments = [
@@ -31,7 +48,20 @@ final class KeyvowUITests: XCTestCase {
     override func tearDownWithError() throws {
         app.terminate()
         app = nil
+        storeKitSession = nil
         try super.tearDownWithError()
+    }
+
+    /// Locate the StoreKit configuration in whichever bundle carries it and
+    /// open a test session for it.
+    private static func makeStoreKitSession() -> SKTestSession? {
+        for bundle in [Bundle(for: KeyvowUITests.self), Bundle.main] {
+            if let url = bundle.url(forResource: "KeyvowPro", withExtension: "storekit") {
+                print("StoreKit config resolved at: \(url.path)")
+                return try? SKTestSession(contentsOf: url)
+            }
+        }
+        return nil
     }
 
     func testEnglishScreenshotsAndLanguageSwitch() {
@@ -246,10 +276,19 @@ final class KeyvowUITests: XCTestCase {
         requireExists(app.navigationBars["Settings"], "Settings did not open")
 
         let proTitle = app.staticTexts["Keyvow Pro"]
-        for _ in 0..<6 where !proTitle.exists {
+        for _ in 0..<8 where !proTitle.isHittable {
             app.swipeUp()
         }
         requireExists(proTitle, "The Keyvow Pro section was not found")
+
+        // Bring the purchase control into view first: SwiftUI builds lazily, so
+        // an off-screen button can never satisfy the label predicate.
+        let anyProButton = app.buttons
+            .matching(NSPredicate(format: "label CONTAINS %@", "Keyvow Pro"))
+            .firstMatch
+        for _ in 0..<6 where !anyProButton.isHittable {
+            app.swipeUp()
+        }
 
         let loadButton = app.buttons["Load Keyvow Pro"]
         if loadButton.exists && loadButton.isHittable {
@@ -259,7 +298,7 @@ final class KeyvowUITests: XCTestCase {
         let priceButton = app.buttons
             .matching(NSPredicate(format: "label BEGINSWITH %@", "Get Keyvow Pro"))
             .firstMatch
-        let priceAppeared = priceButton.waitForExistence(timeout: 20)
+        let priceAppeared = priceButton.waitForExistence(timeout: 25)
         // Capture the state either way so a failing run still shows what the
         // upgrade page rendered.
         attachScreenshot(named: "07-pro-upgrade")
