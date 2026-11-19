@@ -367,6 +367,15 @@ public struct SettingsView: View {
                     }
                 }
             }
+            .task {
+                // Fetch the live StoreKit price as soon as the upgrade card is
+                // visible; the Load button remains for manual retries.
+                if !(purchaseService.isPro || settings.proUnlocked),
+                   purchaseService.displayPrice == nil,
+                   !purchaseService.isLoading {
+                    await purchaseService.loadProduct()
+                }
+            }
             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
             .listRowBackground(Color.clear)
         } header: {
