@@ -38,8 +38,8 @@ jobs:
       PROJECT: Held.xcodeproj
       BUNDLE_ID: com.held.groupbuy
       SHARE_BUNDLE_ID: com.held.groupbuy.ShareExtension
-      APP_PROFILE_NAME: Keyvow App Store
-      SHARE_PROFILE_NAME: Keyvow Share App Store
+      APP_PROFILE_NAME: Held AppStore
+      SHARE_PROFILE_NAME: Held Share AppStore
     steps:
       - name: Check out source
         uses: actions/checkout@v4

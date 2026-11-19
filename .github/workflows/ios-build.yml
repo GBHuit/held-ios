@@ -151,6 +151,7 @@ jobs:
           CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
           CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
           PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          SHARE_PROFILE_BASE64: ${{ secrets.IOS_SHARE_DEV_PROVISIONING_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ runner.temp }}-held-keychain
         run: |
           security create-keychain -p "$KEYCHAIN_PASSWORD" held-build.keychain-db
@@ -168,6 +169,7 @@ jobs:
             -k "$KEYCHAIN_PASSWORD" held-build.keychain-db
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           echo "$PROFILE_BASE64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/Held-Development.mobileprovision"
+          echo "$SHARE_PROFILE_BASE64" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/Held-Share-Development.mobileprovision"
           rm -f "$RUNNER_TEMP/Held-Certificate.p12"
 
       - name: Archive signed iOS device app
@@ -175,8 +177,16 @@ jobs:
         env:
           TEAM_ID: ${{ inputs.team_id }}
           PROFILE_NAME: ${{ inputs.provisioning_profile_name }}
+          SHARE_PROFILE_NAME: Held Share Dev
         run: |
           set -o pipefail
+          # 双 target 签名：项目 Release 配置硬编码了 App Store 描述文件名，
+          # 单一 PROVISIONING_PROFILE_SPECIFIER 喂给两个 target 会让 Share Extension
+          # 因 AppID 不匹配失败。这里按 target 替换 pbxproj 里的描述文件名与签名身份。
+          sed -i '' "s/PROVISIONING_PROFILE_SPECIFIER = \"Held AppStore\";/PROVISIONING_PROFILE_SPECIFIER = \"$PROFILE_NAME\";/" Held.xcodeproj/project.pbxproj
+          sed -i '' "s/PROVISIONING_PROFILE_SPECIFIER = \"Held Share AppStore\";/PROVISIONING_PROFILE_SPECIFIER = \"$SHARE_PROFILE_NAME\";/" Held.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Distribution";/CODE_SIGN_IDENTITY = "Apple Development";/' Held.xcodeproj/project.pbxproj
+          grep -n "PROVISIONING_PROFILE_SPECIFIER\|CODE_SIGN_IDENTITY" Held.xcodeproj/project.pbxproj
           xcodebuild \
             -project "$PROJECT" \
             -scheme "$SCHEME" \
@@ -185,8 +195,6 @@ jobs:
             -archivePath "$RUNNER_TEMP/Held.xcarchive" \
             DEVELOPMENT_TEAM="$TEAM_ID" \
             CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY='Apple Development' \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
             clean archive | tee archive.log
 
       - name: Export development IPA
@@ -194,6 +202,8 @@ jobs:
         env:
           TEAM_ID: ${{ inputs.team_id }}
           PROFILE_NAME: ${{ inputs.provisioning_profile_name }}
+          SHARE_PROFILE_NAME: Held Share Dev
+          SHARE_BUNDLE_ID: com.held.groupbuy.ShareExtension
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
@@ -206,7 +216,10 @@ jobs:
             <key>compileBitcode</key><false/>
             <key>destination</key><string>export</string>
             <key>provisioningProfiles</key>
-            <dict><key>$BUNDLE_ID</key><string>$PROFILE_NAME</string></dict>
+            <dict>
+              <key>$BUNDLE_ID</key><string>$PROFILE_NAME</string>
+              <key>$SHARE_BUNDLE_ID</key><string>$SHARE_PROFILE_NAME</string>
+            </dict>
           </dict>
           </plist>
           EOF

@@ -549,7 +549,7 @@
 				CODE_SIGN_ENTITLEMENTS = Held/Held.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				PROVISIONING_PROFILE_SPECIFIER = "Keyvow App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "Held AppStore";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Keyvow uses the camera only when you scan order details or preserve evidence. Images stay on this device unless you choose to export them.";
@@ -602,7 +602,7 @@
 				CODE_SIGN_ENTITLEMENTS = KeyvowShareExtension/KeyvowShareExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
-				PROVISIONING_PROFILE_SPECIFIER = "Keyvow Share App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "Held Share AppStore";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = KeyvowShareExtension/Info.plist;
